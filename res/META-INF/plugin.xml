@@ -24,6 +24,12 @@ CovScript language support.<br/>
 		<lang.parserDefinition
 				language="CovScript"
 				implementationClass="org.covscript.lang.CovParserDefinition"/>
+		<lang.commenter
+				language="CovScript"
+				implementationClass="org.covscript.lang.editing.CovCommenter"/>
+		<lang.braceMatcher
+				language="CovScript"
+				implementationClass="org.covscript.lang.editing.CovBraceMatcher"/>
 	</extensions>
 
 	<actions>
