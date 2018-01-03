@@ -11,8 +11,10 @@ import org.covscript.lang.psi.CovTypes
 
 class CovSyntaxHighlighter : SyntaxHighlighter {
 	companion object {
-		@JvmField val KEYWORDS = TextAttributesKey.createTextAttributesKey("LICE_IMPORTANT_SYMBOLS", DefaultLanguageHighlighterColors.KEYWORD)
+		@JvmField val KEYWORDS = TextAttributesKey.createTextAttributesKey("COV_KEYWORDS", DefaultLanguageHighlighterColors.KEYWORD)
+		@JvmField val COMMENTS = TextAttributesKey.createTextAttributesKey("COV_COMMENTS", DefaultLanguageHighlighterColors.LINE_COMMENT)
 		private val KEYWORDS_KEY = arrayOf(KEYWORDS)
+		private val COMMENTS_KEY = arrayOf(COMMENTS)
 		private val KEYWORDS_LIST = listOf(
 				CovTypes.IF_KEYWORD,
 				CovTypes.ELSE_KEYWORD,
@@ -35,6 +37,7 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 
 	override fun getTokenHighlights(type: IElementType?): Array<TextAttributesKey> = when (type) {
 		in KEYWORDS_LIST -> KEYWORDS_KEY
+		CovTypes.COMMENT -> COMMENTS_KEY
 		else -> emptyArray()
 	}
 

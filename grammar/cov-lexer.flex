@@ -25,7 +25,7 @@ COMMENT=#[^\n]*{EOF}
 INCOMPLETE_STRING=\"[^\"]*
 STRING_LITERAL={INCOMPLETE_STRING}\"
 
-SYM=[a-zA-Z_][0-9a-zA-Z_]+
+SYM=[a-zA-Z_][0-9a-zA-Z_]*
 
 IF_KEYWORD=if
 ELSE_KEYWORD=else
@@ -56,6 +56,7 @@ LEFT_S_BRACKET=\[
 RIGHT_S_BRACKET=\]
 
 WHITE_SPACE=[ \t\r]
+NON_WHITE_SPACE=[^ \t\r]
 
 %%
 
@@ -93,4 +94,5 @@ WHITE_SPACE=[ \t\r]
 {EOF} { yybegin(YYINITIAL); return CovTypes.EOF; }
 {SYM} { yybegin(YYINITIAL); return CovTypes.SYM; }
 
-{WHITE_SPACE} { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
+{WHITE_SPACE}+ { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
+{NON_WHITE_SPACE} { return TokenType.BAD_CHARACTER; }
