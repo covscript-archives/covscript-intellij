@@ -22,9 +22,12 @@ covElement ::= statement
 
 number ::= NUM
 symbol ::= SYM
-assign ::= EQ_KEYWORD
-
+assign ::= EQ
+true ::= TRUE
+false ::= FALSE
+null ::= NULL
 comment ::= LINE_COMMENT
+string ::= STRING
 
 importDeclaration ::= IMPORT_KEYWORD symbol
 packageDeclaration ::= PACKAGE_KEYWORD symbol
@@ -43,13 +46,15 @@ statement ::= assignment
  | ifStatement
  | whileStatement
 
+boolean ::= true | false
 expression ::= ternaryExpression | nonTernaryExpression
-nonTernaryExpression ::= newExpression | symbol | number
+nonTernaryExpression ::= newExpression | symbol | number | boolean | null | string | array
 newExpression ::= (new | gcnew) type
 ternaryExpression ::= nonTernaryExpression QUESTION_SIGN expression COLON expression
+array ::= LEFT_B_BRACKET (expression (COMMA expression)*)? RIGHT_B_BRACKET
 
 new ::= NEW_KEYWORD
 gcnew ::= GCNEW_KEYWORD
 
-type ::= symbol (DOT_KEYWORD symbol)*
+type ::= symbol (DOT symbol)*
 
