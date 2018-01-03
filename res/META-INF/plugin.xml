@@ -9,7 +9,6 @@ CovScript language support.<br/>
 
 ]]></description>
 
-	<!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
 	<idea-version since-build="145.0"/>
 
 	<depends>com.intellij.modules.lang</depends>
@@ -19,13 +18,16 @@ CovScript language support.<br/>
 		<fileTypeFactory implementation="org.covscript.lang.CovExtensionFileTypeFactory"/>
 		<fileTypeFactory implementation="org.covscript.lang.CovPackageFileTypeFactory"/>
 		<liveTemplateContext implementation="org.covscript.lang.CovContext"/>
+		<lang.parserDefinition
+				language="CovScript"
+				implementationClass="org.covscript.lang.CovParserDefinition"/>
 	</extensions>
 
 	<actions>
 		<action
 				id="Cov.NewCovFile"
 				class="org.covscript.lang.NewCovFile"
-				text="New Cov File"
+				text="Cov File"
 				description="Create a New CovScript File">
 			<add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile"/>
 		</action>

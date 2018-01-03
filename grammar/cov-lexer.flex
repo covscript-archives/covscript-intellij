@@ -19,7 +19,7 @@ import org.covscript.lang.psi.CovTypes;
 %eof{ return;
 %eof}
 
-COMMENT=#[^\n]*
+COMMENT=#[^\r\n]*
 
 INCOMPLETE_STRING=\"[^\"]*
 STRING_LITERAL={INCOMPLETE_STRING}\"
@@ -85,4 +85,6 @@ WHITE_SPACE=[ \t\r]
 {LEFT_S_BRACKET} { yybegin(YYINITIAL); return CovTypes.LEFT_S_BRACKET; }
 {RIGHT_S_BRACKET} { yybegin(YYINITIAL); return CovTypes.RIGHT_S_BRACKET; }
 {WHITE_SPACE} { return TokenType.WHITE_SPACE; }
-{COMMENT} { return CovTypes.COMMENT; }
+{COMMENT} { return CovTypes.LINE_COMMENT; }
+{INCOMPLETE_STRING} { return TokenType.BAD_CHARACTER; }
+{STRING_LITERAL} { return CovTypes.STR; }

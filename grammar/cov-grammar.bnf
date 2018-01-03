@@ -8,25 +8,21 @@
 
   tokenTypeClass='org.covscript.lang.CovTokenType'
   elementTypeHolderClass='org.covscript.lang.psi.CovTypes'
-  elementTypeClass='org.covscript.lang.CovElementType'
+  elementTypeClass='org.covscript.lang.CovTokenType'
   psiImplUtilClass='org.covscript.lang.psi.impl.CovPsiImplUtils'
 }
 
 file ::=
  (importDeclaration | usingDeclaration | comment)*
- covElement*
-
-covElement ::= statement
- | namespaceDeclaration
- | comment
+ statement*
 
 number ::= NUM
 symbol ::= SYM
 assign ::= EQ
-trueElement ::= TRUE
-falseElement ::= FALSE
-nullElement ::= NULL
-comment ::= LINE_COMMENT
+true ::= TRUE_KEYWORD
+false ::= FALSE_KEYWORD
+null ::= NULL_KEYWORD
+comment ::= LINE_COMMENT+
 string ::= STR
 
 importDeclaration ::= IMPORT_KEYWORD symbol
@@ -45,10 +41,12 @@ statement ::= assignment
  | functionDeclaration
  | ifStatement
  | whileStatement
+ | comment
+ | namespaceDeclaration
 
-boolean ::= trueElement | falseElement
+boolean ::= true | false
 expression ::= ternaryExpression | nonTernaryExpression
-nonTernaryExpression ::= newExpression | symbol | number | boolean | nullElement | string | array
+nonTernaryExpression ::= newExpression | symbol | number | boolean | null | string | array
 newExpression ::= (new | gcnew) type
 ternaryExpression ::= nonTernaryExpression QUESTION_SIGN expression COLON expression
 array ::= LEFT_B_BRACKET (expression (COMMA expression)*)? RIGHT_B_BRACKET

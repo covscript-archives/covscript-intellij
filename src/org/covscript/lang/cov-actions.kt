@@ -22,11 +22,7 @@ class NewCovFile : CreateFileAction(CAPTION, "", COV_ICON) {
 		}
 		return arrayOf(directory.add(PsiFileFactory
 				.getInstance(directory.project)
-				.createFileFromText(fixedExtension, CovFileType, """//
-// Created by ${System.getenv("USER")} on ${LocalDate.now()}
-//
-
-""")))
+				.createFileFromText(fixedExtension, CovFileType, "# Created by ${System.getenv("USER")} on ${LocalDate.now()}\n\n")))
 	}
 }
 
