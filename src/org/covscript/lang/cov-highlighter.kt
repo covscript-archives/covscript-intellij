@@ -31,13 +31,15 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 				CovTypes.VAR_KEYWORD,
 				CovTypes.CONST_KEYWORD,
 				CovTypes.NAMESPACE_KEYWORD,
-				CovTypes.FUNCTION_KEYWORD
+				CovTypes.FUNCTION_KEYWORD,
+				CovTypes.BREAK_KEYWORD,
+				CovTypes.CONTINUE_KEYWORD
 		)
 	}
 
 	override fun getTokenHighlights(type: IElementType?): Array<TextAttributesKey> = when (type) {
 		in KEYWORDS_LIST -> KEYWORDS_KEY
-		CovTypes.COMMENT -> COMMENTS_KEY
+		CovTypes.LINE_COMMENT -> COMMENTS_KEY
 		else -> emptyArray()
 	}
 

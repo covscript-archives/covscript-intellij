@@ -9,6 +9,7 @@ import java.time.LocalDate
 class NewCovFile : CreateFileAction(CAPTION, "", COV_ICON) {
 	private companion object Caption {
 		private const val CAPTION = "CovScript File"
+		private val initCode get() = "#\n# Created by ${System.getenv("USER")} on ${LocalDate.now()}\n#\n\n"
 	}
 
 	override fun getActionName(directory: PsiDirectory?, s: String?) = CAPTION
@@ -22,7 +23,7 @@ class NewCovFile : CreateFileAction(CAPTION, "", COV_ICON) {
 		}
 		return arrayOf(directory.add(PsiFileFactory
 				.getInstance(directory.project)
-				.createFileFromText(fixedExtension, CovFileType, "# Created by ${System.getenv("USER")} on ${LocalDate.now()}\n\n")))
+				.createFileFromText(fixedExtension, CovFileType, initCode)))
 	}
 }
 

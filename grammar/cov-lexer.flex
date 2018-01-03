@@ -43,6 +43,8 @@ VAR_KEYWORD=var
 CONST_KEYWORD=const
 NAMESPACE_KEYWORD=namespace
 FUNCTION_KEYWORD=function
+BREAK_KEYWORD=break
+CONTINUE_KEYWORD=continue
 COMMA=,
 DOT=\.
 QUESTION_SIGN=\?
@@ -77,6 +79,8 @@ NON_WHITE_SPACE=[^ \t\r]
 {CONST_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CONST_KEYWORD; }
 {NAMESPACE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.NAMESPACE_KEYWORD; }
 {FUNCTION_KEYWORD} { yybegin(YYINITIAL); return CovTypes.FUNCTION_KEYWORD; }
+{BREAK_KEYWORD} { yybegin(YYINITIAL); return CovTypes.BREAK_KEYWORD; }
+{CONTINUE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CONTINUE_KEYWORD; }
 {COMMA} { yybegin(YYINITIAL); return CovTypes.COMMA; }
 {DOT} { yybegin(YYINITIAL); return CovTypes.DOT; }
 {QUESTION_SIGN} { yybegin(YYINITIAL); return CovTypes.QUESTION_SIGN; }

@@ -18,24 +18,30 @@ file ::=
 
 number ::= NUM
 symbol ::= SYM
+break ::= BREAK_KEYWORD
+continue ::= CONTINUE_KEYWORD
 assign ::= EQ
 true ::= TRUE_KEYWORD
 false ::= FALSE_KEYWORD
 null ::= NULL_KEYWORD
 comment ::= LINE_COMMENT+
 string ::= STR
-endOfLine ::= EOF
+endOfLine ::= EOF+
 
 fileHeader ::= importDeclaration
  | usingDeclaration
+ | packageDeclaration
  | comment
 
 importDeclaration ::= IMPORT_KEYWORD symbol
-packageDeclaration ::= PACKAGE_KEYWORD symbol
-variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol assign expression
-functionDeclaration ::= FUNCTION_KEYWORD symbol LEFT_BRACKET RIGHT_BRACKET endOfLine (statement endOfLine)* END_KEYWORD
 usingDeclaration ::= USING_KEYWORD symbol
-namespaceDeclaration ::= NAMESPACE_KEYWORD statement* END_KEYWORD
+packageDeclaration ::= PACKAGE_KEYWORD symbol
+
+variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol assign expression
+functionDeclaration ::= FUNCTION_KEYWORD symbol LEFT_BRACKET symbolList? RIGHT_BRACKET endOfLine (statement endOfLine)* END_KEYWORD
+namespaceDeclaration ::= NAMESPACE_KEYWORD symbol endOfLine (statement endOfLine)* END_KEYWORD
+
+symbolList ::= symbol (COMMA symbol)*
 
 assignment ::= lhs assign expression
 lhs ::= symbol (LEFT_S_BRACKET expression RIGHT_S_BRACKET)?
@@ -49,6 +55,8 @@ statement ::= endOfLine
  | whileStatement
  | comment
  | namespaceDeclaration
+ | break
+ | continue
 
 boolean ::= true | false
 expression ::= ternaryExpression | nonTernaryExpression
