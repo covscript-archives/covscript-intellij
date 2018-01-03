@@ -8,7 +8,7 @@ import java.time.LocalDate
 
 class NewCovFile : CreateFileAction(CAPTION, "", COV_ICON) {
 	private companion object Caption {
-		private const val CAPTION = "New CovScript File"
+		private const val CAPTION = "CovScript File"
 	}
 
 	override fun getActionName(directory: PsiDirectory?, s: String?) = CAPTION

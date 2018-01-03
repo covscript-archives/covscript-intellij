@@ -1,0 +1,55 @@
+{
+  parserClass='org.covscript.lang.CovParser'
+  extends='com.intellij.extapi.psi.ASTWrapperPsiElement'
+  psiClassPrefix='Cov'
+  psiImplClassSuffix='Impl'
+  psiPackage='org.covscript.lang.psi'
+  psiImplPackage='org.covscript.lang.psi.impl'
+
+  tokenTypeClass='org.covscript.lang.CovTokenType'
+  elementTypeHolderClass='org.covscript.lang.psi.CovTypes'
+  elementTypeClass='org.covscript.lang.CovElementType'
+  psiImplUtilClass='org.covscript.lang.psi.impl.CovPsiImplUtils'
+}
+
+file ::=
+ (importDeclaration | usingDeclaration | comment)*
+ covElement*
+
+covElement ::= statement
+ | namespaceDeclaration
+ | comment
+
+number ::= NUM
+symbol ::= SYM
+assign ::= EQ_KEYWORD
+
+comment ::= LINE_COMMENT
+
+importDeclaration ::= IMPORT_KEYWORD symbol
+packageDeclaration ::= PACKAGE_KEYWORD symbol
+variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol assign expression
+functionDeclaration ::= FUNCTION_KEYWORD symbol LEFT_BRACKET RIGHT_BRACKET statement* END_KEYWORD
+usingDeclaration ::= USING_KEYWORD symbol
+namespaceDeclaration ::= NAMESPACE_KEYWORD statement* END_KEYWORD
+
+assignment ::= lhs assign expression
+lhs ::= symbol (LEFT_S_BRACKET expression RIGHT_S_BRACKET)?
+ifStatement ::= IF_KEYWORD expression (ELSE_KEYWORD expression)? END_KEYWORD
+whileStatement ::= WHILE_KEYWORD expression statement* END_KEYWORD
+statement ::= assignment
+ | variableDeclaration
+ | functionDeclaration
+ | ifStatement
+ | whileStatement
+
+expression ::= ternaryExpression | nonTernaryExpression
+nonTernaryExpression ::= newExpression | symbol | number
+newExpression ::= (new | gcnew) type
+ternaryExpression ::= nonTernaryExpression QUESTION_SIGN expression COLON expression
+
+new ::= NEW_KEYWORD
+gcnew ::= GCNEW_KEYWORD
+
+type ::= symbol (DOT_KEYWORD symbol)*
+
