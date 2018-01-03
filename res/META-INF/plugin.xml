@@ -10,12 +10,15 @@ CovScript language support.<br/>
 ]]></description>
 
 	<!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-	<idea-version since-build="173.0"/>
+	<idea-version since-build="145.0"/>
 
 	<depends>com.intellij.modules.lang</depends>
 
 	<extensions defaultExtensionNs="com.intellij">
 		<fileTypeFactory implementation="org.covscript.lang.CovFileTypeFactory"/>
+		<fileTypeFactory implementation="org.covscript.lang.CovExtensionFileTypeFactory"/>
+		<fileTypeFactory implementation="org.covscript.lang.CovPackageFileTypeFactory"/>
+		<liveTemplateContext implementation="org.covscript.lang.CovContext"/>
 	</extensions>
 
 	<actions>
