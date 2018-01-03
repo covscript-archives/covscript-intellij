@@ -13,7 +13,7 @@
 }
 
 file ::=
- (importDeclaration | usingDeclaration | comment)*
+ (fileHeader endOfLine)*
  statement*
 
 number ::= NUM
@@ -24,27 +24,31 @@ false ::= FALSE_KEYWORD
 null ::= NULL_KEYWORD
 comment ::= LINE_COMMENT+
 string ::= STR
-emptyLine ::= EOF
+endOfLine ::= EOF
+
+fileHeader ::= importDeclaration
+ | usingDeclaration
+ | comment
 
 importDeclaration ::= IMPORT_KEYWORD symbol
 packageDeclaration ::= PACKAGE_KEYWORD symbol
 variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol assign expression
-functionDeclaration ::= FUNCTION_KEYWORD symbol LEFT_BRACKET RIGHT_BRACKET statement* END_KEYWORD
+functionDeclaration ::= FUNCTION_KEYWORD symbol LEFT_BRACKET RIGHT_BRACKET endOfLine (statement endOfLine)* END_KEYWORD
 usingDeclaration ::= USING_KEYWORD symbol
 namespaceDeclaration ::= NAMESPACE_KEYWORD statement* END_KEYWORD
 
 assignment ::= lhs assign expression
 lhs ::= symbol (LEFT_S_BRACKET expression RIGHT_S_BRACKET)?
 ifStatement ::= IF_KEYWORD expression (ELSE_KEYWORD expression)? END_KEYWORD
-whileStatement ::= WHILE_KEYWORD expression statement* END_KEYWORD
-statement ::= assignment
+whileStatement ::= WHILE_KEYWORD expression endOfLine (statement endOfLine)* END_KEYWORD
+statement ::= endOfLine
+ | assignment
  | variableDeclaration
  | functionDeclaration
  | ifStatement
  | whileStatement
  | comment
  | namespaceDeclaration
- | emptyLine
 
 boolean ::= true | false
 expression ::= ternaryExpression | nonTernaryExpression

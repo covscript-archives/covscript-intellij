@@ -87,10 +87,10 @@ WHITE_SPACE=[ \t\r]
 {RIGHT_B_BRACKET} { yybegin(YYINITIAL); return CovTypes.RIGHT_B_BRACKET; }
 {LEFT_S_BRACKET} { yybegin(YYINITIAL); return CovTypes.LEFT_S_BRACKET; }
 {RIGHT_S_BRACKET} { yybegin(YYINITIAL); return CovTypes.RIGHT_S_BRACKET; }
-{COMMENT} { return CovTypes.LINE_COMMENT; }
-{INCOMPLETE_STRING} { return TokenType.BAD_CHARACTER; }
-{STRING_LITERAL} { return CovTypes.STR; }
+{COMMENT} { yybegin(YYINITIAL); return CovTypes.LINE_COMMENT; }
+{INCOMPLETE_STRING} { yybegin(YYINITIAL); return TokenType.BAD_CHARACTER; }
+{STRING_LITERAL} { yybegin(YYINITIAL);  return CovTypes.STR; }
 {EOF} { yybegin(YYINITIAL); return CovTypes.EOF; }
 {SYM} { yybegin(YYINITIAL); return CovTypes.SYM; }
 
-{WHITE_SPACE} { return TokenType.WHITE_SPACE; }
+{WHITE_SPACE} { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
