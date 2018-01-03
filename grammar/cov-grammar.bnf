@@ -24,6 +24,7 @@ false ::= FALSE_KEYWORD
 null ::= NULL_KEYWORD
 comment ::= LINE_COMMENT+
 string ::= STR
+emptyLine ::= EOF
 
 importDeclaration ::= IMPORT_KEYWORD symbol
 packageDeclaration ::= PACKAGE_KEYWORD symbol
@@ -43,6 +44,7 @@ statement ::= assignment
  | whileStatement
  | comment
  | namespaceDeclaration
+ | emptyLine
 
 boolean ::= true | false
 expression ::= ternaryExpression | nonTernaryExpression
