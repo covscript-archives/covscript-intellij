@@ -18,6 +18,9 @@ CovScript language support.<br/>
 		<fileTypeFactory implementation="org.covscript.lang.CovExtensionFileTypeFactory"/>
 		<fileTypeFactory implementation="org.covscript.lang.CovPackageFileTypeFactory"/>
 		<liveTemplateContext implementation="org.covscript.lang.CovContext"/>
+		<lang.syntaxHighlighterFactory
+				language="CovScript"
+				implementationClass="org.covscript.lang.CovSyntaxHighlighterFactory"/>
 		<lang.parserDefinition
 				language="CovScript"
 				implementationClass="org.covscript.lang.CovParserDefinition"/>
