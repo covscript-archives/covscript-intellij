@@ -41,10 +41,12 @@ packageDeclaration ::= PACKAGE_KEYWORD symbol
 
 variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expression
 
+parameterList ::= LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET
 functionDeclaration ::=
- FUNCTION_KEYWORD symbol LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET endOfLine
+ FUNCTION_KEYWORD symbol parameterList endOfLine
   bodyOfSomething
  END_KEYWORD
+
 
 namespaceDeclaration ::=
  NAMESPACE_KEYWORD symbol endOfLine
@@ -79,15 +81,10 @@ ifStatement ::=
 switchStatement ::=
  SWITCH_KEYWORD expression endOfLine
   (
-   CASE_KEYWORD expression endOfLine
+   (CASE_KEYWORD expression | DEFAULT_KEYWORD) endOfLine
     bodyOfSomething
    END_KEYWORD endOfLine
   )*
-  (
-   DEFAULT_KEYWORD endOfLine
-    bodyOfSomething
-   END_KEYWORD endOfLine
-  )?
  END_KEYWORD
 
 whileStatement ::=
@@ -137,6 +134,7 @@ statement ::=
 boolean ::= true | false
 newExpression ::= (NEW_KEYWORD | GCNEW_KEYWORD) dotChain
 arrayLiteral ::= LEFT_B_BRACKET (expression (COMMA expression)*)? RIGHT_B_BRACKET
+functionLiteral ::= LEFT_S_BRACKET RIGHT_S_BRACKET parameterList ARROW expression
 
 expression ::=
  prefixOperator?
@@ -191,17 +189,18 @@ primaryExpression ::=
  | string
  | charLiteral
  | arrayLiteral
+ | functionLiteral
  | LEFT_BRACKET expression RIGHT_BRACKET
 
 symbolSuffixed ::=
  symbol
  (
     (LEFT_S_BRACKET expression RIGHT_S_BRACKET)
-  | (LEFT_BRACKET (expression (COMMA expression)*)? RIGHT_BRACKET) (DOT symbolSuffixed)?
+  | (LEFT_BRACKET (expression (COMMA expression)*)? RIGHT_BRACKET)
   | (DOT symbolSuffixed)
   | INC_OP
   | DEC_OP
- )?
+ )*
 
 dotChain ::= symbol (DOT symbol)*
 

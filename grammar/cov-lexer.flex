@@ -23,7 +23,7 @@ EOF=\n
 COMMENT=#[^\n]*{EOF}
 INCOMPLETE_STRING=\"([^\"\x00-\x1F\x7F\\]|\\[^])*
 STRING_LITERAL={INCOMPLETE_STRING}\"
-INCOMPLETE_CHAR='([^'\x00-\x1F\x7F\\]|\\[^])
+INCOMPLETE_CHAR='([^'\x00-\x1F\x7F\\]|\\[^])*
 CHAR_LITERAL={INCOMPLETE_CHAR}'
 
 SYM=[a-zA-Z_][0-9a-zA-Z_]*
@@ -97,6 +97,7 @@ UN_OP={NOT_OP}=
 NOT_OP=\!
 
 COMMA=,
+ARROW=->
 DOT=\.
 LEFT_BRACKET=\(
 RIGHT_BRACKET=\)
@@ -149,6 +150,7 @@ OTHERWISE=[^ \t\r]
 {OR_KEYWORD} { yybegin(YYINITIAL); return CovTypes.OR_KEYWORD; }
 {NOT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.NOT_KEYWORD; }
 
+{ARROW} { yybegin(YYINITIAL); return CovTypes.ARROW; }
 {QUESTION_OP} { yybegin(YYINITIAL); return CovTypes.QUESTION_OP; }
 {COLON_OP} { yybegin(YYINITIAL); return CovTypes.COLON_OP; }
 {EQ} { yybegin(YYINITIAL); return CovTypes.EQ; }

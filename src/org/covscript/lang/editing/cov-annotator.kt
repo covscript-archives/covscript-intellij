@@ -22,7 +22,7 @@ class CovAnnotator : Annotator {
 				when (element.text.length) {
 					2 -> holder.createErrorAnnotation(element, "Char literal cannot be empty")
 					3 -> if (element.text[1] == '\\') holder.createErrorAnnotation(element, "Escape character expected")
-					4 -> if (element.text[1] == '\\') dealWithEscape(element, 3, element.text[2], holder)
+					4 -> if (element.text[1] == '\\') dealWithEscape(element, 2, element.text[2], holder)
 					else holder.createErrorAnnotation(element, "Char literal cannot be more than 1 character")
 					else -> holder.createErrorAnnotation(element, "Char literal cannot be more than 1 character")
 				}
