@@ -96,7 +96,7 @@ whileStatement ::=
 loopUntilStatement ::=
  LOOP_KEYWORD endOfLine
   bodyOfSomething
- UNTIL_KEYWORD expression endOfLine
+ (UNTIL_KEYWORD expression endOfLine)?
  END_KEYWORD
 
 forStatement ::=
@@ -134,7 +134,7 @@ statement ::=
 
 boolean ::= true | false
 newExpression ::= (NEW_KEYWORD | GCNEW_KEYWORD) dotChain
-arrayLiteral ::= LEFT_B_BRACKET expression (COMMA expression)* RIGHT_B_BRACKET
+arrayLiteral ::= LEFT_B_BRACKET (expression (COMMA expression)*)? RIGHT_B_BRACKET
 
 expression ::=
  prefixOperator?

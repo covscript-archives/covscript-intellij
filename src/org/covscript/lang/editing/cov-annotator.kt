@@ -13,7 +13,7 @@ class CovAnnotator : Annotator {
 			var isPrefixedByBackslash = false
 			element.text.forEachIndexed { index, char ->
 				if (isPrefixedByBackslash) {
-					val range = TextRange(element.textRange.startOffset + index, element.textRange.startOffset + index + 1)
+					val range = TextRange(element.textRange.startOffset + index - 1, element.textRange.startOffset + index + 1)
 					if (char !in "abfnrtv0\\\"'") holder.createErrorAnnotation(range, "Illegal escape character")
 					else holder.createInfoAnnotation(range, null).textAttributes = CovSyntaxHighlighter.STRING_ESCAPE
 				}
