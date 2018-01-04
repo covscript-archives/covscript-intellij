@@ -81,12 +81,12 @@ switchStatement ::=
   (
    CASE_KEYWORD expression endOfLine
     bodyOfSomething
-   END_KEYWORD
+   END_KEYWORD endOfLine
   )*
   (
    DEFAULT_KEYWORD endOfLine
     bodyOfSomething
-   END_KEYWORD
+   END_KEYWORD endOfLine
   )?
  END_KEYWORD
 
@@ -197,7 +197,7 @@ symbolSuffixed ::=
  symbol
  (
     (LEFT_S_BRACKET expression RIGHT_S_BRACKET)
-  | (LEFT_BRACKET (expression (COMMA expression)*)? RIGHT_BRACKET)
+  | (LEFT_BRACKET (expression (COMMA expression)*)? RIGHT_BRACKET) (DOT symbolSuffixed)?
   | (DOT symbolSuffixed)
   | INC_OP
   | DEC_OP
