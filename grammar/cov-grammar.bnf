@@ -28,7 +28,8 @@ comment ::= LINE_COMMENT+
 string ::= STR
 endOfLine ::= EOF+
 
-fileHeader ::= importDeclaration
+fileHeader ::=
+   importDeclaration
  | usingDeclaration
  | packageDeclaration
  | comment
@@ -38,35 +39,107 @@ usingDeclaration ::= USING_KEYWORD symbol
 packageDeclaration ::= PACKAGE_KEYWORD symbol
 
 variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol assign expression
-functionDeclaration ::= FUNCTION_KEYWORD symbol LEFT_BRACKET symbolList? RIGHT_BRACKET endOfLine (statement endOfLine)* END_KEYWORD
-namespaceDeclaration ::= NAMESPACE_KEYWORD symbol endOfLine (statement endOfLine)* END_KEYWORD
+
+functionDeclaration ::=
+ FUNCTION_KEYWORD symbol LEFT_BRACKET symbolList? RIGHT_BRACKET endOfLine
+  bodyOfSomething
+ END_KEYWORD
+
+namespaceDeclaration ::=
+ NAMESPACE_KEYWORD symbol endOfLine
+  bodyOfSomething
+ END_KEYWORD
+
+structDeclaration ::=
+ STRUCT_KEYWORD symbol endOfLine
+  // TODO
+ END_KEYWORD
 
 symbolList ::= symbol (COMMA symbol)*
+bodyOfSomething ::= (statement endOfLine)*
 
 assignment ::= lhs assign expression
 lhs ::= symbol (LEFT_S_BRACKET expression RIGHT_S_BRACKET)?
-ifStatement ::= IF_KEYWORD expression (ELSE_KEYWORD expression)? END_KEYWORD
-whileStatement ::= WHILE_KEYWORD expression endOfLine (statement endOfLine)* END_KEYWORD
-statement ::= endOfLine
+
+throwStatement ::= THROW_KEYWORD expression
+tryCatchStatement ::=
+ TRY_KEYWORD
+  bodyOfSomething
+ CATCH_KEYWORD symbol
+  bodyOfSomething
+ END_KEYWORD
+
+ifStatement ::=
+ IF_KEYWORD expression endOfLine
+  bodyOfSomething
+ (
+  ELSE_KEYWORD expression endOfLine
+   bodyOfSomething
+ )?
+ END_KEYWORD
+
+whileStatement ::=
+ WHILE_KEYWORD expression endOfLine
+  bodyOfSomething
+ END_KEYWORD
+
+loopUntilStatement ::=
+ LOOP_KEYWORD endOfLine
+  bodyOfSomething
+ UNTIL_KEYWORD expression endOfLine
+ END_KEYWORD
+
+forStatement ::=
+ FOR_KEYWORD symbol (forTo | forIterate) endOfLine
+  bodyOfSomething
+ END_KEYWORD
+
+forTo ::= assign expression TO_KEYWORD expression (STEP_KEYWORD expression)?
+forIterate ::= ITERATE_KEYWORD expression
+
+blockStatement ::=
+ BLOCK_KEYWORD endOfLine
+  bodyOfSomething
+ END_KEYWORD
+
+statement ::=
+   endOfLine
  | assignment
+ | throwStatement
  | variableDeclaration
  | functionDeclaration
+ | structDeclaration
  | ifStatement
  | whileStatement
+ | blockStatement
+ | forStatement
+ | loopUntilStatement
+ | tryCatchStatement
  | comment
  | namespaceDeclaration
  | break
  | continue
 
 boolean ::= true | false
-expression ::= ternaryExpression | nonTernaryExpression
-nonTernaryExpression ::= newExpression | symbol | number | boolean | null | string | array
-newExpression ::= (new | gcnew) type
+newExpression ::= (new | gcnew) dotChain
 ternaryExpression ::= nonTernaryExpression QUESTION_SIGN expression COLON expression
-array ::= LEFT_B_BRACKET (expression (COMMA expression)*)? RIGHT_B_BRACKET
+array ::= LEFT_B_BRACKET expression (COMMA expression)* RIGHT_B_BRACKET
+
+expression ::=
+   ternaryExpression
+ | nonTernaryExpression
+
+nonTernaryExpression ::=
+   newExpression
+ | symbol
+ | number
+ | boolean
+ | null
+ | string
+ | array
 
 new ::= NEW_KEYWORD
 gcnew ::= GCNEW_KEYWORD
 
-type ::= symbol (DOT symbol)*
+dotChain ::= symbol (DOT symbol)*
 

@@ -45,6 +45,17 @@ NAMESPACE_KEYWORD=namespace
 FUNCTION_KEYWORD=function
 BREAK_KEYWORD=break
 CONTINUE_KEYWORD=continue
+BLOCK_KEYWORD=block
+TO_KEYWORD=to
+ITERATE_KEYWORD=iterate
+UNTIL_KEYWORD=until
+LOOP_KEYWORD=loop
+STEP_KEYWORD=step
+THROW_KEYWORD=throw
+TRY_KEYWORD=try
+CATCH_KEYWORD=catch
+STRUCT_KEYWORD=struct
+
 COMMA=,
 DOT=\.
 QUESTION_SIGN=\?
@@ -81,6 +92,19 @@ NON_WHITE_SPACE=[^ \t\r]
 {FUNCTION_KEYWORD} { yybegin(YYINITIAL); return CovTypes.FUNCTION_KEYWORD; }
 {BREAK_KEYWORD} { yybegin(YYINITIAL); return CovTypes.BREAK_KEYWORD; }
 {CONTINUE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CONTINUE_KEYWORD; }
+{BLOCK_KEYWORD} { yybegin(YYINITIAL); return CovTypes.BLOCK_KEYWORD; }
+{TO_KEYWORD} { yybegin(YYINITIAL); return CovTypes.TO_KEYWORD; }
+{ITERATE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.ITERATE_KEYWORD; }
+{UNTIL_KEYWORD} { yybegin(YYINITIAL); return CovTypes.UNTIL_KEYWORD; }
+{LOOP_KEYWORD} { yybegin(YYINITIAL); return CovTypes.LOOP_KEYWORD; }
+{STEP_KEYWORD} { yybegin(YYINITIAL); return CovTypes.STEP_KEYWORD; }
+{THROW_KEYWORD} { yybegin(YYINITIAL); return CovTypes.THROW_KEYWORD; }
+{TRY_KEYWORD} { yybegin(YYINITIAL); return CovTypes.TRY_KEYWORD; }
+{CATCH_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CATCH_KEYWORD; }
+{STRUCT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.STRUCT_KEYWORD; }
+
+
+
 {COMMA} { yybegin(YYINITIAL); return CovTypes.COMMA; }
 {DOT} { yybegin(YYINITIAL); return CovTypes.DOT; }
 {QUESTION_SIGN} { yybegin(YYINITIAL); return CovTypes.QUESTION_SIGN; }
