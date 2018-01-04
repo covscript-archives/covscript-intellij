@@ -14,7 +14,7 @@ class CovBasicCompletionContributor : CompletionContributor() {
 	init {
 		extend(
 				CompletionType.BASIC,
-				PlatformPatterns.psiElement(CovTypes.STATEMENT),
+				PlatformPatterns.psiElement(CovTypes.SYM),
 				object : CompletionProvider<CompletionParameters>() {
 					override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext?, resultSet: CompletionResultSet) {
 						resultSet.addAllElements(KEYS.map(LookupElementBuilder::create))
