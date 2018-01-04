@@ -48,7 +48,35 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 				CovTypes.STRUCT_KEYWORD,
 				CovTypes.SWITCH_KEYWORD,
 				CovTypes.CASE_KEYWORD,
-				CovTypes.DEFAULT_KEYWORD)
+				CovTypes.DEFAULT_KEYWORD,
+				CovTypes.AND_KEYWORD,
+				CovTypes.OR_KEYWORD)
+		private val OPERAOR_LIST = listOf(
+				CovTypes.QUESTION_OP,
+				CovTypes.COLON_OP,
+				CovTypes.DIV_ASS,
+				CovTypes.PLUS_ASS,
+				CovTypes.MINUS_ASS,
+				CovTypes.TIMES_ASS,
+				CovTypes.POW_ASS,
+				CovTypes.REM_ASS,
+				CovTypes.QUESTION_OP,
+				CovTypes.PLUS_OP,
+				CovTypes.MINUS_OP,
+				CovTypes.TIMES_OP,
+				CovTypes.DIV_OP,
+				CovTypes.REM_OP,
+				CovTypes.POW_OP,
+				CovTypes.COLON_OP,
+				CovTypes.AND_OP,
+				CovTypes.OR_OP,
+				CovTypes.LT_OP,
+				CovTypes.GT_OP,
+				CovTypes.EQ_OP,
+				CovTypes.LE_OP,
+				CovTypes.GE_OP,
+				CovTypes.UN_OP
+		)
 	}
 
 	override fun getTokenHighlights(type: IElementType?): Array<TextAttributesKey> = when (type) {
