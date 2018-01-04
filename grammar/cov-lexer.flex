@@ -26,6 +26,7 @@ INCOMPLETE_STRING=\"[^\"]*
 STRING_LITERAL={INCOMPLETE_STRING}\"
 
 SYM=[a-zA-Z_][0-9a-zA-Z_]*
+NUM=[0-9]+(\.[0-9]+)?
 
 IF_KEYWORD=if
 ELSE_KEYWORD=else
@@ -103,8 +104,6 @@ NON_WHITE_SPACE=[^ \t\r]
 {CATCH_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CATCH_KEYWORD; }
 {STRUCT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.STRUCT_KEYWORD; }
 
-
-
 {COMMA} { yybegin(YYINITIAL); return CovTypes.COMMA; }
 {DOT} { yybegin(YYINITIAL); return CovTypes.DOT; }
 {QUESTION_SIGN} { yybegin(YYINITIAL); return CovTypes.QUESTION_SIGN; }
@@ -117,10 +116,12 @@ NON_WHITE_SPACE=[^ \t\r]
 {LEFT_S_BRACKET} { yybegin(YYINITIAL); return CovTypes.LEFT_S_BRACKET; }
 {RIGHT_S_BRACKET} { yybegin(YYINITIAL); return CovTypes.RIGHT_S_BRACKET; }
 {COMMENT} { yybegin(YYINITIAL); return CovTypes.LINE_COMMENT; }
-{INCOMPLETE_STRING} { yybegin(YYINITIAL); return TokenType.BAD_CHARACTER; }
-{STRING_LITERAL} { yybegin(YYINITIAL);  return CovTypes.STR; }
 {EOF} { yybegin(YYINITIAL); return CovTypes.EOF; }
+
+{STRING_LITERAL} { yybegin(YYINITIAL);  return CovTypes.STR; }
+{INCOMPLETE_STRING} { yybegin(YYINITIAL); return TokenType.BAD_CHARACTER; }
 {SYM} { yybegin(YYINITIAL); return CovTypes.SYM; }
+{NUM} { yybegin(YYINITIAL); return CovTypes.NUM; }
 
 {WHITE_SPACE}+ { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
 {NON_WHITE_SPACE} { return TokenType.BAD_CHARACTER; }

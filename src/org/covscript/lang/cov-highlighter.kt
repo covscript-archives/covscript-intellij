@@ -11,10 +11,12 @@ import org.covscript.lang.psi.CovTypes
 
 class CovSyntaxHighlighter : SyntaxHighlighter {
 	companion object {
-		@JvmField val KEYWORDS = TextAttributesKey.createTextAttributesKey("COV_KEYWORDS", DefaultLanguageHighlighterColors.KEYWORD)
-		@JvmField val COMMENTS = TextAttributesKey.createTextAttributesKey("COV_COMMENTS", DefaultLanguageHighlighterColors.LINE_COMMENT)
-		private val KEYWORDS_KEY = arrayOf(KEYWORDS)
-		private val COMMENTS_KEY = arrayOf(COMMENTS)
+		@JvmField val KEYWORD = TextAttributesKey.createTextAttributesKey("COV_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
+		@JvmField val NUMBER = TextAttributesKey.createTextAttributesKey("COV_NUMBER", DefaultLanguageHighlighterColors.NUMBER)
+		@JvmField val COMMENT = TextAttributesKey.createTextAttributesKey("COV_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
+		private val KEYWORD_KEY = arrayOf(KEYWORD)
+		private val COMMENT_KEY = arrayOf(COMMENT)
+		private val NUMBER_KEY = arrayOf(NUMBER)
 		private val KEYWORDS_LIST = listOf(
 				CovTypes.IF_KEYWORD,
 				CovTypes.ELSE_KEYWORD,
@@ -33,13 +35,23 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 				CovTypes.NAMESPACE_KEYWORD,
 				CovTypes.FUNCTION_KEYWORD,
 				CovTypes.BREAK_KEYWORD,
-				CovTypes.CONTINUE_KEYWORD
-		)
+				CovTypes.CONTINUE_KEYWORD,
+				CovTypes.BLOCK_KEYWORD,
+				CovTypes.TO_KEYWORD,
+				CovTypes.ITERATE_KEYWORD,
+				CovTypes.UNTIL_KEYWORD,
+				CovTypes.LOOP_KEYWORD,
+				CovTypes.STEP_KEYWORD,
+				CovTypes.THROW_KEYWORD,
+				CovTypes.TRY_KEYWORD,
+				CovTypes.CATCH_KEYWORD,
+				CovTypes.STRUCT_KEYWORD)
 	}
 
 	override fun getTokenHighlights(type: IElementType?): Array<TextAttributesKey> = when (type) {
-		in KEYWORDS_LIST -> KEYWORDS_KEY
-		CovTypes.LINE_COMMENT -> COMMENTS_KEY
+		in KEYWORDS_LIST -> KEYWORD_KEY
+		CovTypes.LINE_COMMENT -> COMMENT_KEY
+		CovTypes.NUM -> NUMBER_KEY
 		else -> emptyArray()
 	}
 

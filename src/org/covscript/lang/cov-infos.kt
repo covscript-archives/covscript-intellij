@@ -29,14 +29,11 @@ class CovContext : TemplateContextType(COV_NAME, COV_NAME) {
 	override fun isInContext(file: PsiFile, p1: Int) = file.name.endsWith(".$COV_EXTENSION")
 }
 
-object CovPackageFileType : FileType {
+object CovPackageFileType : LanguageFileType(CovLanguage) {
 	override fun getDefaultExtension() = COV_PKG_EXTENSION
 	override fun getIcon() = COV_PKG_ICON
-	override fun getCharset(file: VirtualFile, bytes: ByteArray) = null
 	override fun getName() = COV_PKG_NAME
 	override fun getDescription() = COV_PKG_DESCRIPTION
-	override fun isBinary() = true
-	override fun isReadOnly() = true
 }
 
 object CovExtensionFileType : FileType {
