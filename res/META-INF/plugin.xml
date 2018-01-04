@@ -23,7 +23,8 @@ CovScript language support.<br/>
 				language="CovScript"
 				implementationClass="org.covscript.lang.CovSyntaxHighlighterFactory"/>
 		<colorSettingsPage implementation="org.covscript.lang.CovColorSettingsPage"/>
-		<bundledColorScheme path="/colorScheme/CovColors"/>
+		<additionalTextAttributes scheme="Darcula" file="/colorScheme/CovColors.xml"/>
+		<additionalTextAttributes scheme="Default" file="/colorScheme/CovColors.xml"/>
 		<lang.parserDefinition
 				language="CovScript"
 				implementationClass="org.covscript.lang.CovParserDefinition"/>
