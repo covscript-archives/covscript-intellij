@@ -13,7 +13,7 @@
 }
 
 file ::=
- (fileHeader endOfLine)*
+ fileHeader*
  statement*
 
 number ::= NUM
@@ -25,12 +25,14 @@ false ::= FALSE_KEYWORD
 null ::= NULL_KEYWORD
 comment ::= LINE_COMMENT+
 string ::= STR
-endOfLine ::= EOF+
+charLiteral ::= CHAR
+endOfLine ::= (EOF comment?)+
 
 fileHeader ::=
    importDeclaration
  | usingDeclaration
  | packageDeclaration
+ | endOfLine
  | comment
 
 importDeclaration ::= IMPORT_KEYWORD symbol
@@ -187,6 +189,7 @@ primaryExpression ::=
  | boolean
  | null
  | string
+ | charLiteral
  | arrayLiteral
  | LEFT_BRACKET expression RIGHT_BRACKET
 

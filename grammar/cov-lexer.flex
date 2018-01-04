@@ -23,6 +23,8 @@ EOF=\n
 COMMENT=#[^\n]*{EOF}
 INCOMPLETE_STRING=\"([^\"\x00-\x1F\x7F\\]|\\[^])*
 STRING_LITERAL={INCOMPLETE_STRING}\"
+INCOMPLETE_CHAR=\'([^\"\x00-\x1F\x7F\\]|\\[^])*
+CHAR_LITERAL={INCOMPLETE_CHAR}\'
 
 SYM=[a-zA-Z_][0-9a-zA-Z_]*
 NUM=[0-9]+(\.[0-9]+)?
@@ -32,7 +34,7 @@ ELSE_KEYWORD=else
 END_KEYWORD=end
 NEW_KEYWORD=new
 GCNEW_KEYWORD=gcnew
-TYPEID_KEYWORD=not
+TYPEID_KEYWORD=typeid
 WHILE_KEYWORD=while
 FOR_KEYWORD=for
 PACKAGE_KEYWORD=package
@@ -191,6 +193,8 @@ OTHERWISE=[^ \t\r]
 
 {STRING_LITERAL} { yybegin(YYINITIAL);  return CovTypes.STR; }
 {INCOMPLETE_STRING} { yybegin(YYINITIAL); return TokenType.BAD_CHARACTER; }
+{CHAR_LITERAL} { yybegin(YYINITIAL);  return CovTypes.CHAR; }
+{INCOMPLETE_CHAR} { yybegin(YYINITIAL); return TokenType.BAD_CHARACTER; }
 {SYM} { yybegin(YYINITIAL); return CovTypes.SYM; }
 {NUM} { yybegin(YYINITIAL); return CovTypes.NUM; }
 
