@@ -1,30 +1,32 @@
 package org.covscript.lang
 
+import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 
 
 fun Array<String>.main() {
-	val lice = ImageIO.read(File("lice.png"))
-	val csc = ImageIO.read(File("csc.png"))
-	val csp = ImageIO.read(File("csp.png"))
-	val cse = ImageIO.read(File("cse.png"))
-	val alphaPosition = 0xFF shl 24
-	val bottomAlpha = lice.getRGB(lice.width - 1, lice.height - 1) and alphaPosition
-	(0 until lice.width).forEach { x ->
-		(0 until lice.height).forEach { y ->
-			dealWithPixel(csc, x, y, lice, alphaPosition, bottomAlpha)
-			dealWithPixel(csp, x, y, lice, alphaPosition, bottomAlpha)
-			dealWithPixel(cse, x, y, lice, alphaPosition, bottomAlpha)
+	val csc = ImageIO.read(File("res/icons/csc.png"))
+	val csp = ImageIO.read(File("res/icons/csp.png"))
+	val cse = ImageIO.read(File("res/icons/cse.png"))
+	(0 until csc.width).forEach { x ->
+		(0 until csc.height).forEach { y ->
+			dealWithPixel(csc, x, y)
+			dealWithPixel(csp, x, y)
+			dealWithPixel(cse, x, y)
 		}
+		println()
 	}
-	ImageIO.write(csc, "PNG", File("csc-edited.png"))
-	ImageIO.write(cse, "PNG", File("cse-edited.png"))
-	ImageIO.write(csp, "PNG", File("csp-edited.png"))
+	ImageIO.write(csc, "PNG", File("csc.png"))
+	ImageIO.write(cse, "PNG", File("cse.png"))
+	ImageIO.write(csp, "PNG", File("csp.png"))
 }
 
-private fun dealWithPixel(csc: BufferedImage, x: Int, y: Int, lice: BufferedImage, alphaPosition: Int, bottomAlpha: Int) {
+val com = Color(127, 127, 127)
+
+private fun dealWithPixel(csc: BufferedImage, x: Int, y: Int) {
 	val o = csc.getRGB(x, y)
-	csc.setRGB(x, y, if (y <= 9 || x < 1) o + (lice.getRGB(x, y) and alphaPosition) else o + bottomAlpha)
+	if (Color(o) == Color.WHITE) csc.setRGB(x, y, 0x00FFFFFF and o)
+	else if (Color(o) == com) csc.setRGB(x, y, 0x7F2B2B2B)
 }
