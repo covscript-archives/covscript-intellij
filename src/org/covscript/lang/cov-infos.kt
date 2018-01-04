@@ -1,6 +1,7 @@
 package org.covscript.lang
 
 import com.intellij.codeInsight.template.TemplateContextType
+import com.intellij.codeInsight.template.impl.DefaultLiveTemplatesProvider
 import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.*
@@ -27,6 +28,11 @@ class CovFileTypeFactory : FileTypeFactory() {
 
 class CovContext : TemplateContextType(COV_NAME, COV_NAME) {
 	override fun isInContext(file: PsiFile, p1: Int) = file.name.endsWith(".$COV_EXTENSION")
+}
+
+class CovLiveTemplateProvider : DefaultLiveTemplatesProvider {
+	override fun getDefaultLiveTemplateFiles() = arrayOf("liveTemplates/CovScript")
+	override fun getHiddenLiveTemplateFiles() = null
 }
 
 object CovPackageFileType : LanguageFileType(CovLanguage) {

@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.tree.IElementType
 import org.covscript.lang.psi.CovTypes
+import org.intellij.lang.annotations.Language
 
 class CovSyntaxHighlighter : SyntaxHighlighter {
 	companion object {
@@ -133,23 +134,24 @@ class CovColorSettingsPage : ColorSettingsPage {
 	override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
 	override fun getAdditionalHighlightingTagToDescriptorMap() = null
 	override fun getAttributeDescriptors() = DESCRIPTORS
-	override fun getDemoText() = """# CovScript
+	@Language("CovScript")
+	override fun getDemoText() = """# CovScript code example
 namespace std
-	struct A
-		const var x = typeid 233
-		const var i = gcnew string
-		i = new string
-	end
+  struct A
+    const var x = typeid (233 * 666)
+    const var i = gcnew string
+  end
+  i = new string
 
-	function main()
-		var y = {a, b, c}
-		@begin
-			const var str = "boy" +
-					"next" +
-					"door" +
-					to_string(y)
-		@end
-	end
+  function main(args)
+    var y = {a, b, c}
+    @begin
+      const var str = "boy " +
+          "next door\n" +
+          to_string(y)
+    @end
+  end
 end
+std.main({})
 """
 }

@@ -18,11 +18,12 @@ CovScript language support.<br/>
 		<fileTypeFactory implementation="org.covscript.lang.CovExtensionFileTypeFactory"/>
 		<fileTypeFactory implementation="org.covscript.lang.CovPackageFileTypeFactory"/>
 		<liveTemplateContext implementation="org.covscript.lang.CovContext"/>
+		<defaultLiveTemplatesProvider implementation="org.covscript.lang.CovLiveTemplateProvider"/>
 		<lang.syntaxHighlighterFactory
 				language="CovScript"
 				implementationClass="org.covscript.lang.CovSyntaxHighlighterFactory"/>
 		<colorSettingsPage implementation="org.covscript.lang.CovColorSettingsPage"/>
-		<bundledColorScheme path="/colorScheme/CovColors" />
+		<bundledColorScheme path="/colorScheme/CovColors"/>
 		<lang.parserDefinition
 				language="CovScript"
 				implementationClass="org.covscript.lang.CovParserDefinition"/>
