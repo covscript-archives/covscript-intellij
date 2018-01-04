@@ -34,6 +34,7 @@ END_KEYWORD=end
 NEW_KEYWORD=new
 GCNEW_KEYWORD=gcnew
 WHILE_KEYWORD=while
+FOR_KEYWORD=for
 PACKAGE_KEYWORD=package
 USING_KEYWORD=using
 TRUE_KEYWORD=true
@@ -109,6 +110,7 @@ NON_WHITE_SPACE=[^ \t\r]
 {NEW_KEYWORD} { yybegin(YYINITIAL); return CovTypes.NEW_KEYWORD; }
 {GCNEW_KEYWORD} { yybegin(YYINITIAL); return CovTypes.GCNEW_KEYWORD; }
 {WHILE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.WHILE_KEYWORD; }
+{FOR_KEYWORD} { yybegin(YYINITIAL); return CovTypes.FOR_KEYWORD; }
 {PACKAGE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.PACKAGE_KEYWORD; }
 {USING_KEYWORD} { yybegin(YYINITIAL); return CovTypes.USING_KEYWORD; }
 {TRUE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.TRUE_KEYWORD; }

@@ -15,9 +15,13 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 		@JvmField val NUMBER = TextAttributesKey.createTextAttributesKey("COV_NUMBER", DefaultLanguageHighlighterColors.NUMBER)
 		@JvmField val COMMENT = TextAttributesKey.createTextAttributesKey("COV_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
 		@JvmField val OPERATOR = TextAttributesKey.createTextAttributesKey("COV_OPERATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN)
+		@JvmField val STRING = TextAttributesKey.createTextAttributesKey("COV_STRING", DefaultLanguageHighlighterColors.STRING)
+		@JvmField val STRING_ESCAPE = TextAttributesKey.createTextAttributesKey("COV_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
+		@JvmField val STRING_ESCAPE_IN = TextAttributesKey.createTextAttributesKey("COV_STRING_ESCAPE_IN", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE)
 		private val KEYWORD_KEY = arrayOf(KEYWORD)
 		private val COMMENT_KEY = arrayOf(COMMENT)
 		private val NUMBER_KEY = arrayOf(NUMBER)
+		private val STRING_KEY = arrayOf(STRING)
 		private val OPERATOR_KEY = arrayOf(OPERATOR)
 		private val KEYWORDS_LIST = listOf(
 				CovTypes.IF_KEYWORD,
@@ -26,6 +30,7 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 				CovTypes.NEW_KEYWORD,
 				CovTypes.GCNEW_KEYWORD,
 				CovTypes.WHILE_KEYWORD,
+				CovTypes.FOR_KEYWORD,
 				CovTypes.PACKAGE_KEYWORD,
 				CovTypes.USING_KEYWORD,
 				CovTypes.TRUE_KEYWORD,
@@ -84,6 +89,7 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 	override fun getTokenHighlights(type: IElementType?): Array<TextAttributesKey> = when (type) {
 		CovTypes.LINE_COMMENT -> COMMENT_KEY
 		CovTypes.NUM -> NUMBER_KEY
+		CovTypes.STRING -> STRING_KEY
 		in KEYWORDS_LIST -> KEYWORD_KEY
 		in OPERAOR_LIST -> OPERATOR_KEY
 		else -> emptyArray()
