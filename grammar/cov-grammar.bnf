@@ -138,33 +138,36 @@ array ::= LEFT_B_BRACKET expression (COMMA expression)* RIGHT_B_BRACKET
 expression ::=
  atomicExpression
  (
-    EQ
-  | DIV_ASS
-  | PLUS_ASS
-  | MINUS_ASS
-  | TIMES_ASS
-  | POW_ASS
-  | REM_ASS
-  | QUESTION_OP
-  | PLUS_OP
-  | MINUS_OP
-  | TIMES_OP
-  | DIV_OP
-  | REM_OP
-  | POW_OP
-  | COLON_OP
-  | AND_OP
-  | AND_KEYWORD
-  | OR_OP
-  | OR_KEYWORD
-  | LT_OP
-  | GT_OP
-  | EQ_OP
-  | LE_OP
-  | GE_OP
-  | UN_OP
- )
- expression
+  binaryOperator
+  expression
+ )?
+
+binaryOperator ::=
+   EQ
+ | DIV_ASS
+ | PLUS_ASS
+ | MINUS_ASS
+ | TIMES_ASS
+ | POW_ASS
+ | REM_ASS
+ | QUESTION_OP
+ | PLUS_OP
+ | MINUS_OP
+ | TIMES_OP
+ | DIV_OP
+ | REM_OP
+ | POW_OP
+ | COLON_OP
+ | AND_OP
+ | AND_KEYWORD
+ | OR_OP
+ | OR_KEYWORD
+ | LT_OP
+ | GT_OP
+ | EQ_OP
+ | LE_OP
+ | GE_OP
+ | UN_OP
 
 atomicExpression ::=
    newExpression
