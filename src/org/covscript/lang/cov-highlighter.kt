@@ -17,7 +17,6 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 		@JvmField val OPERATOR = TextAttributesKey.createTextAttributesKey("COV_OPERATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN)
 		@JvmField val STRING = TextAttributesKey.createTextAttributesKey("COV_STRING", DefaultLanguageHighlighterColors.STRING)
 		@JvmField val STRING_ESCAPE = TextAttributesKey.createTextAttributesKey("COV_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
-		@JvmField val STRING_ESCAPE_IN = TextAttributesKey.createTextAttributesKey("COV_STRING_ESCAPE_IN", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE)
 		private val KEYWORD_KEY = arrayOf(KEYWORD)
 		private val COMMENT_KEY = arrayOf(COMMENT)
 		private val NUMBER_KEY = arrayOf(NUMBER)

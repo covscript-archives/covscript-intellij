@@ -30,9 +30,9 @@ CovScript language support.<br/>
 		<lang.braceMatcher
 				language="CovScript"
 				implementationClass="org.covscript.lang.editing.CovBraceMatcher"/>
-		<completion.contributor
+		<annotator
 				language="CovScript"
-				implementationClass="org.covscript.lang.editing.CovBasicCompletionContributor"/>
+				implementationClass="org.covscript.lang.editing.CovAnnotator"/>
 	</extensions>
 
 	<actions>
