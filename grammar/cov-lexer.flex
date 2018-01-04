@@ -59,12 +59,37 @@ STRUCT_KEYWORD=struct
 SWITCH_KEYWORD=switch
 CASE_KEYWORD=case
 DEFAULT_KEYWORD=default
+AND_KEYWORD=and
+OR_KEYWORD=or
+
+EQ==
+QUESTION_OP=\?
+COLON_OP=:
+DIV_ASS={DIV_OP}=
+PLUS_ASS={PLUS_OP}=
+MINUS_ASS={MINUS_OP}=
+TIMES_ASS={TIMES_OP}=
+POW_ASS={POW_OP}=
+REM_ASS={REM_OP}=
+QUESTION_OP=\?
+PLUS_OP=\+
+MINUS_OP=\-
+TIMES_OP=\*
+DIV_OP=\/
+REM_OP=%
+POW_OP=\^
+COLON_OP=:
+AND_OP=&&
+OR_OP=\|\|
+LT_OP=<
+GT_OP=>
+EQ_OP===
+LE_OP=<=
+GE_OP=>=
+UN_OP=\!=
 
 COMMA=,
 DOT=\.
-QUESTION_SIGN=\?
-COLON=:
-EQ==
 LEFT_BRACKET=\(
 RIGHT_BRACKET=\)
 LEFT_B_BRACKET=\{
@@ -109,11 +134,13 @@ NON_WHITE_SPACE=[^ \t\r]
 {SWITCH_KEYWORD} { yybegin(YYINITIAL); return CovTypes.SWITCH_KEYWORD; }
 {CASE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CASE_KEYWORD; }
 {DEFAULT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.DEFAULT_KEYWORD; }
+{AND_KEYWORD} { yybegin(YYINITIAL); return CovTypes.AND_KEYWORD; }
+{OR_KEYWORD} { yybegin(YYINITIAL); return CovTypes.OR_KEYWORD; }
 
 {COMMA} { yybegin(YYINITIAL); return CovTypes.COMMA; }
 {DOT} { yybegin(YYINITIAL); return CovTypes.DOT; }
-{QUESTION_SIGN} { yybegin(YYINITIAL); return CovTypes.QUESTION_SIGN; }
-{COLON} { yybegin(YYINITIAL); return CovTypes.COLON; }
+{QUESTION_OP} { yybegin(YYINITIAL); return CovTypes.QUESTION_OP; }
+{COLON_OP} { yybegin(YYINITIAL); return CovTypes.COLON_OP; }
 {EQ} { yybegin(YYINITIAL); return CovTypes.EQ; }
 {LEFT_BRACKET} { yybegin(YYINITIAL); return CovTypes.LEFT_BRACKET; }
 {RIGHT_BRACKET} { yybegin(YYINITIAL); return CovTypes.RIGHT_BRACKET; }
