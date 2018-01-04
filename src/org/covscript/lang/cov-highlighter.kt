@@ -1,6 +1,7 @@
 package org.covscript.lang
 
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
+import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighter
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
@@ -17,11 +18,14 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 		@JvmField val OPERATOR = TextAttributesKey.createTextAttributesKey("COV_OPERATOR", DefaultLanguageHighlighterColors.OPERATION_SIGN)
 		@JvmField val STRING = TextAttributesKey.createTextAttributesKey("COV_STRING", DefaultLanguageHighlighterColors.STRING)
 		@JvmField val STRING_ESCAPE = TextAttributesKey.createTextAttributesKey("COV_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
+		@JvmField val BEGIN_END_BLOCK = TextAttributesKey.createTextAttributesKey("COV_BEGIN_END_BLOCK", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
+		@JvmField val BEGIN_END_THEMSELVES = TextAttributesKey.createTextAttributesKey("COV_BEGIN_END_THEMSELVES", HighlighterColors.TEXT)
 		private val KEYWORD_KEY = arrayOf(KEYWORD)
 		private val COMMENT_KEY = arrayOf(COMMENT)
 		private val NUMBER_KEY = arrayOf(NUMBER)
 		private val STRING_KEY = arrayOf(STRING)
 		private val OPERATOR_KEY = arrayOf(OPERATOR)
+		private val BEGIN_END_THEMSELVES_KEY = arrayOf(BEGIN_END_THEMSELVES)
 		private val KEYWORDS_LIST = listOf(
 				CovTypes.IF_KEYWORD,
 				CovTypes.ELSE_KEYWORD,
@@ -95,6 +99,7 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 		CovTypes.LINE_COMMENT -> COMMENT_KEY
 		CovTypes.NUM -> NUMBER_KEY
 		CovTypes.STR, CovTypes.CHAR -> STRING_KEY
+		CovTypes.COLLAPSER_BEGIN, CovTypes.COLLAPSER_END -> BEGIN_END_THEMSELVES_KEY
 		in KEYWORDS_LIST -> KEYWORD_KEY
 		in OPERATOR_LIST -> OPERATOR_KEY
 		else -> emptyArray()

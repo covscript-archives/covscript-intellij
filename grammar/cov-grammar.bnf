@@ -26,7 +26,7 @@ null ::= NULL_KEYWORD
 comment ::= LINE_COMMENT+
 string ::= STR
 charLiteral ::= CHAR
-endOfLine ::= (EOF comment?)+
+endOfLine ::= (EOL comment?)+
 
 fileHeader ::=
    importDeclaration
@@ -63,9 +63,9 @@ bodyOfSomething ::= (statement endOfLine)*
 returnStatement ::= RETURN_KEYWORD expression?
 throwStatement ::= THROW_KEYWORD expression
 tryCatchStatement ::=
- TRY_KEYWORD
+ TRY_KEYWORD endOfLine
   bodyOfSomething
- CATCH_KEYWORD symbol
+ CATCH_KEYWORD symbol endOfLine
   bodyOfSomething
  END_KEYWORD
 
@@ -112,6 +112,12 @@ blockStatement ::=
  END_KEYWORD
 
 statement ::=
+   primaryStatement
+ | collapsedStatement
+
+collapsedStatement ::= COLLAPSER_BEGIN primaryStatement COLLAPSER_END
+
+primaryStatement ::=
    endOfLine
  | throwStatement
  | returnStatement

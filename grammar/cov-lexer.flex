@@ -19,8 +19,8 @@ import org.covscript.lang.psi.CovTypes;
 %eof{ return;
 %eof}
 
-EOF=\n
-COMMENT=#[^\n]*{EOF}
+EOL=\n
+COMMENT=#[^\n]*{EOL}
 INCOMPLETE_STRING=\"([^\"\x00-\x1F\x7F\\]|\\[^])*
 STRING_LITERAL={INCOMPLETE_STRING}\"
 INCOMPLETE_CHAR='([^'\x00-\x1F\x7F\\]|\\[^])*
@@ -67,6 +67,9 @@ AND_KEYWORD=and
 OR_KEYWORD=or
 NOT_KEYWORD=not
 
+COLLAPSER_BEGIN=@begin
+COLLAPSER_END=@end
+
 EQ==
 QUESTION_OP=\?
 COLON_OP=:
@@ -109,96 +112,104 @@ RIGHT_S_BRACKET=\]
 WHITE_SPACE=[ \t\r]
 OTHERWISE=[^ \t\r]
 
+%state COLLAPSING
+
 %%
 
-{NAMESPACE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.NAMESPACE_KEYWORD; }
-{IF_KEYWORD} { yybegin(YYINITIAL); return CovTypes.IF_KEYWORD; }
-{ELSE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.ELSE_KEYWORD; }
-{END_KEYWORD} { yybegin(YYINITIAL); return CovTypes.END_KEYWORD; }
-{NEW_KEYWORD} { yybegin(YYINITIAL); return CovTypes.NEW_KEYWORD; }
-{GCNEW_KEYWORD} { yybegin(YYINITIAL); return CovTypes.GCNEW_KEYWORD; }
-{TYPEID_KEYWORD} { yybegin(YYINITIAL); return CovTypes.TYPEID_KEYWORD; }
-{WHILE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.WHILE_KEYWORD; }
-{FOR_KEYWORD} { yybegin(YYINITIAL); return CovTypes.FOR_KEYWORD; }
-{PACKAGE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.PACKAGE_KEYWORD; }
-{USING_KEYWORD} { yybegin(YYINITIAL); return CovTypes.USING_KEYWORD; }
-{TRUE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.TRUE_KEYWORD; }
-{FALSE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.FALSE_KEYWORD; }
-{NULL_KEYWORD} { yybegin(YYINITIAL); return CovTypes.NULL_KEYWORD; }
-{IMPORT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.IMPORT_KEYWORD; }
-{VAR_KEYWORD} { yybegin(YYINITIAL); return CovTypes.VAR_KEYWORD; }
-{CONST_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CONST_KEYWORD; }
-{NAMESPACE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.NAMESPACE_KEYWORD; }
-{FUNCTION_KEYWORD} { yybegin(YYINITIAL); return CovTypes.FUNCTION_KEYWORD; }
-{BREAK_KEYWORD} { yybegin(YYINITIAL); return CovTypes.BREAK_KEYWORD; }
-{CONTINUE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CONTINUE_KEYWORD; }
-{RETURN_KEYWORD} { yybegin(YYINITIAL); return CovTypes.RETURN_KEYWORD; }
-{BLOCK_KEYWORD} { yybegin(YYINITIAL); return CovTypes.BLOCK_KEYWORD; }
-{TO_KEYWORD} { yybegin(YYINITIAL); return CovTypes.TO_KEYWORD; }
-{ITERATE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.ITERATE_KEYWORD; }
-{UNTIL_KEYWORD} { yybegin(YYINITIAL); return CovTypes.UNTIL_KEYWORD; }
-{LOOP_KEYWORD} { yybegin(YYINITIAL); return CovTypes.LOOP_KEYWORD; }
-{STEP_KEYWORD} { yybegin(YYINITIAL); return CovTypes.STEP_KEYWORD; }
-{THROW_KEYWORD} { yybegin(YYINITIAL); return CovTypes.THROW_KEYWORD; }
-{TRY_KEYWORD} { yybegin(YYINITIAL); return CovTypes.TRY_KEYWORD; }
-{CATCH_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CATCH_KEYWORD; }
-{STRUCT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.STRUCT_KEYWORD; }
-{SWITCH_KEYWORD} { yybegin(YYINITIAL); return CovTypes.SWITCH_KEYWORD; }
-{CASE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CASE_KEYWORD; }
-{DEFAULT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.DEFAULT_KEYWORD; }
-{AND_KEYWORD} { yybegin(YYINITIAL); return CovTypes.AND_KEYWORD; }
-{OR_KEYWORD} { yybegin(YYINITIAL); return CovTypes.OR_KEYWORD; }
-{NOT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.NOT_KEYWORD; }
+<COLLAPSING> {COLLAPSER_END} { yybegin(YYINITIAL); return CovTypes.COLLAPSER_END; }
+<COLLAPSING> {EOL} {}
+<YYINITIAL> {COLLAPSER_END} { return TokenType.BAD_CHARACTER; }
 
-{ARROW} { yybegin(YYINITIAL); return CovTypes.ARROW; }
-{QUESTION_OP} { yybegin(YYINITIAL); return CovTypes.QUESTION_OP; }
-{COLON_OP} { yybegin(YYINITIAL); return CovTypes.COLON_OP; }
-{EQ} { yybegin(YYINITIAL); return CovTypes.EQ; }
-{QUESTION_OP} { yybegin(YYINITIAL); return CovTypes.QUESTION_OP; }
-{COLON_OP} { yybegin(YYINITIAL); return CovTypes.COLON_OP; }
-{DIV_ASS} { yybegin(YYINITIAL); return CovTypes.DIV_ASS; }
-{PLUS_ASS} { yybegin(YYINITIAL); return CovTypes.PLUS_ASS; }
-{MINUS_ASS} { yybegin(YYINITIAL); return CovTypes.MINUS_ASS; }
-{TIMES_ASS} { yybegin(YYINITIAL); return CovTypes.TIMES_ASS; }
-{POW_ASS} { yybegin(YYINITIAL); return CovTypes.POW_ASS; }
-{REM_ASS} { yybegin(YYINITIAL); return CovTypes.REM_ASS; }
-{QUESTION_OP} { yybegin(YYINITIAL); return CovTypes.QUESTION_OP; }
-{PLUS_OP} { yybegin(YYINITIAL); return CovTypes.PLUS_OP; }
-{MINUS_OP} { yybegin(YYINITIAL); return CovTypes.MINUS_OP; }
-{TIMES_OP} { yybegin(YYINITIAL); return CovTypes.TIMES_OP; }
-{DIV_OP} { yybegin(YYINITIAL); return CovTypes.DIV_OP; }
-{REM_OP} { yybegin(YYINITIAL); return CovTypes.REM_OP; }
-{POW_OP} { yybegin(YYINITIAL); return CovTypes.POW_OP; }
-{COLON_OP} { yybegin(YYINITIAL); return CovTypes.COLON_OP; }
-{AND_OP} { yybegin(YYINITIAL); return CovTypes.AND_OP; }
-{OR_OP} { yybegin(YYINITIAL); return CovTypes.OR_OP; }
-{LT_OP} { yybegin(YYINITIAL); return CovTypes.LT_OP; }
-{GT_OP} { yybegin(YYINITIAL); return CovTypes.GT_OP; }
-{EQ_OP} { yybegin(YYINITIAL); return CovTypes.EQ_OP; }
-{LE_OP} { yybegin(YYINITIAL); return CovTypes.LE_OP; }
-{GE_OP} { yybegin(YYINITIAL); return CovTypes.GE_OP; }
-{UN_OP} { yybegin(YYINITIAL); return CovTypes.UN_OP; }
-{INC_OP} { yybegin(YYINITIAL); return CovTypes.INC_OP; }
-{DEC_OP} { yybegin(YYINITIAL); return CovTypes.DEC_OP; }
-{NOT_OP} { yybegin(YYINITIAL); return CovTypes.NOT_OP; }
+{COLLAPSER_BEGIN} { yybegin(COLLAPSING); return CovTypes.COLLAPSER_BEGIN; }
 
-{COMMA} { yybegin(YYINITIAL); return CovTypes.COMMA; }
-{DOT} { yybegin(YYINITIAL); return CovTypes.DOT; }
-{LEFT_BRACKET} { yybegin(YYINITIAL); return CovTypes.LEFT_BRACKET; }
-{RIGHT_BRACKET} { yybegin(YYINITIAL); return CovTypes.RIGHT_BRACKET; }
-{LEFT_B_BRACKET} { yybegin(YYINITIAL); return CovTypes.LEFT_B_BRACKET; }
-{RIGHT_B_BRACKET} { yybegin(YYINITIAL); return CovTypes.RIGHT_B_BRACKET; }
-{LEFT_S_BRACKET} { yybegin(YYINITIAL); return CovTypes.LEFT_S_BRACKET; }
-{RIGHT_S_BRACKET} { yybegin(YYINITIAL); return CovTypes.RIGHT_S_BRACKET; }
-{COMMENT} { yybegin(YYINITIAL); return CovTypes.LINE_COMMENT; }
-{EOF} { yybegin(YYINITIAL); return CovTypes.EOF; }
+{NAMESPACE_KEYWORD} { return CovTypes.NAMESPACE_KEYWORD; }
+{IF_KEYWORD} { return CovTypes.IF_KEYWORD; }
+{ELSE_KEYWORD} { return CovTypes.ELSE_KEYWORD; }
+{END_KEYWORD} { return CovTypes.END_KEYWORD; }
+{NEW_KEYWORD} { return CovTypes.NEW_KEYWORD; }
+{GCNEW_KEYWORD} { return CovTypes.GCNEW_KEYWORD; }
+{TYPEID_KEYWORD} { return CovTypes.TYPEID_KEYWORD; }
+{WHILE_KEYWORD} { return CovTypes.WHILE_KEYWORD; }
+{FOR_KEYWORD} { return CovTypes.FOR_KEYWORD; }
+{PACKAGE_KEYWORD} { return CovTypes.PACKAGE_KEYWORD; }
+{USING_KEYWORD} { return CovTypes.USING_KEYWORD; }
+{TRUE_KEYWORD} { return CovTypes.TRUE_KEYWORD; }
+{FALSE_KEYWORD} { return CovTypes.FALSE_KEYWORD; }
+{NULL_KEYWORD} { return CovTypes.NULL_KEYWORD; }
+{IMPORT_KEYWORD} { return CovTypes.IMPORT_KEYWORD; }
+{VAR_KEYWORD} { return CovTypes.VAR_KEYWORD; }
+{CONST_KEYWORD} { return CovTypes.CONST_KEYWORD; }
+{NAMESPACE_KEYWORD} { return CovTypes.NAMESPACE_KEYWORD; }
+{FUNCTION_KEYWORD} { return CovTypes.FUNCTION_KEYWORD; }
+{BREAK_KEYWORD} { return CovTypes.BREAK_KEYWORD; }
+{CONTINUE_KEYWORD} { return CovTypes.CONTINUE_KEYWORD; }
+{RETURN_KEYWORD} { return CovTypes.RETURN_KEYWORD; }
+{BLOCK_KEYWORD} { return CovTypes.BLOCK_KEYWORD; }
+{TO_KEYWORD} { return CovTypes.TO_KEYWORD; }
+{ITERATE_KEYWORD} { return CovTypes.ITERATE_KEYWORD; }
+{UNTIL_KEYWORD} { return CovTypes.UNTIL_KEYWORD; }
+{LOOP_KEYWORD} { return CovTypes.LOOP_KEYWORD; }
+{STEP_KEYWORD} { return CovTypes.STEP_KEYWORD; }
+{THROW_KEYWORD} { return CovTypes.THROW_KEYWORD; }
+{TRY_KEYWORD} { return CovTypes.TRY_KEYWORD; }
+{CATCH_KEYWORD} { return CovTypes.CATCH_KEYWORD; }
+{STRUCT_KEYWORD} { return CovTypes.STRUCT_KEYWORD; }
+{SWITCH_KEYWORD} { return CovTypes.SWITCH_KEYWORD; }
+{CASE_KEYWORD} { return CovTypes.CASE_KEYWORD; }
+{DEFAULT_KEYWORD} { return CovTypes.DEFAULT_KEYWORD; }
+{AND_KEYWORD} { return CovTypes.AND_KEYWORD; }
+{OR_KEYWORD} { return CovTypes.OR_KEYWORD; }
+{NOT_KEYWORD} { return CovTypes.NOT_KEYWORD; }
 
-{STRING_LITERAL} { yybegin(YYINITIAL);  return CovTypes.STR; }
-{INCOMPLETE_STRING} { yybegin(YYINITIAL); return TokenType.BAD_CHARACTER; }
-{CHAR_LITERAL} { yybegin(YYINITIAL);  return CovTypes.CHAR; }
-{INCOMPLETE_CHAR} { yybegin(YYINITIAL); return TokenType.BAD_CHARACTER; }
-{SYM} { yybegin(YYINITIAL); return CovTypes.SYM; }
-{NUM} { yybegin(YYINITIAL); return CovTypes.NUM; }
+{ARROW} { return CovTypes.ARROW; }
+{QUESTION_OP} { return CovTypes.QUESTION_OP; }
+{COLON_OP} { return CovTypes.COLON_OP; }
+{EQ} { return CovTypes.EQ; }
+{QUESTION_OP} { return CovTypes.QUESTION_OP; }
+{COLON_OP} { return CovTypes.COLON_OP; }
+{DIV_ASS} { return CovTypes.DIV_ASS; }
+{PLUS_ASS} { return CovTypes.PLUS_ASS; }
+{MINUS_ASS} { return CovTypes.MINUS_ASS; }
+{TIMES_ASS} { return CovTypes.TIMES_ASS; }
+{POW_ASS} { return CovTypes.POW_ASS; }
+{REM_ASS} { return CovTypes.REM_ASS; }
+{QUESTION_OP} { return CovTypes.QUESTION_OP; }
+{PLUS_OP} { return CovTypes.PLUS_OP; }
+{MINUS_OP} { return CovTypes.MINUS_OP; }
+{TIMES_OP} { return CovTypes.TIMES_OP; }
+{DIV_OP} { return CovTypes.DIV_OP; }
+{REM_OP} { return CovTypes.REM_OP; }
+{POW_OP} { return CovTypes.POW_OP; }
+{COLON_OP} { return CovTypes.COLON_OP; }
+{AND_OP} { return CovTypes.AND_OP; }
+{OR_OP} { return CovTypes.OR_OP; }
+{LT_OP} { return CovTypes.LT_OP; }
+{GT_OP} { return CovTypes.GT_OP; }
+{EQ_OP} { return CovTypes.EQ_OP; }
+{LE_OP} { return CovTypes.LE_OP; }
+{GE_OP} { return CovTypes.GE_OP; }
+{UN_OP} { return CovTypes.UN_OP; }
+{INC_OP} { return CovTypes.INC_OP; }
+{DEC_OP} { return CovTypes.DEC_OP; }
+{NOT_OP} { return CovTypes.NOT_OP; }
 
-{WHITE_SPACE}+ { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
+{COMMA} { return CovTypes.COMMA; }
+{DOT} { return CovTypes.DOT; }
+{LEFT_BRACKET} { return CovTypes.LEFT_BRACKET; }
+{RIGHT_BRACKET} { return CovTypes.RIGHT_BRACKET; }
+{LEFT_B_BRACKET} { return CovTypes.LEFT_B_BRACKET; }
+{RIGHT_B_BRACKET} { return CovTypes.RIGHT_B_BRACKET; }
+{LEFT_S_BRACKET} { return CovTypes.LEFT_S_BRACKET; }
+{RIGHT_S_BRACKET} { return CovTypes.RIGHT_S_BRACKET; }
+{COMMENT} { return CovTypes.LINE_COMMENT; }
+{EOL} { return CovTypes.EOL; }
+
+{STRING_LITERAL} {  return CovTypes.STR; }
+{INCOMPLETE_STRING} { return TokenType.BAD_CHARACTER; }
+{CHAR_LITERAL} {  return CovTypes.CHAR; }
+{INCOMPLETE_CHAR} { return TokenType.BAD_CHARACTER; }
+{SYM} { return CovTypes.SYM; }
+{NUM} { return CovTypes.NUM; }
+
+{WHITE_SPACE}+ { return TokenType.WHITE_SPACE; }
 {OTHERWISE} { return TokenType.BAD_CHARACTER; }

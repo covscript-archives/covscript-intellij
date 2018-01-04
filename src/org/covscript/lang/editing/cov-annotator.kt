@@ -5,8 +5,7 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.covscript.lang.CovSyntaxHighlighter
-import org.covscript.lang.psi.CovCharLiteral
-import org.covscript.lang.psi.CovString
+import org.covscript.lang.psi.*
 
 class CovAnnotator : Annotator {
 	override fun annotate(element: PsiElement, holder: AnnotationHolder) {
@@ -27,6 +26,8 @@ class CovAnnotator : Annotator {
 					else -> holder.createErrorAnnotation(element, "Char literal cannot be more than 1 character")
 				}
 			}
+			is CovCollapsedStatement -> holder.createInfoAnnotation(element, "Collapsed into one line")
+					.textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
 		}
 	}
 
