@@ -5,8 +5,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 
-
-fun Array<String>.main() {
+fun task1() {
 	val csc = ImageIO.read(File("res/icons/csc.png"))
 	val csp = ImageIO.read(File("res/icons/csp.png"))
 	val cse = ImageIO.read(File("res/icons/cse.png"))
@@ -16,11 +15,28 @@ fun Array<String>.main() {
 			dealWithPixel(csp, x, y)
 			dealWithPixel(cse, x, y)
 		}
-		println()
 	}
 	ImageIO.write(csc, "PNG", File("csc.png"))
 	ImageIO.write(cse, "PNG", File("cse.png"))
 	ImageIO.write(csp, "PNG", File("csp.png"))
+}
+
+fun task2() {
+	val csp = ImageIO.read(File("res/icons/csp.png"))
+	(0 until csp.width).forEach { x ->
+		(0 until csp.height).forEach { y ->
+			val o = csp.getRGB(x, y)
+			print((Color(o).rgb + 0xFFFFFF).toString(16))
+			print(' ')
+			if (Color(o).rgb + 0xFFFFFF == 0x2B2B2A) csp.setRGB(x, y, 0x9FEFEFEF.toInt())
+		}
+		println()
+	}
+	ImageIO.write(csp, "PNG", File("csp.png"))
+}
+
+fun Array<String>.main() {
+	task2()
 }
 
 val com = Color(127, 127, 127)
