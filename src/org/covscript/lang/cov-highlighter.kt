@@ -45,7 +45,10 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 				CovTypes.THROW_KEYWORD,
 				CovTypes.TRY_KEYWORD,
 				CovTypes.CATCH_KEYWORD,
-				CovTypes.STRUCT_KEYWORD)
+				CovTypes.STRUCT_KEYWORD,
+				CovTypes.SWITCH_KEYWORD,
+				CovTypes.CASE_KEYWORD,
+				CovTypes.DEFAULT_KEYWORD)
 	}
 
 	override fun getTokenHighlights(type: IElementType?): Array<TextAttributesKey> = when (type) {

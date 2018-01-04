@@ -56,6 +56,9 @@ THROW_KEYWORD=throw
 TRY_KEYWORD=try
 CATCH_KEYWORD=catch
 STRUCT_KEYWORD=struct
+SWITCH_KEYWORD=switch
+CASE_KEYWORD=case
+DEFAULT_KEYWORD=default
 
 COMMA=,
 DOT=\.
@@ -103,6 +106,9 @@ NON_WHITE_SPACE=[^ \t\r]
 {TRY_KEYWORD} { yybegin(YYINITIAL); return CovTypes.TRY_KEYWORD; }
 {CATCH_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CATCH_KEYWORD; }
 {STRUCT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.STRUCT_KEYWORD; }
+{SWITCH_KEYWORD} { yybegin(YYINITIAL); return CovTypes.SWITCH_KEYWORD; }
+{CASE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CASE_KEYWORD; }
+{DEFAULT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.DEFAULT_KEYWORD; }
 
 {COMMA} { yybegin(YYINITIAL); return CovTypes.COMMA; }
 {DOT} { yybegin(YYINITIAL); return CovTypes.DOT; }

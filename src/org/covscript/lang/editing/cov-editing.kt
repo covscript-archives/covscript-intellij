@@ -13,7 +13,17 @@ class CovBraceMatcher : PairedBraceMatcher {
 				BracePair(CovTypes.LEFT_S_BRACKET, CovTypes.RIGHT_S_BRACKET, false),
 				BracePair(CovTypes.FUNCTION_KEYWORD, CovTypes.END_KEYWORD, false),
 				BracePair(CovTypes.NAMESPACE_KEYWORD, CovTypes.END_KEYWORD, false),
-				BracePair(CovTypes.WHILE_KEYWORD, CovTypes.END_KEYWORD, false))
+				BracePair(CovTypes.WHILE_KEYWORD, CovTypes.END_KEYWORD, false),
+				BracePair(CovTypes.FOR_KEYWORD, CovTypes.END_KEYWORD, false),
+				BracePair(CovTypes.IF_KEYWORD, CovTypes.END_KEYWORD, false),
+				BracePair(CovTypes.STRUCT_KEYWORD, CovTypes.END_KEYWORD, false),
+				BracePair(CovTypes.TRY_KEYWORD, CovTypes.END_KEYWORD, false),
+				BracePair(CovTypes.LOOP_KEYWORD, CovTypes.END_KEYWORD, false),
+				BracePair(CovTypes.BLOCK_KEYWORD, CovTypes.END_KEYWORD, false),
+				BracePair(CovTypes.SWITCH_KEYWORD, CovTypes.END_KEYWORD, false),
+				BracePair(CovTypes.CASE_KEYWORD, CovTypes.END_KEYWORD, false),
+				BracePair(CovTypes.DEFAULT_KEYWORD, CovTypes.END_KEYWORD, false)
+		)
 	}
 
 	override fun getCodeConstructStart(psiFile: PsiFile?, openingBraceOffset: Int) = openingBraceOffset

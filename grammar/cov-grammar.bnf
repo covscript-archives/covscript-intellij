@@ -72,10 +72,24 @@ tryCatchStatement ::=
 ifStatement ::=
  IF_KEYWORD expression endOfLine
   bodyOfSomething
- (
-  ELSE_KEYWORD expression endOfLine
-   bodyOfSomething
- )?
+  (
+   ELSE_KEYWORD expression endOfLine
+    bodyOfSomething
+  )?
+ END_KEYWORD
+
+switchStatement ::=
+ SWITCH_KEYWORD expression endOfLine
+  (
+   CASE_KEYWORD expression endOfLine
+    bodyOfSomething
+   END_KEYWORD
+  )*
+  (
+   DEFAULT_KEYWORD endOfLine
+    bodyOfSomething
+   END_KEYWORD
+  )?
  END_KEYWORD
 
 whileStatement ::=
@@ -111,6 +125,7 @@ statement ::=
  | structDeclaration
  | ifStatement
  | whileStatement
+ | switchStatement
  | blockStatement
  | forStatement
  | loopUntilStatement
@@ -119,17 +134,19 @@ statement ::=
  | namespaceDeclaration
  | break
  | continue
+ | expression
 
 boolean ::= true | false
 newExpression ::= (new | gcnew) dotChain
-ternaryExpression ::= nonTernaryExpression QUESTION_SIGN expression COLON expression
 array ::= LEFT_B_BRACKET expression (COMMA expression)* RIGHT_B_BRACKET
 
-expression ::=
-   ternaryExpression
- | nonTernaryExpression
+questionExpression ::= atomicExpression QUESTION_SIGN atomicExpression
 
-nonTernaryExpression ::=
+expression ::=
+   questionExpression
+ | atomicExpression
+
+atomicExpression ::=
    newExpression
  | symbol
  | number
