@@ -56,9 +56,12 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 				CovTypes.SWITCH_KEYWORD,
 				CovTypes.CASE_KEYWORD,
 				CovTypes.DEFAULT_KEYWORD,
+				CovTypes.NOT_KEYWORD,
 				CovTypes.AND_KEYWORD,
-				CovTypes.OR_KEYWORD)
-		private val OPERAOR_LIST = listOf(
+				CovTypes.OR_KEYWORD
+		)
+
+		private val OPERATOR_LIST = listOf(
 				CovTypes.QUESTION_OP,
 				CovTypes.COLON_OP,
 				CovTypes.DIV_ASS,
@@ -75,6 +78,7 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 				CovTypes.REM_OP,
 				CovTypes.POW_OP,
 				CovTypes.COLON_OP,
+				CovTypes.NOT_OP,
 				CovTypes.AND_OP,
 				CovTypes.OR_OP,
 				CovTypes.LT_OP,
@@ -91,7 +95,7 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 		CovTypes.NUM -> NUMBER_KEY
 		CovTypes.STR -> STRING_KEY
 		in KEYWORDS_LIST -> KEYWORD_KEY
-		in OPERAOR_LIST -> OPERATOR_KEY
+		in OPERATOR_LIST -> OPERATOR_KEY
 		else -> emptyArray()
 	}
 

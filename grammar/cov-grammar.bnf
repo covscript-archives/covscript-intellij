@@ -147,6 +147,8 @@ prefixOperator ::=
  | DEC_OP
  | MINUS_OP
  | PLUS_OP
+ | NOT_OP
+ | NOT_KEYWORD
 
 binaryOperator ::=
    EQ

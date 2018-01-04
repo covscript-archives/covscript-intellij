@@ -62,6 +62,7 @@ CASE_KEYWORD=case
 DEFAULT_KEYWORD=default
 AND_KEYWORD=and
 OR_KEYWORD=or
+NOT_KEYWORD=or
 
 EQ==
 QUESTION_OP=\?
@@ -89,7 +90,8 @@ GT_OP=>
 EQ_OP===
 LE_OP=<=
 GE_OP=>=
-UN_OP=\!=
+UN_OP={NOT_OP}=
+NOT_OP=\!
 
 COMMA=,
 DOT=\.
@@ -101,7 +103,7 @@ LEFT_S_BRACKET=\[
 RIGHT_S_BRACKET=\]
 
 WHITE_SPACE=[ \t\r]
-NON_WHITE_SPACE=[^ \t\r]
+OTHERWISE=[^ \t\r]
 
 %%
 
@@ -140,6 +142,7 @@ NON_WHITE_SPACE=[^ \t\r]
 {DEFAULT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.DEFAULT_KEYWORD; }
 {AND_KEYWORD} { yybegin(YYINITIAL); return CovTypes.AND_KEYWORD; }
 {OR_KEYWORD} { yybegin(YYINITIAL); return CovTypes.OR_KEYWORD; }
+{NOT_KEYWORD} { yybegin(YYINITIAL); return CovTypes.NOT_KEYWORD; }
 
 {QUESTION_OP} { yybegin(YYINITIAL); return CovTypes.QUESTION_OP; }
 {COLON_OP} { yybegin(YYINITIAL); return CovTypes.COLON_OP; }
@@ -170,6 +173,7 @@ NON_WHITE_SPACE=[^ \t\r]
 {UN_OP} { yybegin(YYINITIAL); return CovTypes.UN_OP; }
 {INC_OP} { yybegin(YYINITIAL); return CovTypes.INC_OP; }
 {DEC_OP} { yybegin(YYINITIAL); return CovTypes.DEC_OP; }
+{NOT_OP} { yybegin(YYINITIAL); return CovTypes.NOT_OP; }
 
 {COMMA} { yybegin(YYINITIAL); return CovTypes.COMMA; }
 {DOT} { yybegin(YYINITIAL); return CovTypes.DOT; }
@@ -188,4 +192,4 @@ NON_WHITE_SPACE=[^ \t\r]
 {NUM} { yybegin(YYINITIAL); return CovTypes.NUM; }
 
 {WHITE_SPACE}+ { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
-{NON_WHITE_SPACE} { return TokenType.BAD_CHARACTER; }
+{OTHERWISE} { return TokenType.BAD_CHARACTER; }
