@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.fileTypes.SyntaxHighlighter
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
+import com.intellij.openapi.options.colors.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.tree.IElementType
@@ -110,4 +111,45 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 
 class CovSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
 	override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?) = CovSyntaxHighlighter()
+}
+
+class CovColorSettingsPage : ColorSettingsPage {
+	companion object {
+		private val DESCRIPTORS = arrayOf(
+				AttributesDescriptor("String//String content", CovSyntaxHighlighter.STRING),
+				AttributesDescriptor("String//Escape characters", CovSyntaxHighlighter.STRING_ESCAPE),
+				AttributesDescriptor("Keywords//Common reserved words", CovSyntaxHighlighter.KEYWORD),
+				AttributesDescriptor("Keywords//@begin and @end", CovSyntaxHighlighter.BEGIN_END_THEMSELVES),
+				AttributesDescriptor("Collapsed area", CovSyntaxHighlighter.BEGIN_END_BLOCK),
+				AttributesDescriptor("Comment", CovSyntaxHighlighter.COMMENT),
+				AttributesDescriptor("Number", CovSyntaxHighlighter.NUMBER),
+				AttributesDescriptor("Operators", CovSyntaxHighlighter.OPERATOR)
+		)
+	}
+
+	override fun getHighlighter() = CovSyntaxHighlighter()
+	override fun getIcon() = COV_ICON
+	override fun getDisplayName() = COV_NAME
+	override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
+	override fun getAdditionalHighlightingTagToDescriptorMap() = null
+	override fun getAttributeDescriptors() = DESCRIPTORS
+	override fun getDemoText() = """# CovScript
+namespace std
+	struct A
+		const var x = typeid 233
+		const var i = gcnew string
+		i = new string
+	end
+
+	function main()
+		var y = {a, b, c}
+		@begin
+			const var str = "boy" +
+					"next" +
+					"door" +
+					to_string(y)
+		@end
+	end
+end
+"""
 }
