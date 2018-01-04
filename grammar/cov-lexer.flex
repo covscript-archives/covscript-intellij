@@ -21,8 +21,7 @@ import org.covscript.lang.psi.CovTypes;
 
 EOF=\n
 COMMENT=#[^\n]*{EOF}
-
-INCOMPLETE_STRING=\"[^\"]*
+INCOMPLETE_STRING=\"([^\"\x00-\x1F\x7F\\]|\\[^])*
 STRING_LITERAL={INCOMPLETE_STRING}\"
 
 SYM=[a-zA-Z_][0-9a-zA-Z_]*
@@ -33,6 +32,7 @@ ELSE_KEYWORD=else
 END_KEYWORD=end
 NEW_KEYWORD=new
 GCNEW_KEYWORD=gcnew
+TYPEID_KEYWORD=not
 WHILE_KEYWORD=while
 FOR_KEYWORD=for
 PACKAGE_KEYWORD=package
@@ -47,6 +47,7 @@ NAMESPACE_KEYWORD=namespace
 FUNCTION_KEYWORD=function
 BREAK_KEYWORD=break
 CONTINUE_KEYWORD=continue
+RETURN_KEYWORD=return
 BLOCK_KEYWORD=block
 TO_KEYWORD=to
 ITERATE_KEYWORD=iterate
@@ -62,7 +63,7 @@ CASE_KEYWORD=case
 DEFAULT_KEYWORD=default
 AND_KEYWORD=and
 OR_KEYWORD=or
-NOT_KEYWORD=or
+NOT_KEYWORD=not
 
 EQ==
 QUESTION_OP=\?
@@ -113,6 +114,7 @@ OTHERWISE=[^ \t\r]
 {END_KEYWORD} { yybegin(YYINITIAL); return CovTypes.END_KEYWORD; }
 {NEW_KEYWORD} { yybegin(YYINITIAL); return CovTypes.NEW_KEYWORD; }
 {GCNEW_KEYWORD} { yybegin(YYINITIAL); return CovTypes.GCNEW_KEYWORD; }
+{TYPEID_KEYWORD} { yybegin(YYINITIAL); return CovTypes.TYPEID_KEYWORD; }
 {WHILE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.WHILE_KEYWORD; }
 {FOR_KEYWORD} { yybegin(YYINITIAL); return CovTypes.FOR_KEYWORD; }
 {PACKAGE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.PACKAGE_KEYWORD; }
@@ -127,6 +129,7 @@ OTHERWISE=[^ \t\r]
 {FUNCTION_KEYWORD} { yybegin(YYINITIAL); return CovTypes.FUNCTION_KEYWORD; }
 {BREAK_KEYWORD} { yybegin(YYINITIAL); return CovTypes.BREAK_KEYWORD; }
 {CONTINUE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.CONTINUE_KEYWORD; }
+{RETURN_KEYWORD} { yybegin(YYINITIAL); return CovTypes.RETURN_KEYWORD; }
 {BLOCK_KEYWORD} { yybegin(YYINITIAL); return CovTypes.BLOCK_KEYWORD; }
 {TO_KEYWORD} { yybegin(YYINITIAL); return CovTypes.TO_KEYWORD; }
 {ITERATE_KEYWORD} { yybegin(YYINITIAL); return CovTypes.ITERATE_KEYWORD; }

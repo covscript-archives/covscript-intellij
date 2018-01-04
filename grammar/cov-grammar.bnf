@@ -51,11 +51,12 @@ namespaceDeclaration ::=
 
 structDeclaration ::=
  STRUCT_KEYWORD symbol endOfLine
-  // TODO
+  ((variableDeclaration | functionDeclaration) endOfLine)*
  END_KEYWORD
 
 bodyOfSomething ::= (statement endOfLine)*
 
+returnStatement ::= RETURN_KEYWORD expression?
 throwStatement ::= THROW_KEYWORD expression
 tryCatchStatement ::=
  TRY_KEYWORD
@@ -68,7 +69,7 @@ ifStatement ::=
  IF_KEYWORD expression endOfLine
   bodyOfSomething
   (
-   ELSE_KEYWORD expression endOfLine
+   ELSE_KEYWORD endOfLine
     bodyOfSomething
   )?
  END_KEYWORD
@@ -114,6 +115,7 @@ blockStatement ::=
 statement ::=
    endOfLine
  | throwStatement
+ | returnStatement
  | variableDeclaration
  | functionDeclaration
  | structDeclaration
@@ -131,8 +133,8 @@ statement ::=
  | expression
 
 boolean ::= true | false
-newExpression ::= (new | gcnew) dotChain
-array ::= LEFT_B_BRACKET expression (COMMA expression)* RIGHT_B_BRACKET
+newExpression ::= (NEW_KEYWORD | GCNEW_KEYWORD) dotChain
+arrayLiteral ::= LEFT_B_BRACKET expression (COMMA expression)* RIGHT_B_BRACKET
 
 expression ::=
  prefixOperator?
@@ -149,6 +151,7 @@ prefixOperator ::=
  | PLUS_OP
  | NOT_OP
  | NOT_KEYWORD
+ | TYPEID_KEYWORD
 
 binaryOperator ::=
    EQ
@@ -184,7 +187,7 @@ primaryExpression ::=
  | boolean
  | null
  | string
- | array
+ | arrayLiteral
  | LEFT_BRACKET expression RIGHT_BRACKET
 
 symbolSuffixed ::=
@@ -196,9 +199,6 @@ symbolSuffixed ::=
   | INC_OP
   | DEC_OP
  )?
-
-new ::= NEW_KEYWORD
-gcnew ::= GCNEW_KEYWORD
 
 dotChain ::= symbol (DOT symbol)*
 
