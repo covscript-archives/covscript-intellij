@@ -135,11 +135,18 @@ newExpression ::= (new | gcnew) dotChain
 array ::= LEFT_B_BRACKET expression (COMMA expression)* RIGHT_B_BRACKET
 
 expression ::=
+ prefixOperator?
  primaryExpression
  (
   binaryOperator
   expression
  )?
+
+prefixOperator ::=
+   INC_OP
+ | DEC_OP
+ | MINUS_OP
+ | PLUS_OP
 
 binaryOperator ::=
    EQ
@@ -184,6 +191,8 @@ symbolSuffixed ::=
     (LEFT_S_BRACKET expression RIGHT_S_BRACKET)
   | (LEFT_BRACKET (expression (COMMA expression)*)? RIGHT_BRACKET)
   | (DOT symbolSuffixed)
+  | INC_OP
+  | DEC_OP
  )?
 
 new ::= NEW_KEYWORD

@@ -89,7 +89,7 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 	override fun getTokenHighlights(type: IElementType?): Array<TextAttributesKey> = when (type) {
 		CovTypes.LINE_COMMENT -> COMMENT_KEY
 		CovTypes.NUM -> NUMBER_KEY
-		CovTypes.STRING -> STRING_KEY
+		CovTypes.STR -> STRING_KEY
 		in KEYWORDS_LIST -> KEYWORD_KEY
 		in OPERAOR_LIST -> OPERATOR_KEY
 		else -> emptyArray()

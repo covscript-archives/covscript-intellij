@@ -74,7 +74,9 @@ POW_ASS={POW_OP}=
 REM_ASS={REM_OP}=
 QUESTION_OP=\?
 PLUS_OP=\+
+INC_OP={PLUS_OP}{PLUS_OP}
 MINUS_OP=\-
+DEC_OP={MINUS_OP}{MINUS_OP}
 TIMES_OP=\*
 DIV_OP=\/
 REM_OP=%
@@ -166,6 +168,8 @@ NON_WHITE_SPACE=[^ \t\r]
 {LE_OP} { yybegin(YYINITIAL); return CovTypes.LE_OP; }
 {GE_OP} { yybegin(YYINITIAL); return CovTypes.GE_OP; }
 {UN_OP} { yybegin(YYINITIAL); return CovTypes.UN_OP; }
+{INC_OP} { yybegin(YYINITIAL); return CovTypes.INC_OP; }
+{DEC_OP} { yybegin(YYINITIAL); return CovTypes.DEC_OP; }
 
 {COMMA} { yybegin(YYINITIAL); return CovTypes.COMMA; }
 {DOT} { yybegin(YYINITIAL); return CovTypes.DOT; }
