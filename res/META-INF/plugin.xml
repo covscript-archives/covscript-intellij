@@ -22,6 +22,7 @@ CovScript language support.<br/>
 				language="CovScript"
 				implementationClass="org.covscript.lang.CovSyntaxHighlighterFactory"/>
 		<colorSettingsPage implementation="org.covscript.lang.CovColorSettingsPage"/>
+		<bundledColorScheme path="/colorScheme/CovColors" />
 		<lang.parserDefinition
 				language="CovScript"
 				implementationClass="org.covscript.lang.CovParserDefinition"/>
