@@ -1,0 +1,11 @@
+<templateSet group="CovScript">
+	<template name="d" value="(def $NAME$ $PARAMS$&#10;  (|&gt; ($END$)))" description="define a function"
+	          toReformat="true" toShortenFQNames="true">
+		<variable name="NAME" expression="" defaultValue="" alwaysStopAt="true"/>
+		<variable name="PARAMS" expression="" defaultValue="" alwaysStopAt="true"/>
+		<context>
+			<option name="CovScript" value="true"/>
+			<option name="OTHER" value="false"/>
+		</context>
+	</template>
+</templateSet>

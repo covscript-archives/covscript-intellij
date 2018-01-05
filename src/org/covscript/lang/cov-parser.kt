@@ -20,6 +20,7 @@ class CovParserDefinition : ParserDefinition {
 	override fun createElement(astNode: ASTNode?): PsiElement = CovTypes.Factory.createElement(astNode)
 	override fun getStringLiteralElements() = CovTokenType.STRINGS
 	override fun getCommentTokens() = CovTokenType.COMMENTS
+	override fun getWhitespaceTokens() = CovTokenType.COMMENTS
 }
 
 class CovTokenType(debugName: String) : IElementType(debugName, CovLanguage) {
