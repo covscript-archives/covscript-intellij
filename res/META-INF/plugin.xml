@@ -7,6 +7,12 @@
 	<description><![CDATA[
 CovScript language support.<br/>
 
+Functions provided:<br/>
+<ul>
+  <li>Syntax-based highlighting</li>
+  <li>Syntax error reporting</li>
+  <li>Syntax-based code completion</li>
+</ul>
 ]]></description>
 
 	<idea-version since-build="145.0"/>
