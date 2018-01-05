@@ -22,7 +22,8 @@ class CovBraceMatcher : PairedBraceMatcher {
 				BracePair(CovTypes.BLOCK_KEYWORD, CovTypes.END_KEYWORD, false),
 				BracePair(CovTypes.SWITCH_KEYWORD, CovTypes.END_KEYWORD, false),
 				BracePair(CovTypes.CASE_KEYWORD, CovTypes.END_KEYWORD, false),
-				BracePair(CovTypes.DEFAULT_KEYWORD, CovTypes.END_KEYWORD, false)
+				BracePair(CovTypes.DEFAULT_KEYWORD, CovTypes.END_KEYWORD, false),
+				BracePair(CovTypes.COLLAPSER_BEGIN, CovTypes.COLLAPSER_END, false)
 		)
 	}
 
