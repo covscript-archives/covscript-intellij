@@ -13,8 +13,10 @@ class CovAnnotator : Annotator {
 			is CovString -> {
 				var isPrefixedByBackslash = false
 				element.text.forEachIndexed { index, char ->
-					if (isPrefixedByBackslash) dealWithEscape(element, index, char, holder)
-					isPrefixedByBackslash = char == '\\'
+					isPrefixedByBackslash = if (isPrefixedByBackslash) {
+						dealWithEscape(element, index, char, holder)
+						false
+					} else char == '\\'
 				}
 			}
 			is CovCharLiteral -> {
