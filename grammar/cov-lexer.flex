@@ -21,9 +21,9 @@ import org.covscript.lang.psi.CovTypes;
 
 EOL=\n
 COMMENT=#[^\n]*{EOL}
-INCOMPLETE_STRING=\"([^\"\x00-\x1F\x7F\\]|\\[^])*
+INCOMPLETE_STRING=\"([^\"\\]|\\[^])*
 STRING_LITERAL={INCOMPLETE_STRING}\"
-INCOMPLETE_CHAR='([^'\x00-\x1F\x7F\\]|\\[^])*
+INCOMPLETE_CHAR='([^'\\]|\\[^])*
 CHAR_LITERAL={INCOMPLETE_CHAR}'
 
 SYM=[a-zA-Z_][0-9a-zA-Z_]*

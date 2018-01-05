@@ -144,7 +144,7 @@ functionLiteral ::= LEFT_S_BRACKET RIGHT_S_BRACKET parameterList ARROW expressio
 
 expression ::=
  prefixOperator?
- primaryExpression
+ suffixedExpression
  (
   binaryOperator
   expression
@@ -189,7 +189,7 @@ binaryOperator ::=
 
 primaryExpression ::=
    newExpression
- | symbolSuffixed
+ | symbol
  | number
  | boolean
  | null
@@ -199,12 +199,12 @@ primaryExpression ::=
  | functionLiteral
  | LEFT_BRACKET expression RIGHT_BRACKET
 
-symbolSuffixed ::=
- symbol
+suffixedExpression ::=
+ primaryExpression
  (
     (LEFT_S_BRACKET expression RIGHT_S_BRACKET)
   | (LEFT_BRACKET (expression (COMMA expression)*)? RIGHT_BRACKET)
-  | (DOT symbolSuffixed)
+  | ((DOT | ARROW) suffixedExpression)
   | INC_OP
   | DEC_OP
  )*
