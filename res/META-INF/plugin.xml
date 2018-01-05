@@ -37,6 +37,9 @@ CovScript language support.<br/>
 		<annotator
 				language="CovScript"
 				implementationClass="org.covscript.lang.editing.CovAnnotator"/>
+		<completion.contributor
+				language="CovScript"
+				implementationClass="org.covscript.lang.editing.CovBasicCompletionContributor"/>
 	</extensions>
 
 	<actions>

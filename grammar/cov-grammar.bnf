@@ -158,6 +158,7 @@ prefixOperator ::=
  | NOT_OP
  | NOT_KEYWORD
  | TYPEID_KEYWORD
+ | TIMES_OP
 
 binaryOperator ::=
    EQ
