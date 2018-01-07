@@ -1,6 +1,14 @@
 <templateSet group="CovScript">
 	<template
-			name="@" value="@begin&#10;&#009;$END$&#10;@end" description="Create a @begin-@end pair"
+			name="@begin" value="@begin&#10;&#009;$END$&#10;@end" description="Create a @begin-@end pair"
+			toReformat="true" toShortenFQNames="true">
+		<context>
+			<option name="CovScript" value="true"/>
+			<option name="OTHER" value="false"/>
+		</context>
+	</template>
+	<template
+			name="@block" value="@begin&#10;&#009;$END$&#10;@end" description="Create a @begin-@end pair"
 			toReformat="true" toShortenFQNames="true">
 		<context>
 			<option name="CovScript" value="true"/>

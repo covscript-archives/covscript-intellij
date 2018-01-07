@@ -116,11 +116,14 @@ OTHERWISE=[^ \t\r]
 
 %%
 
+{WHITE_SPACE}+ { return TokenType.WHITE_SPACE; }
+
 <COLLAPSING> {COLLAPSER_END} { yybegin(YYINITIAL); return CovTypes.COLLAPSER_END; }
-<COLLAPSING> {EOL} {}
+<COLLAPSING> {EOL} { return TokenType.WHITE_SPACE; }
 <YYINITIAL> {COLLAPSER_END} { return TokenType.BAD_CHARACTER; }
 
-{COLLAPSER_BEGIN} { yybegin(COLLAPSING); return CovTypes.COLLAPSER_BEGIN; }
+<YYINITIAL> {COLLAPSER_BEGIN} { yybegin(COLLAPSING); return CovTypes.COLLAPSER_BEGIN; }
+<COLLAPSING> {COLLAPSER_BEGIN} { return TokenType.BAD_CHARACTER; }
 
 {NAMESPACE_KEYWORD} { return CovTypes.NAMESPACE_KEYWORD; }
 {IF_KEYWORD} { return CovTypes.IF_KEYWORD; }
@@ -211,5 +214,4 @@ OTHERWISE=[^ \t\r]
 {SYM} { return CovTypes.SYM; }
 {NUM} { return CovTypes.NUM; }
 
-{WHITE_SPACE}+ { return TokenType.WHITE_SPACE; }
 {OTHERWISE} { return TokenType.BAD_CHARACTER; }

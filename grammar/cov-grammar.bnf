@@ -47,7 +47,6 @@ functionDeclaration ::=
   bodyOfSomething
  END_KEYWORD
 
-
 namespaceDeclaration ::=
  NAMESPACE_KEYWORD symbol endOfLine
   bodyOfSomething
@@ -115,7 +114,7 @@ statement ::=
    primaryStatement
  | collapsedStatement
 
-collapsedStatement ::= COLLAPSER_BEGIN primaryStatement COLLAPSER_END
+collapsedStatement ::= COLLAPSER_BEGIN primaryStatement? COLLAPSER_END
 
 primaryStatement ::=
    endOfLine
