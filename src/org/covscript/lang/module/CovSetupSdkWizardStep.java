@@ -9,8 +9,7 @@ import javax.swing.*;
 
 public class CovSetupSdkWizardStep extends ModuleWizardStep {
 	private @NotNull JPanel mainPanel;
-	private TextFieldWithHistoryWithBrowseButton sdkPathField;
-	private LinkLabel covWebsiteLabel;
+	private @NotNull TextFieldWithHistoryWithBrowseButton sdkPathField;
 
 	@Override public JComponent getComponent() {
 		return mainPanel;
