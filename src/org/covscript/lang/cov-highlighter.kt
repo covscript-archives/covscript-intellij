@@ -97,6 +97,7 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 		)
 	}
 
+	override fun getHighlightingLexer() = CovLexerAdapter()
 	override fun getTokenHighlights(type: IElementType?): Array<TextAttributesKey> = when (type) {
 		CovTypes.LINE_COMMENT -> COMMENT_KEY
 		CovTypes.NUM -> NUMBER_KEY
@@ -106,8 +107,6 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 		in OPERATOR_LIST -> OPERATOR_KEY
 		else -> emptyArray()
 	}
-
-	override fun getHighlightingLexer() = CovLexerAdapter()
 }
 
 class CovSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
@@ -127,7 +126,8 @@ class CovColorSettingsPage : ColorSettingsPage {
 				AttributesDescriptor("Operators", CovSyntaxHighlighter.OPERATOR)
 		)
 		private val KEYS = mapOf(
-				"beginEndBlock" to CovSyntaxHighlighter.BEGIN_END_BLOCK
+				"beginEndBlock" to CovSyntaxHighlighter.BEGIN_END_BLOCK,
+				"escapeCharacter" to CovSyntaxHighlighter.STRING_ESCAPE
 		)
 	}
 
@@ -148,11 +148,13 @@ namespace std
 
   function main(args)
     var y = {a, b, c}
-    <beginEndBlock>@begin
-      const var str = "boy " +
-          "next door\n" +
-          to_string(y)
-    @end</beginEndBlock>
+    const var str = "boy " +
+        "next door<escapeCharacter>\n</escapeCharacter>" +
+        to_string(y)
+    @begin<beginEndBlock>
+      system.out.println(str +
+      x.to_string())
+    </beginEndBlock>@end
   end
 end
 std.main({})

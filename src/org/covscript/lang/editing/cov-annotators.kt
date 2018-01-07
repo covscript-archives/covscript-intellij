@@ -28,8 +28,11 @@ class CovAnnotator : Annotator {
 					else -> holder.createErrorAnnotation(element, "Char literal cannot be more than 1 character")
 				}
 			}
-			is CovCollapsedStatement -> holder.createInfoAnnotation(element, "Collapsed into one line")
-					.textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
+			is CovCollapsedStatement ->
+				if (element.primaryStatement != null) holder.createInfoAnnotation(element, "Collapsed into one line")
+						.textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
+				else holder.createWarningAnnotation(element, "Empty collapsed block")
+						.registerFix(CovRemoveCollapsedBlockIntention(element))
 		}
 	}
 
