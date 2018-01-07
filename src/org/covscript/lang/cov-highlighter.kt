@@ -120,7 +120,7 @@ class CovColorSettingsPage : ColorSettingsPage {
 				AttributesDescriptor("String//Escape characters", CovSyntaxHighlighter.STRING_ESCAPE),
 				AttributesDescriptor("Keywords//Common reserved words", CovSyntaxHighlighter.KEYWORD),
 				AttributesDescriptor("Keywords//@begin and @end", CovSyntaxHighlighter.BEGIN_END_THEMSELVES),
-				AttributesDescriptor("Collapsed area", CovSyntaxHighlighter.BEGIN_END_BLOCK),
+				AttributesDescriptor("Collapsed block", CovSyntaxHighlighter.BEGIN_END_BLOCK),
 				AttributesDescriptor("Comment", CovSyntaxHighlighter.COMMENT),
 				AttributesDescriptor("Number", CovSyntaxHighlighter.NUMBER),
 				AttributesDescriptor("Operators", CovSyntaxHighlighter.OPERATOR)

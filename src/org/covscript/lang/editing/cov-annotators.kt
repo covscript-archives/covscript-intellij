@@ -29,8 +29,10 @@ class CovAnnotator : Annotator {
 				}
 			}
 			is CovCollapsedStatement ->
-				if (element.primaryStatement != null) holder.createInfoAnnotation(element, "Collapsed into one line")
-						.textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
+				if (element.primaryStatement != null) holder.createInfoAnnotation(element, "Collapsed into one line").run {
+					textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
+					registerFix(CovConvertCollapsedBlockToOrdinaryStatementIntention(element))
+				}
 				else holder.createWarningAnnotation(element, "Empty collapsed block")
 						.registerFix(CovRemoveCollapsedBlockIntention(element))
 		}
