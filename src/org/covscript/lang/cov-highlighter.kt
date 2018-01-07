@@ -126,13 +126,16 @@ class CovColorSettingsPage : ColorSettingsPage {
 				AttributesDescriptor("Number", CovSyntaxHighlighter.NUMBER),
 				AttributesDescriptor("Operators", CovSyntaxHighlighter.OPERATOR)
 		)
+		private val KEYS = mapOf(
+				"beginEndBlock" to CovSyntaxHighlighter.BEGIN_END_BLOCK
+		)
 	}
 
 	override fun getHighlighter() = CovSyntaxHighlighter()
 	override fun getIcon() = COV_ICON
 	override fun getDisplayName() = COV_NAME
 	override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
-	override fun getAdditionalHighlightingTagToDescriptorMap() = null
+	override fun getAdditionalHighlightingTagToDescriptorMap() = KEYS
 	override fun getAttributeDescriptors() = DESCRIPTORS
 	@Language("CovScript")
 	override fun getDemoText() = """# CovScript code example
@@ -145,11 +148,11 @@ namespace std
 
   function main(args)
     var y = {a, b, c}
-    @begin
+    <beginEndBlock>@begin
       const var str = "boy " +
           "next door\n" +
           to_string(y)
-    @end
+    @end</beginEndBlock>
   end
 end
 std.main({})
