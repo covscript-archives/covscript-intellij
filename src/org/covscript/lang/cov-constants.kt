@@ -17,3 +17,4 @@ const val COV_EXT_DESCRIPTION = "$COV_NAME Extension File"
 @JvmField val COV_ICON: Icon = IconLoader.getIcon("/icons/csc.png")
 @JvmField val COV_PKG_ICON: Icon = IconLoader.getIcon("/icons/csp.png")
 @JvmField val COV_EXT_ICON: Icon = IconLoader.getIcon("/icons/cse.png")
+@JvmField val COV_BIG_ICON: Icon = IconLoader.getIcon("/icons/cov.png")

@@ -35,8 +35,25 @@ fun task2() {
 	ImageIO.write(csp, "PNG", File("csp.png"))
 }
 
+fun task3() {
+	val csp = ImageIO.read(File("res/icons/cov.png"))
+	(0 until csp.width).forEach { x ->
+		(0 until csp.height).forEach { y ->
+			val o = csp.getRGB(x, y)
+			print((Color(o).rgb + 0xFFFFFF).toString(16))
+			print(' ')
+			when (Color(o).rgb + 0xFFFFFF) {
+				0xFFFFFE -> csp.setRGB(x, y, 0)
+				0x99D9E9 -> csp.setRGB(x, y, 0x8E99D9E9.toInt())
+			}
+		}
+		println()
+	}
+	ImageIO.write(csp, "PNG", File("cov.png"))
+}
+
 fun Array<String>.main() {
-	task2()
+	task3()
 }
 
 val com = Color(127, 127, 127)
