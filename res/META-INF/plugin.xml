@@ -49,6 +49,7 @@ Functions provided:<br/>
 		<completion.contributor
 				language="CovScript"
 				implementationClass="org.covscript.lang.editing.CovBasicCompletionContributor"/>
+		<moduleType id="COV_MODULE_TYPE" implementationClass="org.covscript.lang.module.CovModuleType"/>
 	</extensions>
 
 	<actions>
