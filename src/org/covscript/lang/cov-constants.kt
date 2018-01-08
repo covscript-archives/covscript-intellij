@@ -20,3 +20,5 @@ const val COV_DEFAULT_MODULE_NAME = "my_bizarre_covscript_module"
 @JvmField val COV_PKG_ICON: Icon = IconLoader.getIcon("/icons/csp.png")
 @JvmField val COV_EXT_ICON: Icon = IconLoader.getIcon("/icons/cse.png")
 @JvmField val COV_BIG_ICON: Icon = IconLoader.getIcon("/icons/cov.png")
+
+@JvmField val JOJO_ICON: Icon = IconLoader.getIcon("/icons/jojo.png")

@@ -7,14 +7,13 @@ import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.module.ModuleTypeManager
 import com.intellij.openapi.roots.ModifiableRootModel
 import org.covscript.lang.*
-import java.net.URI
 
 class CovModuleBuilder : ModuleBuilder() {
 	override fun getModuleType() = CovModuleType.instance
 	override fun getCustomOptionsStep(context: WizardContext, parentDisposable: Disposable): CovSetupSdkWizardStep {
 		parentDisposable.dispose()
 		context.defaultModuleName = COV_DEFAULT_MODULE_NAME
-		return CovSetupSdkWizardStep()
+		return CovSetupSdkWizardStep(data)
 	}
 
 	override fun setupRootModel(model: ModifiableRootModel?) {
@@ -33,3 +32,9 @@ class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
 		@JvmStatic val instance: CovModuleType get() = ModuleTypeManager.getInstance().findByID(ID) as CovModuleType
 	}
 }
+
+fun validateCovSDK(path: String): Boolean {
+	return false
+}
+
+class CovProjectWizardData(var covSdkPath: String)
