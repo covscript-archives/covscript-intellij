@@ -2,16 +2,23 @@ package org.covscript.lang.module
 
 import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.ide.util.projectWizard.WizardContext
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.module.ModuleTypeManager
 import com.intellij.openapi.roots.ModifiableRootModel
-import com.intellij.openapi.roots.ui.configuration.ModulesProvider
-import org.covscript.lang.COV_BIG_ICON
-import org.covscript.lang.COV_NAME
+import org.covscript.lang.*
+import java.net.URI
 
 class CovModuleBuilder : ModuleBuilder() {
 	override fun getModuleType() = CovModuleType.instance
+	override fun getCustomOptionsStep(context: WizardContext, parentDisposable: Disposable): CovSetupSdkWizardStep {
+		parentDisposable.dispose()
+		context.defaultModuleName = COV_DEFAULT_MODULE_NAME
+		return CovSetupSdkWizardStep()
+	}
+
 	override fun setupRootModel(model: ModifiableRootModel?) {
+		println("Debug breakpoint")
 	}
 }
 
@@ -20,8 +27,6 @@ class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
 	override fun getNodeIcon(bool: Boolean) = COV_BIG_ICON
 	override fun createModuleBuilder() = CovModuleBuilder()
 	override fun getDescription() = "CovScript Module Type"
-	override fun createWizardSteps(wizardContext: WizardContext, moduleBuilder: CovModuleBuilder, modulesProvider: ModulesProvider) =
-			arrayOf(CovSetupSdkWizardStep())
 
 	companion object InstanceHolder {
 		private const val ID = "COV_MODULE_TYPE"

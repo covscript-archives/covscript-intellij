@@ -14,6 +14,8 @@ const val COV_DESCRIPTION = "$COV_NAME Source File"
 const val COV_PKG_DESCRIPTION = "$COV_NAME Package"
 const val COV_EXT_DESCRIPTION = "$COV_NAME Extension File"
 
+const val COV_DEFAULT_MODULE_NAME = "my_bizarre_covscript_module"
+
 @JvmField val COV_ICON: Icon = IconLoader.getIcon("/icons/csc.png")
 @JvmField val COV_PKG_ICON: Icon = IconLoader.getIcon("/icons/csp.png")
 @JvmField val COV_EXT_ICON: Icon = IconLoader.getIcon("/icons/cse.png")
