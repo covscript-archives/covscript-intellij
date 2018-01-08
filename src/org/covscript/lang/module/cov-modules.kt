@@ -6,7 +6,10 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.module.ModuleTypeManager
 import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.vfs.VirtualFile
 import org.covscript.lang.*
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class CovModuleBuilder : ModuleBuilder() {
 	private val projectWizardData = CovProjectWizardData(System.getenv("").orEmpty())
@@ -17,8 +20,12 @@ class CovModuleBuilder : ModuleBuilder() {
 		return CovSetupSdkWizardStep(projectWizardData)
 	}
 
-	override fun setupRootModel(model: ModifiableRootModel?) {
-		println("Debug breakpoint")
+	override fun setupRootModel(model: ModifiableRootModel) {
+		doAddContentEntry(model)?.file?.let { setupCovModule(model, it, projectWizardData) }
+	}
+
+	private fun setupCovModule(model: ModifiableRootModel, file: VirtualFile, data: CovProjectWizardData) {
+
 	}
 }
 
@@ -34,8 +41,13 @@ class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
 	}
 }
 
-fun validateCovSDK(path: String): Boolean {
-	return false
+fun validateCovSDK(pathString: String): Boolean {
+	val csPath = Paths.get(pathString, "bin", "cs")
+	val csReplPath = Paths.get(pathString, "bin", "cs_repl")
+	return Files.exists(csPath) and
+			Files.isExecutable(csPath) and
+			Files.exists(csReplPath) and
+			Files.isExecutable(csReplPath)
 }
 
 class CovProjectWizardData(var covSdkPath: String)
