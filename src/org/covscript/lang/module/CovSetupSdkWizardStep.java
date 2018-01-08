@@ -25,7 +25,7 @@ public class CovSetupSdkWizardStep extends ModuleWizardStep {
 
 	public CovSetupSdkWizardStep(@NotNull CovProjectWizardData data) {
 		this.data = data;
-		validationInfo.setVisible(false);
+		validationInfo.setVisible(!validateCovSDK(data.getCovSdkPath()));
 		covWebsiteLink.setListener((label, o) -> BrowserLauncher.getInstance().open(covWebsiteLink.getText()), null);
 		String title = "Select a CovScript SDK", description = "Selecting a CovScript SDK path to use";
 		FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
@@ -43,7 +43,7 @@ public class CovSetupSdkWizardStep extends ModuleWizardStep {
 
 	@Override public void updateDataModel() {
 		if (validationInfo.isVisible()) Messages.showDialog(mainPanel,
-				"You're SDK path is invalid, you can't run your code later.",
+				"You're SDK path is invalid,\nyou will not be able to run your code later.",
 				"Invalid CovScript SDK",
 				new String[]{"Yes! Yes! Yes!"},
 				0,
