@@ -9,11 +9,12 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import org.covscript.lang.*
 
 class CovModuleBuilder : ModuleBuilder() {
+	private val projectWizardData = CovProjectWizardData(System.getenv("").orEmpty())
 	override fun getModuleType() = CovModuleType.instance
 	override fun getCustomOptionsStep(context: WizardContext, parentDisposable: Disposable): CovSetupSdkWizardStep {
 		parentDisposable.dispose()
 		context.defaultModuleName = COV_DEFAULT_MODULE_NAME
-		return CovSetupSdkWizardStep(data)
+		return CovSetupSdkWizardStep(projectWizardData)
 	}
 
 	override fun setupRootModel(model: ModifiableRootModel?) {
