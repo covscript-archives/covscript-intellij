@@ -1,5 +1,8 @@
 package org.covscript.lang.module
 
+import com.intellij.framework.FrameworkTypeEx
+import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
+import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.*
@@ -35,6 +38,12 @@ class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
 		@JvmStatic val instance: CovModuleType get() = ModuleTypeManager.getInstance().findByID(ID) as CovModuleType
 	}
 }
+
+//class CovModuleProvider : FrameworkSupportInModuleProvider() {
+//	override fun getFrameworkType(): CovFrameworkType = FrameworkTypeEx.EP_NAME.findExtension(CovFrameworkType::class.java)
+//	override fun isEnabledForModuleType(moduleType: ModuleType<*>) = moduleType is CovModuleType
+//	override fun createConfigurable(model: FrameworkSupportModel) = CovModuleConfigurable()
+//}
 
 fun validateCovSDK(pathString: String): Boolean {
 	val csPath = Paths.get(pathString, "bin", "cs")

@@ -58,6 +58,7 @@ v1.1:<br/>
 		<configurationType implementation="org.covscript.lang.execution.CovRunConfigurationType"/>
 		<runConfigurationProducer implementation="org.covscript.lang.execution.CovRunConfigurationProducer"/>
 		<sdkType implementation="org.covscript.lang.module.CovSdkType"/>
+		<facetType implementation="org.covscript.lang.module.CovFacetType"/>
 	</extensions>
 
 	<actions>

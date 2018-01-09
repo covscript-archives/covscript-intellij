@@ -1,7 +1,7 @@
 package org.covscript.lang.module
 
 import com.intellij.execution.Platform
-import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.*
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor
@@ -34,12 +34,6 @@ class CovSdkType : SdkType(COV_NAME) {
 	}
 }
 
-class CovSdkData(var covSdkPath: String) : SdkAdditionalData, PersistentStateComponent<CovSdkData> {
-	override fun getState() = this
-	override fun clone() = CovSdkData(covSdkPath)
-	override fun loadState(state: CovSdkData) = XmlSerializerUtil.copyBean(state, this)
-}
-
 class CovSdkComboBox : ComboboxWithBrowseButton() {
 	val selectedSdk get() = comboBox.selectedItem as? Sdk
 	val sdkName get() = selectedSdk?.name.orEmpty()
@@ -70,4 +64,14 @@ class CovSdkComboBox : ComboboxWithBrowseButton() {
 			comboBox.selectedItem = sdkToSelectOuter ?: firstOrNull()
 		}
 	}
+}
+
+@State(
+		name = "CovSdkConfiguration",
+		storages = [Storage(file = "\$MODULE_FILE\$"),
+			Storage(id = "dir", file = "\$PROJECT_CONFIG_DIR\$/cov_config.xml", scheme = StorageScheme.DIRECTORY_BASED)])
+class CovSdkData(var covSdkName: String) : SdkAdditionalData, PersistentStateComponent<CovSdkData> {
+	override fun getState() = this
+	override fun clone() = CovSdkData(covSdkName)
+	override fun loadState(state: CovSdkData) = XmlSerializerUtil.copyBean(state, this)
 }

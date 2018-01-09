@@ -29,13 +29,13 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 				field = it
 			}
 		}
-	var workingDir = project.basePath.orEmpty()
+	var workingDir = ""
 	var targetFile = ""
-	var covExecutive = sdkUsed?.run { Paths.get(homePath, "bin", "cs").toAbsolutePath().toString() }.orEmpty()
 	var additionalParams = ""
+	var covExecutive = sdkUsed?.run { Paths.get(homePath, "bin", "cs").toAbsolutePath().toString() }.orEmpty()
 	override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = CovRunConfigurationEditor(this)
 	override fun getState(executor: Executor, environment: ExecutionEnvironment) = null
-	override fun getValidModules() = allModules.filter { it.project.getUserData(COV_SDK_LIB_KEY) != null }
+	override fun getValidModules() = allModules.filter { it.getUserData(COV_SDK_LIB_KEY) != null }
 	override fun readExternal(element: Element) {
 		super.readExternal(element)
 		JDOMExternalizer.readString(element, "additionalParams")?.let { additionalParams = it }
