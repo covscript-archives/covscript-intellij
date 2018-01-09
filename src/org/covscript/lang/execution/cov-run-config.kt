@@ -27,6 +27,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 			value?.let {
 				sdkName = it.name
 				field = it
+				covExecutive = Paths.get(it.homePath, "bin", "cs").toAbsolutePath().toString()
 			}
 		}
 	var workingDir = ""
@@ -34,7 +35,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 	var additionalParams = ""
 	var covExecutive = sdkUsed?.run { Paths.get(homePath, "bin", "cs").toAbsolutePath().toString() }.orEmpty()
 	override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = CovRunConfigurationEditor(this)
-	override fun getState(executor: Executor, environment: ExecutionEnvironment) = null
+	override fun getState(executor: Executor, environment: ExecutionEnvironment) = CovCommandLineState(this, environment)
 	override fun getValidModules() = allModules.filter { it.getUserData(COV_SDK_LIB_KEY) != null }
 	override fun readExternal(element: Element) {
 		super.readExternal(element)

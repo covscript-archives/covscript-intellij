@@ -1,8 +1,7 @@
 package org.covscript.lang.module
 
-import com.intellij.framework.FrameworkTypeEx
-import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
-import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
+import com.intellij.facet.FacetManager
+import com.intellij.facet.FacetTypeRegistry
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.*
@@ -10,6 +9,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.util.Key
 import org.covscript.lang.*
 import java.nio.file.*
+
 
 class CovModuleBuilder : JavaModuleBuilder(), ModuleBuilderListener {
 	lateinit var sdk: Sdk
@@ -21,9 +21,25 @@ class CovModuleBuilder : JavaModuleBuilder(), ModuleBuilderListener {
 	}
 
 	override fun moduleCreated(module: Module) {
+		setupFacet(module, sdk)
 		// ModuleRootManager.getInstance(module).sourceRoots.forEach {
 		//   do init
 		// }
+	}
+
+	private fun setupFacet(module: Module, sdk: Sdk) {
+		val facetId = CovFacetType.stringId
+		if (facetId.isNotBlank()) {
+			val facetManager = FacetManager.getInstance(module)
+			val type = FacetTypeRegistry.getInstance().findFacetType(facetId) ?: return
+			if (facetManager.getFacetByType(type.id) == null) {
+				val model = facetManager.createModifiableModel()
+				val facet = facetManager.addFacet(type, type.defaultFacetName, null) as? CovFacet ?: return
+				facet.configuration.data.covSdkName = sdk.name
+				model.addFacet(facet)
+				model.commit()
+			}
+		}
 	}
 }
 

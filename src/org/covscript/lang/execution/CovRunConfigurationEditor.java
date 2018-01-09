@@ -18,6 +18,7 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 
 	public CovRunConfigurationEditor(@NonNull CovRunConfiguration configuration) {
 		sdkComboBox.getComboBox().setSelectedItem(configuration.getSdkUsed());
+		sdkComboBox.addActionListener(actionEvent -> covExecutiveField.setText(sdkComboBox.getSelectedSdk().getHomePath()));
 		covExecutiveField.setText(configuration.getCovExecutive());
 		workingDirField.setText(configuration.getWorkingDir());
 	}
