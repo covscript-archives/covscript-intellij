@@ -19,7 +19,7 @@ import javax.swing.Icon
 @Nls const val COV_SDK_TYPE = "$COV_NAME SDK Type"
 
 @NonNls const val COV_DEFAULT_MODULE_NAME = "my_bizarre_covscript_module"
-@NonNls const val COV_SDK_NAME = "COV_SDK_NAME"
+@NonNls const val COV_SDK_LIB_NAME = "COV_SDK_NAME"
 @NonNls const val COV_SDK_HOME_KEY = "COVSCRIPT_HOME"
 
 @JvmField val COV_ICON: Icon = IconLoader.getIcon("/icons/csc.png")
