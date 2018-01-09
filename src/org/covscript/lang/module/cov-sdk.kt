@@ -7,7 +7,6 @@ import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.ComboboxWithBrowseButton
-import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.XmlSerializerUtil
 import org.covscript.lang.*
 import org.jdom.Element
@@ -22,11 +21,15 @@ class CovSdkType : SdkType(COV_NAME) {
 	override fun suggestSdkName(s: String?, p1: String?) = COV_SDK_NAME
 	override fun suggestHomePath() = if (Platform.current() == Platform.WINDOWS) POSSIBLE_SDK_HOME_WINDOWS else POSSIBLE_SDK_HOME_LINUX
 	override fun createAdditionalDataConfigurable(model: SdkModel, modificator: SdkModificator) = null
-	override fun loadAdditionalData(additional: Element) = XmlSerializer.deserialize(additional, CovSdkData::class.java)
 	override fun getVersionString(sdk: Sdk) = "Stable"
 	override fun getVersionString(sdkHome: String?) = "Stable"
-	override fun saveAdditionalData(additionalData: SdkAdditionalData, element: Element) {
-		if (additionalData is CovSdkData) XmlSerializer.serializeInto(additionalData, element)
+	override fun saveAdditionalData(additionalData: SdkAdditionalData, element: Element) = Unit // leave blank
+	override fun setupSdkPaths(sdk: Sdk, sdkModel: SdkModel): Boolean {
+		val sdkModificator = sdk.sdkModificator
+		sdkModificator.versionString = getVersionString(sdk)
+		// addAddOnPackageSources(sdkModificator, homePath)
+		sdkModificator.commitChanges()
+		return true
 	}
 
 	companion object InstanceHolder {
@@ -40,7 +43,12 @@ class CovSdkComboBox : ComboboxWithBrowseButton() {
 
 	init {
 		comboBox.setRenderer(object : ColoredListCellRenderer<Sdk?>() {
-			override fun customizeCellRenderer(list: JList<out Sdk?>, value: Sdk?, index: Int, selected: Boolean, hasFocus: Boolean) {
+			override fun customizeCellRenderer(
+					list: JList<out Sdk?>,
+					value: Sdk?,
+					index: Int,
+					selected: Boolean,
+					hasFocus: Boolean) {
 				value?.name?.let(::append)
 			}
 		})
@@ -64,14 +72,4 @@ class CovSdkComboBox : ComboboxWithBrowseButton() {
 			comboBox.selectedItem = sdkToSelectOuter ?: firstOrNull()
 		}
 	}
-}
-
-@State(
-		name = "CovSdkConfiguration",
-		storages = [Storage(file = "\$MODULE_FILE\$"),
-			Storage(id = "dir", file = "\$PROJECT_CONFIG_DIR\$/cov_config.xml", scheme = StorageScheme.DIRECTORY_BASED)])
-class CovSdkData(var covSdkName: String) : SdkAdditionalData, PersistentStateComponent<CovSdkData> {
-	override fun getState() = this
-	override fun clone() = CovSdkData(covSdkName)
-	override fun loadState(state: CovSdkData) = XmlSerializerUtil.copyBean(state, this)
 }

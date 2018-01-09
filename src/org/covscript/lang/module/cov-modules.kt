@@ -76,12 +76,6 @@ class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
 	}
 }
 
-//class CovModuleProvider : FrameworkSupportInModuleProvider() {
-//	override fun getFrameworkType(): CovFrameworkType = FrameworkTypeEx.EP_NAME.findExtension(CovFrameworkType::class.java)
-//	override fun isEnabledForModuleType(moduleType: ModuleType<*>) = moduleType is CovModuleType
-//	override fun createConfigurable(model: FrameworkSupportModel) = CovModuleConfigurable()
-//}
-
 fun validateCovSDK(pathString: String): Boolean {
 	val csPath = Paths.get(pathString, "bin", "cs")
 	val csReplPath = Paths.get(pathString, "bin", "cs_repl")
@@ -91,4 +85,3 @@ fun validateCovSDK(pathString: String): Boolean {
 }
 
 fun Path.isExe() = Files.exists(this) and Files.isExecutable(this)
-@JvmField val COV_SDK_LIB_KEY = Key<CovSdkData>(COV_SDK_LIB_NAME)
