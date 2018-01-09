@@ -12,7 +12,6 @@ class CovRemoveBlockIntention(private val element: PsiElement, private val inten
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = COV_NAME
 	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
-		// val file = psiFile?.let { PsiManager.getInstance(project).findFile(it.virtualFile) as? CovFile } ?: return
 		element.delete()
 	}
 }
