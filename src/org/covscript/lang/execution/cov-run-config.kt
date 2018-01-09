@@ -8,13 +8,16 @@ import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMExternalizer
 import org.covscript.lang.*
+import org.covscript.lang.module.COV_SDK_LIB_KEY
 import org.jdom.Element
+import java.nio.file.Paths
 
 class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project) :
 		ModuleBasedConfiguration<RunConfigurationModule>(COV_NAME, RunConfigurationModule(project), factory) {
+	private val covData = project.getUserData(COV_SDK_LIB_KEY)!!
 	var workingDir = ""
 	var targetFile = ""
-	var covExecutive = ""
+	var covExecutive = Paths.get(covData.covSdkPath, "bin", "cs").toAbsolutePath().toString()
 	var additionalParams = ""
 	override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = CovRunConfigurationEditor(this)
 	override fun getState(executor: Executor, environment: ExecutionEnvironment) = null

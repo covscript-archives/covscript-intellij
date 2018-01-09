@@ -24,9 +24,9 @@ public class CovSetupSdkWizardStep extends ModuleWizardStep {
 	private @NotNull JLabel validationInfo;
 	private @NonNull JLabel covPathExample;
 	private @NonNull JLabel covWebsiteDescription;
-	private @NotNull CovProjectWizardData data;
+	private @NotNull CovSdkData data;
 
-	public CovSetupSdkWizardStep(@NotNull CovProjectWizardData data) {
+	public CovSetupSdkWizardStep(@NotNull CovSdkData data) {
 		this.data = data;
 		validationInfo.setVisible(!validateCovSDK(data.getCovSdkPath()));
 		covPathExample.setVisible(false);
