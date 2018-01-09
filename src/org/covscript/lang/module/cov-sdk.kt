@@ -1,13 +1,11 @@
 package org.covscript.lang.module
 
 import com.intellij.execution.Platform
-import com.intellij.openapi.components.*
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.ComboboxWithBrowseButton
-import com.intellij.util.xmlb.XmlSerializerUtil
 import org.covscript.lang.*
 import org.jdom.Element
 import javax.swing.DefaultComboBoxModel

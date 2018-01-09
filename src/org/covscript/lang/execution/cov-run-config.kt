@@ -9,11 +9,11 @@ import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.JDOMExternalizer
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import org.covscript.lang.*
-import org.covscript.lang.module.COV_SDK_LIB_KEY
 import org.covscript.lang.module.CovSdkType
 import org.jdom.Element
 import java.nio.file.Paths
@@ -22,7 +22,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 		ModuleBasedConfiguration<RunConfigurationModule>(COV_NAME, RunConfigurationModule(project), factory) {
 	private val covSdks get() = ProjectJdkTable.getInstance().getSdksOfType(CovSdkType.instance)
 	private var sdkName = ""
-	var sdkUsed = covSdks.firstOrNull { it.name == sdkName }
+	var sdkUsed = ProjectRootManager.getInstance(project).projectSdk
 		set(value) {
 			value?.let {
 				sdkName = it.name
@@ -36,7 +36,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 	var covExecutive = sdkUsed?.run { Paths.get(homePath, "bin", "cs").toAbsolutePath().toString() }.orEmpty()
 	override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = CovRunConfigurationEditor(this)
 	override fun getState(executor: Executor, environment: ExecutionEnvironment) = CovCommandLineState(this, environment)
-	override fun getValidModules() = allModules.filter { it.getUserData(COV_SDK_LIB_KEY) != null }
+	override fun getValidModules() = allModules
 	override fun readExternal(element: Element) {
 		super.readExternal(element)
 		JDOMExternalizer.readString(element, "additionalParams")?.let { additionalParams = it }
@@ -44,7 +44,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 		JDOMExternalizer.readString(element, "targetFile")?.let { targetFile = it }
 		JDOMExternalizer.readString(element, "workingDir")?.let { workingDir = it }
 		JDOMExternalizer.readString(element, "sdkName")?.let { name ->
-			sdkUsed = covSdks.firstOrNull { it.name == name }
+			sdkUsed = covSdks.firstOrNull { it.name == name } ?: return@let
 		}
 		PathMacroManager.getInstance(project).collapsePathsRecursively(element)
 	}

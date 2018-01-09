@@ -8,7 +8,8 @@ import org.covscript.lang.*
 import org.covscript.lang.psi.CovBlockStatement
 import org.covscript.lang.psi.CovCollapsedStatement
 
-class CovRemoveBlockIntention(private val element: PsiElement, private val intentionText: String) : BaseIntentionAction() {
+class CovRemoveBlockIntention(private val element: PsiElement, private val intentionText: String) :
+		BaseIntentionAction() {
 	override fun getText() = intentionText
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = COV_NAME

@@ -1,14 +1,11 @@
 package org.covscript.lang.module
 
-import com.intellij.facet.FacetManager
-import com.intellij.facet.FacetTypeRegistry
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.*
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.*
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -57,10 +54,6 @@ class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 
 	override fun moduleCreated(module: Module) {
 		ProjectRootManager.getInstance(module.project).projectSdk = sdk
-	}
-
-	override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep? {
-		return super.modifySettingsStep(settingsStep)
 	}
 }
 
