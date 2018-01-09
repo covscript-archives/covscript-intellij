@@ -90,5 +90,12 @@
 			<option name="OTHER" value="false"/>
 		</context>
 	</template>
-</templateSet>
+	<template
+			name="sout" value="system.out.println($END$)" description="system.out.println"
+			toReformat="true" toShortenFQNames="true">
+		<context>
+			<option name="CovScript" value="true"/>
+			<option name="OTHER" value="false"/>
+		</context>
+	</template></templateSet>
 

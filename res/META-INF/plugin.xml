@@ -9,13 +9,18 @@ CovScript language support.<br/>
 
 Functions provided:<br/>
 <ul>
-  <li>Syntax-based highlighting</li>
-  <li>Syntax error reporting</li>
-  <li>Syntax-based code completion</li>
+  <li>Syntax-based highlighting, error reporting, completions</li>
+  <li>SDK configurations and code execution</li>
 </ul>
 ]]></description>
 
 	<change-notes><![CDATA[
+v1.1:<br/>
+<ul>
+  <li>SDK configuration</li>
+  <li>Completion improvements</li>
+  <li>Code execution</li>
+</ul>
 ]]></change-notes>
 
 	<idea-version since-build="145.0"/>
@@ -51,6 +56,7 @@ Functions provided:<br/>
 				implementationClass="org.covscript.lang.editing.CovBasicCompletionContributor"/>
 		<moduleType id="COV_MODULE_TYPE" implementationClass="org.covscript.lang.module.CovModuleType"/>
 		<configurationType implementation="org.covscript.lang.execution.CovRunConfigurationType"/>
+		<runConfigurationProducer implementation="org.covscript.lang.execution.CovRunConfigurationProducer"/>
 		<sdkType implementation="org.covscript.lang.module.CovSdkType"/>
 	</extensions>
 

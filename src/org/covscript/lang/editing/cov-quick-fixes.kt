@@ -39,6 +39,10 @@ class CovConvertBlockToStatementListIntention(
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = COV_NAME
 	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
+		if (element.bodyOfSomething.statementList.isEmpty()) {
+			element.delete()
+			return
+		}
 		val newStatement = PsiFileFactory
 				.getInstance(project)
 				.createFileFromText(CovLanguage, element.bodyOfSomething.text)
