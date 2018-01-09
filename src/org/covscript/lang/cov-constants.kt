@@ -12,6 +12,7 @@ import javax.swing.Icon
 @NonNls const val COV_EXT_EXTENSION = "cse"
 @NonNls const val COV_PKG_EXTENSION = "csp"
 
+@Nls const val COV_SDK_NAME = "CovScript SDK"
 @Nls const val COV_DESCRIPTION = "$COV_NAME Source File"
 @Nls const val COV_PKG_DESCRIPTION = "$COV_NAME Package"
 @Nls const val COV_EXT_DESCRIPTION = "$COV_NAME Extension File"

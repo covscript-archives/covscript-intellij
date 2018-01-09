@@ -1,37 +1,26 @@
 package org.covscript.lang.module
 
-import com.intellij.ide.util.projectWizard.ModuleBuilder
-import com.intellij.ide.util.projectWizard.WizardContext
+import com.intellij.ide.util.projectWizard.*
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.module.ModuleType
-import com.intellij.openapi.module.ModuleTypeManager
-import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.module.*
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VirtualFile
 import org.covscript.lang.*
 import java.nio.file.*
 
-class CovModuleBuilder : ModuleBuilder() {
-	private val projectWizardData = CovSdkData(System.getenv(COV_SDK_HOME_KEY).orEmpty())
+class CovModuleBuilder : JavaModuleBuilder(), ModuleBuilderListener {
+	lateinit var sdk: Sdk
 	override fun getModuleType() = CovModuleType.instance
 	override fun getCustomOptionsStep(context: WizardContext, parentDisposable: Disposable): CovSetupSdkWizardStep {
 		parentDisposable.dispose()
 		context.projectName = COV_DEFAULT_MODULE_NAME
-		return CovSetupSdkWizardStep(projectWizardData)
+		return CovSetupSdkWizardStep(this)
 	}
 
-	override fun setupRootModel(model: ModifiableRootModel) {
-		doAddContentEntry(model)?.file?.let { setupCovModule(model, it, projectWizardData) }
-	}
-
-	private fun setupCovModule(model: ModifiableRootModel, basePath: VirtualFile, data: CovSdkData) {
-		basePath.createChildDirectory(this, "src")
-		LocalFileSystem.getInstance().refreshAndFindFileByPath(data.covSdkPath)
-		model.project.run {
-			putUserData(COV_SDK_LIB_KEY, data)
-			save()
-		}
+	override fun moduleCreated(module: Module) {
+		// ModuleRootManager.getInstance(module).sourceRoots.forEach {
+		//   do init
+		// }
 	}
 }
 
@@ -57,4 +46,3 @@ fun validateCovSDK(pathString: String): Boolean {
 
 fun Path.isExe() = Files.exists(this) and Files.isExecutable(this)
 @JvmField val COV_SDK_LIB_KEY = Key<CovSdkData>(COV_SDK_LIB_NAME)
-

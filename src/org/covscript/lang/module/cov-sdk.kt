@@ -14,21 +14,19 @@ import org.jdom.Element
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JList
 
-
 class CovSdkType : SdkType(COV_NAME) {
-	override fun getPresentableName() = COV_NAME
+	override fun getPresentableName() = COV_SDK_NAME
 	override fun getIcon() = COV_BIG_ICON
 	override fun getIconForAddAction() = icon
 	override fun isValidSdkHome(s: String?) = validateCovSDK(s.orEmpty())
-	override fun suggestSdkName(p0: String?, p1: String?) = ""
+	override fun suggestSdkName(s: String?, p1: String?) = COV_SDK_NAME
 	override fun suggestHomePath() = if (Platform.current() == Platform.WINDOWS) POSSIBLE_SDK_HOME_WINDOWS else POSSIBLE_SDK_HOME_LINUX
 	override fun createAdditionalDataConfigurable(model: SdkModel, modificator: SdkModificator) = null
+	override fun loadAdditionalData(additional: Element) = XmlSerializer.deserialize(additional, CovSdkData::class.java)
+	override fun getVersionString(sdk: Sdk) = "Stable"
+	override fun getVersionString(sdkHome: String?) = "Stable"
 	override fun saveAdditionalData(additionalData: SdkAdditionalData, element: Element) {
 		if (additionalData is CovSdkData) XmlSerializer.serializeInto(additionalData, element)
-	}
-
-	override fun loadAdditionalData(additional: Element): SdkAdditionalData? {
-		return XmlSerializer.deserialize(additional, CovSdkData::class.java)
 	}
 
 	companion object InstanceHolder {
@@ -42,37 +40,34 @@ class CovSdkData(var covSdkPath: String) : SdkAdditionalData, PersistentStateCom
 	override fun loadState(state: CovSdkData) = XmlSerializerUtil.copyBean(state, this)
 }
 
-
 class CovSdkComboBox : ComboboxWithBrowseButton() {
-	val selectedSdk: Sdk get() = comboBox.selectedItem as Sdk
+	val selectedSdk get() = comboBox.selectedItem as? Sdk
+	val sdkName get() = selectedSdk?.name.orEmpty()
 
 	init {
-		comboBox.setRenderer(object : ColoredListCellRenderer<Sdk>() {
-			override fun customizeCellRenderer(list: JList<out Sdk>, value: Sdk, index: Int, selected: Boolean, hasFocus: Boolean) {
-				append(value.name)
+		comboBox.setRenderer(object : ColoredListCellRenderer<Sdk?>() {
+			override fun customizeCellRenderer(list: JList<out Sdk?>, value: Sdk?, index: Int, selected: Boolean, hasFocus: Boolean) {
+				value?.name?.let(::append)
 			}
 		})
 		addActionListener {
 			var selectedSdk = selectedSdk
 			val project = ProjectManager.getInstance().defaultProject
 			val editor = ProjectJdksEditor(selectedSdk, project, this@CovSdkComboBox)
+			editor.title = "Select a CovScript SDK"
 			editor.show()
 			if (editor.isOK) {
 				selectedSdk = editor.selectedJdk
-				updateSdkList(selectedSdk, false)
+				updateSdkList(selectedSdk)
 			}
 		}
-		updateSdkList(null, true)
+		updateSdkList()
 	}
 
-	private fun updateSdkList(sdkToSelectOuter: Sdk?, selectAnySdk: Boolean) {
-		var sdkToSelect = sdkToSelectOuter
-		val sdkList = ProjectJdkTable.getInstance().getSdksOfType(CovSdkType.instance)
-		if (selectAnySdk && sdkList.size > 0) {
-			sdkToSelect = sdkList[0]
+	private fun updateSdkList(sdkToSelectOuter: Sdk? = null) {
+		ProjectJdkTable.getInstance().getSdksOfType(CovSdkType.instance).run {
+			comboBox.model = DefaultComboBoxModel(toTypedArray())
+			comboBox.selectedItem = sdkToSelectOuter ?: firstOrNull()
 		}
-		sdkList[0] = null
-		comboBox.model = DefaultComboBoxModel(sdkList.toTypedArray())
-		comboBox.selectedItem = sdkToSelect
 	}
 }
