@@ -16,6 +16,7 @@ import javax.swing.Icon
 @Nls const val COV_PKG_DESCRIPTION = "$COV_NAME Package"
 @Nls const val COV_EXT_DESCRIPTION = "$COV_NAME Extension File"
 @Nls const val COV_MODULE_TYPE_DESCRIPTION = "$COV_NAME Module Type"
+@Nls const val COV_SDK_TYPE = "$COV_NAME SDK Type"
 
 @NonNls const val COV_DEFAULT_MODULE_NAME = "my_bizarre_covscript_module"
 @NonNls const val COV_SDK_NAME = "COV_SDK_NAME"

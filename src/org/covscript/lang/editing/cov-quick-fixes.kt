@@ -7,8 +7,8 @@ import com.intellij.psi.*
 import org.covscript.lang.*
 import org.covscript.lang.psi.CovCollapsedStatement
 
-class CovRemoveCollapsedBlockIntention(val element: PsiElement) : BaseIntentionAction() {
-	override fun getText() = "Remove empty collapsed block"
+class CovRemoveBlockIntention(private val element: PsiElement, private val intentionText: String) : BaseIntentionAction() {
+	override fun getText() = intentionText
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = COV_NAME
 	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
@@ -17,7 +17,8 @@ class CovRemoveCollapsedBlockIntention(val element: PsiElement) : BaseIntentionA
 	}
 }
 
-class CovConvertCollapsedBlockToOrdinaryStatementIntention(val element: CovCollapsedStatement) : BaseIntentionAction() {
+class CovConvertCollapsedBlockToOrdinaryStatementIntention(
+		private val element: CovCollapsedStatement) : BaseIntentionAction() {
 	override fun getText() = "Convert collapsed block into ordinary statement"
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = COV_NAME

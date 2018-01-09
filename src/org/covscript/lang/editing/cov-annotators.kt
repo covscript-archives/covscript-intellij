@@ -34,7 +34,7 @@ class CovAnnotator : Annotator {
 					registerFix(CovConvertCollapsedBlockToOrdinaryStatementIntention(element))
 				}
 				else holder.createWarningAnnotation(element, "Empty collapsed block")
-						.registerFix(CovRemoveCollapsedBlockIntention(element))
+						.registerFix(CovRemoveBlockIntention(element, "Remove empty collapsed block"))
 		}
 	}
 

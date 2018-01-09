@@ -14,7 +14,6 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
 import static org.covscript.lang.Cov_constantsKt.JOJO_ICON;
-import static org.covscript.lang.module.Cov_modulesKt.validateCovSDK;
 
 public class CovSetupSdkWizardStep extends ModuleWizardStep {
 	private @NotNull JPanel mainPanel;
@@ -25,14 +24,14 @@ public class CovSetupSdkWizardStep extends ModuleWizardStep {
 
 	public CovSetupSdkWizardStep(@NotNull CovProjectWizardData data) {
 		this.data = data;
-		validationInfo.setVisible(!validateCovSDK(data.getCovSdkPath()));
+		validationInfo.setVisible(!CovSdkType.INSTANCE.isValidSdkHome(data.getCovSdkPath()));
 		covWebsiteLink.setListener((label, o) -> BrowserLauncher.getInstance().open(covWebsiteLink.getText()), null);
 		String title = "Select a CovScript SDK", description = "Selecting a CovScript SDK path to use";
 		FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
 		sdkPathField.addBrowseFolderListener(title, description, null, descriptor);
 		sdkPathField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
 			@Override protected void textChanged(DocumentEvent documentEvent) {
-				validationInfo.setVisible(!validateCovSDK(sdkPathField.getText()));
+				validationInfo.setVisible(!CovSdkType.INSTANCE.isValidSdkHome(sdkPathField.getText()));
 			}
 		});
 	}

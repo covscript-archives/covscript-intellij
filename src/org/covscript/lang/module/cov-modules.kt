@@ -41,14 +41,6 @@ class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
 	}
 }
 
-fun validateCovSDK(pathString: String): Boolean {
-	val csPath = Paths.get(pathString, "bin", "cs")
-	val csReplPath = Paths.get(pathString, "bin", "cs_repl")
-	val csExePath = Paths.get(pathString, "bin", "cs.exe")
-	val csExeReplPath = Paths.get(pathString, "bin", "cs_repl.exe")
-	return (csPath.isExe() || csExePath.isExe()) && (csReplPath.isExe() || csExeReplPath.isExe())
-}
-
 fun Path.isExe() = Files.exists(this) and Files.isExecutable(this)
 
 class CovProjectWizardData(var covSdkPath: String)
