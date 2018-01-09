@@ -6,18 +6,21 @@ import com.intellij.ide.util.projectWizard.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.*
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.util.Key
 import org.covscript.lang.*
 import java.nio.file.*
 
 
-class CovModuleBuilder : JavaModuleBuilder(), ModuleBuilderListener {
+class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 	lateinit var sdk: Sdk
 	override fun getModuleType() = CovModuleType.instance
 	override fun getCustomOptionsStep(context: WizardContext, parentDisposable: Disposable): CovSetupSdkWizardStep {
 		parentDisposable.dispose()
 		context.projectName = COV_DEFAULT_MODULE_NAME
 		return CovSetupSdkWizardStep(this)
+	}
+	override fun setupRootModel(rootModel: ModifiableRootModel) {
 	}
 
 	override fun moduleCreated(module: Module) {

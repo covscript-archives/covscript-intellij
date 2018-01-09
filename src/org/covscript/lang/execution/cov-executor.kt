@@ -9,11 +9,10 @@ import com.intellij.execution.runners.ExecutionEnvironment
 class CovCommandLineState(
 		private val configuration: CovRunConfiguration,
 		env: ExecutionEnvironment) : CommandLineState(env) {
-	override fun startProcess() = OSProcessHandler(GeneralCommandLine(listOf(
+	override fun startProcess() = OSProcessHandler(GeneralCommandLine(
 			configuration.covExecutive,
-			configuration.additionalParams,
 			configuration.targetFile
-	)).apply {
+	).apply {
 		setWorkDirectory(configuration.workingDir)
 	}).also {
 		ProcessTerminatedListener.attach(it)

@@ -20,7 +20,7 @@ import java.nio.file.Paths
 
 class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project) :
 		ModuleBasedConfiguration<RunConfigurationModule>(COV_NAME, RunConfigurationModule(project), factory) {
-	private val covSdks = ProjectJdkTable.getInstance().getSdksOfType(CovSdkType.instance)
+	private val covSdks get() = ProjectJdkTable.getInstance().getSdksOfType(CovSdkType.instance)
 	private var sdkName = ""
 	var sdkUsed = covSdks.firstOrNull { it.name == sdkName }
 		set(value) {
@@ -43,7 +43,9 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 		JDOMExternalizer.readString(element, "covExecutive")?.let { covExecutive = it }
 		JDOMExternalizer.readString(element, "targetFile")?.let { targetFile = it }
 		JDOMExternalizer.readString(element, "workingDir")?.let { workingDir = it }
-		JDOMExternalizer.readString(element, "sdkName")?.let { sdkName = it }
+		JDOMExternalizer.readString(element, "sdkName")?.let { name ->
+			sdkUsed = covSdks.firstOrNull { it.name == name }
+		}
 		PathMacroManager.getInstance(project).collapsePathsRecursively(element)
 	}
 
