@@ -28,6 +28,13 @@ class CovAnnotator : Annotator {
 					else -> holder.createErrorAnnotation(element, "Char literal cannot be more than 1 character")
 				}
 			}
+			is CovBlockStatement -> {
+				val list = element.bodyOfSomething.statementList
+				if (list.size <= 1) {
+					holder.createWeakWarningAnnotation(element, "Unnecessary block declaration")
+							.registerFix(CovConvertBlockToStatementListIntention(element))
+				}
+			}
 			is CovCollapsedStatement ->
 				if (element.primaryStatement != null) holder.createInfoAnnotation(element, "Collapsed into one line").run {
 					textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
