@@ -27,7 +27,10 @@ class CovModuleBuilder : ModuleBuilder() {
 	private fun setupCovModule(model: ModifiableRootModel, basePath: VirtualFile, data: CovProjectWizardData) {
 		basePath.createChildDirectory(this, "src")
 		LocalFileSystem.getInstance().refreshAndFindFileByPath(data.covSdkPath)
-		model.project.putUserData(COV_SDK_LIB_KEY, data.covSdkPath)
+		model.project.run {
+			putUserData(COV_SDK_LIB_KEY, data.covSdkPath)
+			save()
+		}
 	}
 }
 

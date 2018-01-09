@@ -8,11 +8,16 @@ import javax.swing.*;
 
 public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguration> {
 	private @NonNull JPanel mainPanel;
+	private @NonNull CovRunConfiguration configuration;
 
-	@Override protected void resetEditorFrom(@NotNull CovRunConfiguration covRunConfiguration) {
+	public CovRunConfigurationEditor(CovRunConfiguration configuration) {
+		this.configuration = configuration;
 	}
 
-	@Override protected void applyEditorTo(@NotNull CovRunConfiguration covRunConfiguration) {
+	@Override protected void resetEditorFrom(@NotNull CovRunConfiguration configuration) {
+	}
+
+	@Override protected void applyEditorTo(@NotNull CovRunConfiguration configuration) {
 
 	}
 
