@@ -9,17 +9,19 @@ CovScript language support.<br/>
 
 Functions provided:<br/>
 <ul>
-  <li>Syntax-based highlighting, error reporting, completions</li>
+  <li>Syntax highlighting, error reporting, completions</li>
+  <li>Quick fixes and semantic-based highlights</li>
   <li>SDK configurations and code execution</li>
 </ul>
 ]]></description>
 
 	<change-notes><![CDATA[
-v1.1:<br/>
+1.1:<br/>
 <ul>
   <li>SDK configuration</li>
   <li>Completion improvements</li>
   <li>Code execution</li>
+  <li>Some basic quick fixes</li>
 </ul>
 ]]></change-notes>
 
