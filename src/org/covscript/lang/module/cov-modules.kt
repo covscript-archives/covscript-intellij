@@ -5,8 +5,8 @@ import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.module.ModuleTypeManager
-import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import org.covscript.lang.*
 import java.nio.file.*
@@ -25,13 +25,9 @@ class CovModuleBuilder : ModuleBuilder() {
 	}
 
 	private fun setupCovModule(model: ModifiableRootModel, basePath: VirtualFile, data: CovProjectWizardData) {
-		model.addContentEntry(basePath.createChildDirectory(this, "src"))
-		val libraryTableModel = ModifiableModelsProvider
-				.SERVICE
-				.getInstance()
-				.getLibraryTableModifiableModel(model.project)
-		val library = libraryTableModel.getLibraryByName(COV_SDK_LIB_NAME)
-				?: libraryTableModel.createLibrary(COV_SDK_LIB_NAME)
+		basePath.createChildDirectory(this, "src")
+		LocalFileSystem.getInstance().refreshAndFindFileByPath(data.covSdkPath)
+		model.project.putUserData(COV_SDK_LIB_KEY, data.covSdkPath)
 	}
 }
 

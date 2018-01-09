@@ -1,6 +1,7 @@
 package org.covscript.lang
 
 import com.intellij.openapi.util.IconLoader
+import com.intellij.openapi.util.Key
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
@@ -18,7 +19,10 @@ import javax.swing.Icon
 @Nls const val COV_MODULE_TYPE_DESCRIPTION = "$COV_NAME Module Type"
 @Nls const val COV_SDK_TYPE = "$COV_NAME SDK Type"
 
+@Nls const val COV_RUN_CONFIG_DESCRIPTION = "$COV_NAME Run Configuration Type"
+
 @NonNls const val COV_DEFAULT_MODULE_NAME = "my_bizarre_covscript_module"
+@NonNls const val COV_RUN_CONFIG_ID = "COV_RUN_CONFIG_ID"
 @NonNls const val COV_SDK_LIB_NAME = "COV_SDK_NAME"
 @NonNls const val COV_SDK_HOME_KEY = "COVSCRIPT_HOME"
 
@@ -28,3 +32,5 @@ import javax.swing.Icon
 @JvmField val COV_BIG_ICON: Icon = IconLoader.getIcon("/icons/cov.png")
 
 @JvmField val JOJO_ICON: Icon = IconLoader.getIcon("/icons/jojo.png")
+
+@JvmField val COV_SDK_LIB_KEY = Key<String>(COV_SDK_LIB_NAME)
