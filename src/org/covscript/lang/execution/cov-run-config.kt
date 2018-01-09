@@ -52,3 +52,4 @@ object CovRunConfigurationType : ConfigurationType {
 	override fun getDisplayName() = COV_NAME
 	override fun getConfigurationFactories() = arrayOf(CovRunConfigurationFactory(this))
 }
+
