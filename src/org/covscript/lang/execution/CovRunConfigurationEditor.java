@@ -35,7 +35,7 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 		String scriptTitle = "Select a CovScript File";
 		String scriptDescription = scriptTitle + " to execute";
 		FileChooserDescriptor scriptDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(CovFileType.INSTANCE);
-		workingDirField.addBrowseFolderListener(scriptTitle, scriptDescription, null, scriptDescriptor);
+		targetFileField.addBrowseFolderListener(scriptTitle, scriptDescription, null, scriptDescriptor);
 	}
 
 	@Override protected void resetEditorFrom(@NotNull CovRunConfiguration configuration) {
