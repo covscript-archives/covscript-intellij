@@ -35,6 +35,14 @@ class CovAnnotator : Annotator {
 							.registerFix(CovConvertBlockToStatementListIntention(element))
 				}
 			}
+			is CovNamespaceDeclaration -> holder.createInfoAnnotation(element.symbol, null)
+					.textAttributes = CovSyntaxHighlighter.NAMESPACE_DEFINITION
+			is CovFunctionDeclaration -> holder.createInfoAnnotation(element.symbol, null)
+					.textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION
+			is CovVariableDeclaration -> holder.createInfoAnnotation(element.symbol, null)
+					.textAttributes = CovSyntaxHighlighter.VARIABLE_DEFINITION
+			is CovStructDeclaration -> holder.createInfoAnnotation(element.symbol, null)
+					.textAttributes = CovSyntaxHighlighter.STRUCT_DEFINITION
 			is CovCollapsedStatement ->
 				if (element.primaryStatement != null) holder.createInfoAnnotation(element, "Collapsed into one line").run {
 					textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK

@@ -22,10 +22,9 @@ import javax.swing.Icon
 
 @NonNls const val COV_DEFAULT_MODULE_NAME = "my_bizarre_covscript_module"
 @NonNls const val COV_RUN_CONFIG_ID = "COV_RUN_CONFIG_ID"
-@NonNls const val COV_SDK_LIB_NAME = "COV_SDK_NAME"
-@NonNls const val COV_SDK_HOME_KEY = "COVSCRIPT_HOME"
 @NonNls const val POSSIBLE_SDK_HOME_LINUX = "/usr/share/covscript"
 @NonNls const val POSSIBLE_SDK_HOME_WINDOWS = "C:/Program Files"
+@NonNls const val COV_VERSION_COMMAND = """echo "runtime.info ()" | cs_repl --silent"""
 
 @JvmField val COV_ICON: Icon = IconLoader.getIcon("/icons/csc.png")
 @JvmField val COV_PKG_ICON: Icon = IconLoader.getIcon("/icons/csp.png")

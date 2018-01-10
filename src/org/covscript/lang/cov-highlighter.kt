@@ -22,6 +22,10 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 		@JvmField val STRING_ESCAPE = TextAttributesKey.createTextAttributesKey("COV_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
 		@JvmField val BEGIN_END_BLOCK = TextAttributesKey.createTextAttributesKey("COV_BEGIN_END_BLOCK", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
 		@JvmField val BEGIN_END_THEMSELVES = TextAttributesKey.createTextAttributesKey("COV_BEGIN_END_THEMSELVES", HighlighterColors.TEXT)
+		@JvmField val FUNCTION_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_FUNCTION_DEFINITION", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION)
+		@JvmField val NAMESPACE_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_NAMESPACE_DEFINITION", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION)
+		@JvmField val VARIABLE_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_VARIABLE_DEFINITION", DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
+		@JvmField val STRUCT_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_STRUCT_DEFINITION", DefaultLanguageHighlighterColors.CLASS_NAME)
 		private val KEYWORD_KEY = arrayOf(KEYWORD)
 		private val COMMENT_KEY = arrayOf(COMMENT)
 		private val NUMBER_KEY = arrayOf(NUMBER)
@@ -123,6 +127,10 @@ class CovColorSettingsPage : ColorSettingsPage {
 				AttributesDescriptor("Collapsed block", CovSyntaxHighlighter.BEGIN_END_BLOCK),
 				AttributesDescriptor("Comment", CovSyntaxHighlighter.COMMENT),
 				AttributesDescriptor("Number", CovSyntaxHighlighter.NUMBER),
+				AttributesDescriptor("Declarations//Function declaration", CovSyntaxHighlighter.FUNCTION_DEFINITION),
+				AttributesDescriptor("Declarations//Namespace declaration", CovSyntaxHighlighter.NAMESPACE_DEFINITION),
+				AttributesDescriptor("Declarations//Variable declaration", CovSyntaxHighlighter.VARIABLE_DEFINITION),
+				AttributesDescriptor("Declarations//Struct declaration", CovSyntaxHighlighter.STRUCT_DEFINITION),
 				AttributesDescriptor("Operators", CovSyntaxHighlighter.OPERATOR)
 		)
 		private val KEYS = mapOf(
