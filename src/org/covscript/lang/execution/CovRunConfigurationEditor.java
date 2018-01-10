@@ -23,15 +23,19 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 		sdkComboBox.getComboBox().setSelectedItem(configuration.getSdkUsed());
 		sdkComboBox.addActionListener(actionEvent -> covExecutiveField.setText(sdkComboBox.getSdkHomePath()));
 		covExecutiveField.setText(configuration.getCovExecutive());
-		String exeTitle = "Select a CovScript File";
-		String exeDescription = exeTitle + " to execute";
-		FileChooserDescriptor exeDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(CovFileType.INSTANCE);
+		String exeTitle = "Select a CovScript Interpreter";
+		String exeDescription = exeTitle + " to execute your script";
+		FileChooserDescriptor exeDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor();
 		covExecutiveField.addBrowseFolderListener(exeTitle, exeDescription, null, exeDescriptor);
 		workingDirField.setText(configuration.getWorkingDir());
-		String workTitle = "Select the Working Directory";
+		String workTitle = "Select a Working Directory";
 		String workDescription = workTitle + " for execution";
 		FileChooserDescriptor workDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
 		workingDirField.addBrowseFolderListener(workTitle, workDescription, null, workDescriptor);
+		String scriptTitle = "Select a CovScript File";
+		String scriptDescription = scriptTitle + " to execute";
+		FileChooserDescriptor scriptDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(CovFileType.INSTANCE);
+		workingDirField.addBrowseFolderListener(scriptTitle, scriptDescription, null, scriptDescriptor);
 	}
 
 	@Override protected void resetEditorFrom(@NotNull CovRunConfiguration configuration) {
