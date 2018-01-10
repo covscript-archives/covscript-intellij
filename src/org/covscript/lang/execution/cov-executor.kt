@@ -1,37 +1,74 @@
 package org.covscript.lang.execution
 
 import com.intellij.execution.*
-import com.intellij.execution.configurations.CommandLineState
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.OSProcessHandler
-import com.intellij.execution.process.ProcessTerminatedListener
+import com.intellij.execution.configurations.*
+import com.intellij.execution.filters.TextConsoleBuilderFactory
+import com.intellij.execution.process.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ProgramRunner
+import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.ConsoleViewContentType
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ToggleAction
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.DumbAware
 import java.nio.charset.Charset
+
 
 class CovCommandLineState(
 		private val configuration: CovRunConfiguration,
-		env: ExecutionEnvironment) : CommandLineState(env) {
-	override fun startProcess() = OSProcessHandler(GeneralCommandLine(listOf(
-			listOf(configuration.covExecutive),
-			configuration.additionalParams.split(' ').filter(String::isNotBlank),
-			listOf(configuration.targetFile)
-	).flatMap { it }).also {
-		it.withCharset(Charset.forName("UTF-8"))
-		it.withWorkDirectory(configuration.workingDir)
-	}).also {
-		ProcessTerminatedListener.attach(it)
-		it.startNotify()
-	}
+		env: ExecutionEnvironment) : RunProfileState {
+	private val consoleBuilder = TextConsoleBuilderFactory
+			.getInstance()
+			.createBuilder(env.project,
+					SearchScopeProvider.createSearchScope(env.project, env.runProfile))
 
 	override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {
-		val handler = startProcess()
-		val console = createConsole(executor)
-		console?.run {
-			print("${handler.commandLine}\n", ConsoleViewContentType.NORMAL_OUTPUT)
-			attachToProcess(handler)
+		val handler = OSProcessHandler(GeneralCommandLine(listOf(
+				listOf(configuration.covExecutive),
+				configuration.additionalParams.split(' ').filter(String::isNotBlank),
+				listOf(configuration.targetFile)
+		).flatMap { it }).also {
+			it.withCharset(Charset.forName("UTF-8"))
+			it.withWorkDirectory(configuration.workingDir)
+		}).also {
+			ProcessTerminatedListener.attach(it)
+			it.startNotify()
 		}
-		return DefaultExecutionResult(console, handler, *createActions(console, handler, executor))
+		val console = consoleBuilder.console
+		console.print("${handler.commandLine}\n", ConsoleViewContentType.NORMAL_OUTPUT)
+		console.attachToProcess(handler)
+		return DefaultExecutionResult(console, handler, PauseOutputAction(console, handler))
+	}
+
+	private class PauseOutputAction(private val console: ConsoleView, private val handler: ProcessHandler) :
+			ToggleAction(
+					ExecutionBundle.message("run.configuration.pause.output.action.name"),
+					null,
+					AllIcons.Actions.Pause), DumbAware {
+		override fun isSelected(event: AnActionEvent) = console.isOutputPaused
+		override fun setSelected(event: AnActionEvent, flag: Boolean) {
+			console.isOutputPaused = flag
+			ApplicationManager.getApplication().invokeLater { update(event) }
+		}
+
+		override fun update(event: AnActionEvent) {
+			super.update(event)
+			val presentation = event.presentation
+			val isRunning = !handler.isProcessTerminated
+			if (isRunning) presentation.isEnabled = true
+			else {
+				if (!console.canPause()) {
+					presentation.isEnabled = false
+					return
+				}
+				if (!console.hasDeferredOutput()) presentation.isEnabled = false
+				else {
+					presentation.isEnabled = true
+					console.performWhenNoDeferredOutput { update(event) }
+				}
+			}
+		}
 	}
 }
