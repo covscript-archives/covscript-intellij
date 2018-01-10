@@ -6,6 +6,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.covscript.lang.CovSyntaxHighlighter
 import org.covscript.lang.psi.*
+import java.math.BigDecimal
 
 class CovAnnotator : Annotator {
 	override fun annotate(element: PsiElement, holder: AnnotationHolder) {
@@ -30,9 +31,38 @@ class CovAnnotator : Annotator {
 			}
 			is CovBlockStatement -> {
 				val list = element.bodyOfSomething.statementList
-				if (list.size <= 1) {
-					holder.createWeakWarningAnnotation(element, "Unnecessary block declaration")
-							.registerFix(CovConvertBlockToStatementListIntention(element))
+				if (list.size <= 1) holder.createWeakWarningAnnotation(element, "Unnecessary block declaration")
+						.registerFix(CovBlockToStatementIntention(element))
+			}
+			is CovExpression -> {
+				if (element.parent is CovExpression) return
+				val left = element.leftPrimaryExprOrNull() ?: return
+				val right = element.expression?.primaryExprOrNull() ?: return
+				val op = element.binaryOperator ?: return
+				val infoText = "Constant folding is possible"
+				when {
+					left.string != null && right.string != null -> {
+						if (op.text == "+") holder.createInfoAnnotation(element, infoText)
+								.registerFix(CovReplaceWithTextIntention(element,
+										"${left.text.dropLast(1)}${right.text.drop(1)}",
+										"Replace with concatenated string"))
+						else if (op.text != ":") holder.createErrorAnnotation(element, "Operator ${op.text} is not applicable between strings")
+					}
+					left.number != null && right.number != null -> {
+						val leftDec = BigDecimal(left.text)
+						val rightDec = BigDecimal(right.text)
+						val fixText = "Replace with calculated result"
+						when (op.text) {
+							"+" -> holder.createInfoAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
+									(leftDec + rightDec).toPlainString(), fixText))
+							"-" -> holder.createInfoAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
+									(leftDec - rightDec).toPlainString(), fixText))
+							"*" -> holder.createInfoAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
+									(leftDec * rightDec).toPlainString(), fixText))
+							"/" -> holder.createInfoAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
+									(leftDec / rightDec).toPlainString(), fixText))
+						}
+					}
 				}
 			}
 			is CovNamespaceDeclaration -> holder.createInfoAnnotation(element.symbol, null)
@@ -46,7 +76,7 @@ class CovAnnotator : Annotator {
 			is CovCollapsedStatement ->
 				if (element.primaryStatement != null) holder.createInfoAnnotation(element, "Collapsed into one line").run {
 					textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
-					registerFix(CovConvertCollapsedBlockToOrdinaryStatementIntention(element))
+					registerFix(CovCollapsedBlockToOneStatementIntention(element))
 				}
 				else holder.createWarningAnnotation(element, "Empty collapsed block")
 						.registerFix(CovRemoveBlockIntention(element, "Remove empty collapsed block"))

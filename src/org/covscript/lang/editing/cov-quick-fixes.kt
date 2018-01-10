@@ -18,23 +18,38 @@ class CovRemoveBlockIntention(private val element: PsiElement, private val inten
 	}
 }
 
-class CovConvertCollapsedBlockToOrdinaryStatementIntention(
+class CovCollapsedBlockToOneStatementIntention(
 		private val element: CovCollapsedStatement) : BaseIntentionAction() {
 	override fun getText() = "Convert collapsed block into ordinary statement"
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = COV_NAME
 	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
 		val statement = element.primaryStatement ?: return
-		val newStatement = PsiFileFactory
+		element.replace(PsiFileFactory
 				.getInstance(project)
 				.createFileFromText(CovLanguage, statement.text.replace("\n", ""))
 				.let { it as? CovFile }
-				?.firstChild ?: return
-		element.replace(newStatement)
+				?.firstChild ?: return)
 	}
 }
 
-class CovConvertBlockToStatementListIntention(
+class CovReplaceWithTextIntention(
+		private val element: PsiElement,
+		private val new: String,
+		private val info: String) : BaseIntentionAction() {
+	override fun getText() = info
+	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
+	override fun getFamilyName() = COV_NAME
+	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
+		element.replace(PsiFileFactory
+				.getInstance(project)
+				.createFileFromText(CovLanguage, new)
+				.let { it as? CovFile }
+				?.firstChild ?: return)
+	}
+}
+
+class CovBlockToStatementIntention(
 		private val element: CovBlockStatement) : BaseIntentionAction() {
 	override fun getText() = "Remove unnecessary block"
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
@@ -44,11 +59,10 @@ class CovConvertBlockToStatementListIntention(
 			element.delete()
 			return
 		}
-		val newStatement = PsiFileFactory
+		element.replace(PsiFileFactory
 				.getInstance(project)
 				.createFileFromText(CovLanguage, element.bodyOfSomething.text)
 				.let { it as? CovFile }
-				?.firstChild ?: return
-		element.replace(newStatement)
+				?.firstChild ?: return)
 	}
 }

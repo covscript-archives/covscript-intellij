@@ -147,7 +147,9 @@ expression ::=
  (
   binaryOperator
   expression
- )?
+ )? {
+methods=[primaryExprOrNull leftPrimaryExprOrNull]
+}
 
 prefixOperator ::=
    INC_OP
