@@ -1,6 +1,5 @@
 package org.covscript.lang.module;
 
-import com.android.annotations.NonNull;
 import com.intellij.ide.browsers.BrowserLauncher;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.openapi.options.ConfigurationException;
@@ -15,8 +14,8 @@ public class CovSetupSdkWizardStep extends ModuleWizardStep {
 	private @NotNull JPanel mainPanel;
 	private @NotNull CovSdkComboBox sdkPathField;
 	private @NotNull LinkLabel<Object> covWebsiteLink;
-	private @NonNull JLabel covPathExample;
-	private @NonNull JLabel covWebsiteDescription;
+	private @NotNull JLabel covPathExample;
+	private @NotNull JLabel covWebsiteDescription;
 	private @NotNull CovModuleBuilder builder;
 
 	public CovSetupSdkWizardStep(@NotNull CovModuleBuilder builder) {

@@ -1,6 +1,5 @@
 package org.covscript.lang.execution;
 
-import com.android.annotations.NonNull;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.SettingsEditor;
@@ -12,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguration> {
-	private @NonNull JPanel mainPanel;
-	private @NonNull CovSdkComboBox sdkComboBox;
-	private @NonNull TextFieldWithBrowseButton covExecutiveField;
-	private @NonNull TextFieldWithBrowseButton workingDirField;
-	private @NonNull JTextField additionalParamsField;
-	private @NonNull TextFieldWithBrowseButton targetFileField;
+	private @NotNull JPanel mainPanel;
+	private @NotNull CovSdkComboBox sdkComboBox;
+	private @NotNull TextFieldWithBrowseButton covExecutiveField;
+	private @NotNull TextFieldWithBrowseButton workingDirField;
+	private @NotNull JTextField additionalParamsField;
+	private @NotNull TextFieldWithBrowseButton targetFileField;
 
-	public CovRunConfigurationEditor(@NonNull CovRunConfiguration configuration) {
+	public CovRunConfigurationEditor(@NotNull CovRunConfiguration configuration) {
 		sdkComboBox.getComboBox().setSelectedItem(configuration.getSdkUsed());
 		sdkComboBox.addActionListener(actionEvent -> covExecutiveField.setText(sdkComboBox.getSdkHomePath()));
 		covExecutiveField.setText(configuration.getCovExecutive());

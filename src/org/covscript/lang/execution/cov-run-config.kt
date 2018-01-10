@@ -36,7 +36,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 	var covExecutive = sdkUsed?.run { Paths.get(homePath, "bin", "cs").toAbsolutePath().toString() }.orEmpty()
 	override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = CovRunConfigurationEditor(this)
 	override fun getState(executor: Executor, environment: ExecutionEnvironment) = CovCommandLineState(this, environment)
-	override fun getValidModules() = allModules
+	override fun getValidModules() = allModules.filter { ProjectRootManager.getInstance(it.project).projectSdk?.sdkType is CovSdkType }
 	override fun readExternal(element: Element) {
 		super.readExternal(element)
 		JDOMExternalizer.readString(element, "additionalParams")?.let { additionalParams = it }
