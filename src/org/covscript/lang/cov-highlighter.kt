@@ -23,7 +23,7 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 		@JvmField val BEGIN_END_BLOCK = TextAttributesKey.createTextAttributesKey("COV_BEGIN_END_BLOCK", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR)
 		@JvmField val BEGIN_END_THEMSELVES = TextAttributesKey.createTextAttributesKey("COV_BEGIN_END_THEMSELVES", HighlighterColors.TEXT)
 		@JvmField val FUNCTION_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_FUNCTION_DEFINITION", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION)
-		@JvmField val NAMESPACE_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_NAMESPACE_DEFINITION", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION)
+		@JvmField val NAMESPACE_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_NAMESPACE_DEFINITION", DefaultLanguageHighlighterColors.CLASS_NAME)
 		@JvmField val VARIABLE_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_VARIABLE_DEFINITION", DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
 		@JvmField val STRUCT_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_STRUCT_DEFINITION", DefaultLanguageHighlighterColors.CLASS_NAME)
 		private val KEYWORD_KEY = arrayOf(KEYWORD)
@@ -135,7 +135,11 @@ class CovColorSettingsPage : ColorSettingsPage {
 		)
 		private val KEYS = mapOf(
 				"beginEndBlock" to CovSyntaxHighlighter.BEGIN_END_BLOCK,
-				"escapeCharacter" to CovSyntaxHighlighter.STRING_ESCAPE
+				"escapeCharacter" to CovSyntaxHighlighter.STRING_ESCAPE,
+				"functionName" to CovSyntaxHighlighter.FUNCTION_DEFINITION,
+				"structName" to CovSyntaxHighlighter.STRUCT_DEFINITION,
+				"namespaceName" to CovSyntaxHighlighter.NAMESPACE_DEFINITION,
+				"variableName" to CovSyntaxHighlighter.VARIABLE_DEFINITION
 		)
 	}
 
@@ -147,16 +151,16 @@ class CovColorSettingsPage : ColorSettingsPage {
 	override fun getAttributeDescriptors() = DESCRIPTORS
 	@Language("CovScript")
 	override fun getDemoText() = """# CovScript code example
-namespace std
-  struct A
-    const var x = typeid (233 * 666)
-    const var i = gcnew string
+namespace <namespaceName>std</namespaceName>
+  struct <structName>MyStruct</structName>
+    const var <variableName>thisIsAType</variableName> = typeid (233 * 666)
+    const var <variableName>i</variableName> = gcnew string
   end
-  i = new string
+  <variableName>i</variableName> = new string
 
-  function main(args)
-    var y = {a, b, c}
-    const var str = "boy " +
+  function <functionName>main</functionName>(args)
+    var <variableName>thisIsAnArray</variableName> = {a, b, c}
+    const var <variableName>str</variableName> = "boy " +
         "next door<escapeCharacter>\n</escapeCharacter>" +
         to_string(y)
     @begin<beginEndBlock>
