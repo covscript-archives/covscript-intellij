@@ -1,7 +1,7 @@
 <idea-plugin>
 	<id>org.covscript</id>
 	<name>CovScript</name>
-	<version>1.1</version>
+	<version>1.2</version>
 	<vendor email="ice1000kotlin@foxmail.com" url="http://covscript.org">ice1000</vendor>
 
 	<description><![CDATA[
@@ -16,6 +16,11 @@ Functions provided:<br/>
 ]]></description>
 
 	<change-notes><![CDATA[
+1.2:<br/>
+<ul>
+  <li>Bug fixes</li>
+</ul>
+<br/><br/>
 1.1:<br/>
 <ul>
   <li>SDK configuration</li>

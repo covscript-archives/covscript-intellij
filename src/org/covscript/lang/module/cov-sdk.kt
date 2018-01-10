@@ -38,6 +38,7 @@ class CovSdkType : SdkType(COV_NAME) {
 class CovSdkComboBox : ComboboxWithBrowseButton() {
 	val selectedSdk get() = comboBox.selectedItem as? Sdk
 	val sdkName get() = selectedSdk?.name.orEmpty()
+	val sdkHomePath get() = selectedSdk?.homePath.orEmpty()
 
 	init {
 		comboBox.setRenderer(object : ColoredListCellRenderer<Sdk?>() {

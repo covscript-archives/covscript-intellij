@@ -1,8 +1,11 @@
 package org.covscript.lang.execution;
 
 import com.android.annotations.NonNull;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import org.covscript.lang.CovFileType;
 import org.covscript.lang.module.CovSdkComboBox;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,13 +17,21 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 	private @NonNull TextFieldWithBrowseButton covExecutiveField;
 	private @NonNull TextFieldWithBrowseButton workingDirField;
 	private @NonNull JTextField additionalParamsField;
-	private TextFieldWithBrowseButton targetFileField;
+	private @NonNull TextFieldWithBrowseButton targetFileField;
 
 	public CovRunConfigurationEditor(@NonNull CovRunConfiguration configuration) {
 		sdkComboBox.getComboBox().setSelectedItem(configuration.getSdkUsed());
-		sdkComboBox.addActionListener(actionEvent -> covExecutiveField.setText(sdkComboBox.getSelectedSdk().getHomePath()));
+		sdkComboBox.addActionListener(actionEvent -> covExecutiveField.setText(sdkComboBox.getSdkHomePath()));
 		covExecutiveField.setText(configuration.getCovExecutive());
+		String exeTitle = "Select a CovScript File";
+		String exeDescription = exeTitle + " to execute";
+		FileChooserDescriptor exeDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(CovFileType.INSTANCE);
+		covExecutiveField.addBrowseFolderListener(exeTitle, exeDescription, null, exeDescriptor);
 		workingDirField.setText(configuration.getWorkingDir());
+		String workTitle = "Select the Working Directory";
+		String workDescription = workTitle + " for execution";
+		FileChooserDescriptor workDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
+		workingDirField.addBrowseFolderListener(workTitle, workDescription, null, workDescriptor);
 	}
 
 	@Override protected void resetEditorFrom(@NotNull CovRunConfiguration configuration) {
