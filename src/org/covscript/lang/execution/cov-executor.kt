@@ -45,8 +45,7 @@ class CovCommandLineState(
 	private class PauseOutputAction(private val console: ConsoleView, private val handler: ProcessHandler) :
 			ToggleAction(
 					ExecutionBundle.message("run.configuration.pause.output.action.name"),
-					null,
-					AllIcons.Actions.Pause), DumbAware {
+					null, AllIcons.Actions.Pause), DumbAware {
 		override fun isSelected(event: AnActionEvent) = console.isOutputPaused
 		override fun setSelected(event: AnActionEvent, flag: Boolean) {
 			console.isOutputPaused = flag
@@ -55,17 +54,11 @@ class CovCommandLineState(
 
 		override fun update(event: AnActionEvent) {
 			super.update(event)
-			val presentation = event.presentation
-			val isRunning = !handler.isProcessTerminated
-			if (isRunning) presentation.isEnabled = true
-			else {
-				if (!console.canPause()) {
-					presentation.isEnabled = false
-					return
-				}
-				if (!console.hasDeferredOutput()) presentation.isEnabled = false
-				else {
-					presentation.isEnabled = true
+			if (!handler.isProcessTerminated) event.presentation.isEnabled = true
+			else when {
+				!console.canPause() || !console.hasDeferredOutput() -> event.presentation.isEnabled = false
+				else -> {
+					event.presentation.isEnabled = true
 					console.performWhenNoDeferredOutput { update(event) }
 				}
 			}

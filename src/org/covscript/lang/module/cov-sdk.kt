@@ -1,9 +1,10 @@
 package org.covscript.lang.module
 
-import com.intellij.execution.Platform
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.ComboboxWithBrowseButton
 import org.covscript.lang.*
@@ -17,15 +18,18 @@ class CovSdkType : SdkType(COV_NAME) {
 	override fun getIconForAddAction() = icon
 	override fun isValidSdkHome(s: String?) = validateCovSDK(s.orEmpty())
 	override fun suggestSdkName(s: String?, p1: String?) = COV_SDK_NAME
-	override fun suggestHomePath() = if (Platform.current() == Platform.WINDOWS) POSSIBLE_SDK_HOME_WINDOWS else POSSIBLE_SDK_HOME_LINUX
+	override fun suggestHomePath() = if (SystemInfo.isWindows) POSSIBLE_SDK_HOME_WINDOWS else POSSIBLE_SDK_HOME_LINUX
 	override fun createAdditionalDataConfigurable(model: SdkModel, modificator: SdkModificator) = null
 	override fun getVersionString(sdk: Sdk) = "Stable"
 	override fun getVersionString(sdkHome: String?) = "Stable"
 	override fun saveAdditionalData(additionalData: SdkAdditionalData, element: Element) = Unit // leave blank
+	override fun getDownloadSdkUrl() = COV_WEBSITE
 	override fun setupSdkPaths(sdk: Sdk, sdkModel: SdkModel): Boolean {
 		val sdkModificator = sdk.sdkModificator
 		sdkModificator.versionString = getVersionString(sdk)
-		// addAddOnPackageSources(sdkModificator, homePath)
+		sdk.homeDirectory
+				?.findChild("imports")
+				?.let { sdkModificator.addRoot(it, OrderRootType.CLASSES) }
 		sdkModificator.commitChanges()
 		return true
 	}

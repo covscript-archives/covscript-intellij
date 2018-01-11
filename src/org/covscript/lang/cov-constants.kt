@@ -26,6 +26,8 @@ import javax.swing.Icon
 @NonNls const val POSSIBLE_SDK_HOME_WINDOWS = "C:/Program Files"
 @NonNls const val COV_VERSION_COMMAND = """echo "runtime.info ()" | cs_repl --silent"""
 
+@NonNls const val COV_WEBSITE = "http://covscript.org"
+
 @JvmField val COV_ICON: Icon = IconLoader.getIcon("/icons/csc.png")
 @JvmField val COV_PKG_ICON: Icon = IconLoader.getIcon("/icons/csp.png")
 @JvmField val COV_EXT_ICON: Icon = IconLoader.getIcon("/icons/cse.png")
