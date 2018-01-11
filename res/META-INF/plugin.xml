@@ -58,9 +58,6 @@ Functions provided:<br/>
 		<annotator
 				language="CovScript"
 				implementationClass="org.covscript.lang.editing.CovAnnotator"/>
-		<completion.contributor
-				language="CovScript"
-				implementationClass="org.covscript.lang.editing.CovBasicCompletionContributor"/>
 		<moduleType id="COV_MODULE_TYPE" implementationClass="org.covscript.lang.module.CovModuleType"/>
 		<configurationType implementation="org.covscript.lang.execution.CovRunConfigurationType"/>
 		<runConfigurationProducer implementation="org.covscript.lang.execution.CovRunConfigurationProducer"/>
