@@ -6,9 +6,6 @@ import com.intellij.openapi.module.*
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.*
-import com.intellij.openapi.util.Pair
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.LocalFileSystem
 import org.covscript.lang.*
 import java.nio.file.*
 
@@ -18,16 +15,6 @@ class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 	}
 
 	lateinit var sdk: Sdk
-	private var sourcePaths = mutableListOf<Pair<String, String>>()
-		get() {
-			if (field.isEmpty()) {
-				val path = Paths.get(contentEntryPath, "src")
-				Files.createDirectories(path)
-				field.add(Pair.create(path.toAbsolutePath().toString(), ""))
-			}
-			return field
-		}
-
 	override fun isSuitableSdkType(sdkType: SdkTypeId?) = sdkType is CovSdkType
 	override fun getWeight() = 99
 	override fun getNodeIcon() = COV_BIG_ICON
@@ -39,17 +26,9 @@ class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 	}
 
 	override fun setupRootModel(model: ModifiableRootModel) {
-		model.getModuleExtension(CompilerModuleExtension::class.java)?.isExcludeOutput = true
 		model.sdk = sdk
-		val contentEntry = doAddContentEntry(model) ?: return
-		sourcePaths.forEach { libInfo ->
-			Files.createDirectories(Paths.get(libInfo.first))
-			val sourceRoot = LocalFileSystem
-					.getInstance().
-					refreshAndFindFileByPath(FileUtil.toSystemIndependentName(libInfo.first))
-					?: return@forEach
-			contentEntry.addSourceFolder(sourceRoot, false, libInfo.second)
-		}
+		Files.createDirectories(Paths.get(contentEntryPath, "src"))
+		doAddContentEntry(model)
 	}
 
 	override fun moduleCreated(module: Module) {
