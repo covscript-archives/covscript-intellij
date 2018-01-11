@@ -62,6 +62,9 @@ Functions provided:<br/>
 		<configurationType implementation="org.covscript.lang.execution.CovRunConfigurationType"/>
 		<runConfigurationProducer implementation="org.covscript.lang.execution.CovRunConfigurationProducer"/>
 		<sdkType implementation="org.covscript.lang.module.CovSdkType"/>
+		<lang.formatter
+				language="CovScript"
+				implementationClass="org.covscript.lang.editing.CovFormattingModelBuilder"/>
 	</extensions>
 
 	<actions>
