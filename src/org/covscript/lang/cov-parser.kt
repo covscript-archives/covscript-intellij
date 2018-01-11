@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.*
+import org.covscript.lang.psi.CovTokenType
 import org.covscript.lang.psi.CovTypes
 
 class CovParserDefinition : ParserDefinition {
@@ -23,9 +24,3 @@ class CovParserDefinition : ParserDefinition {
 	override fun getWhitespaceTokens(): TokenSet = TokenSet.WHITE_SPACE
 }
 
-class CovTokenType(debugName: String) : IElementType(debugName, CovLanguage) {
-	companion object {
-		@JvmField val COMMENTS = TokenSet.create(CovTypes.COMMENT)
-		@JvmField val STRINGS = TokenSet.create(CovTypes.STR)
-	}
-}
