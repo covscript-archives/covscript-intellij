@@ -1,11 +1,15 @@
 package org.covscript.lang.editing
 
 import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler
+import com.intellij.ide.structureView.*
+import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
+import com.intellij.ide.util.treeView.smartTree.SortableTreeElement
 import com.intellij.lang.*
 import com.intellij.lang.folding.FoldingBuilderEx
 import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.lang.parser.GeneratedParserUtilBase
 import com.intellij.lang.refactoring.NamesValidator
+import com.intellij.navigation.LocationPresentation
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.highlighter.HighlighterIterator
@@ -136,7 +140,6 @@ class CovFoldingBuilder : FoldingBuilderEx() {
 			CovTypes.STRUCT_DECLARATION -> "struct…"
 			CovTypes.NAMESPACE_DECLARATION -> "namespace…"
 			CovTypes.FOR_STATEMENT -> "for…"
-			CovTypes.ARRAY_LITERAL -> "{…}"
 			CovTypes.LOOP_UNTIL_STATEMENT -> "loop…"
 			CovTypes.WHILE_STATEMENT -> "while…"
 			CovTypes.TRY_CATCH_STATEMENT -> "try…catch…"
@@ -144,6 +147,7 @@ class CovFoldingBuilder : FoldingBuilderEx() {
 			CovTypes.COLLAPSED_STATEMENT -> "@begin…"
 			CovTypes.BLOCK_STATEMENT -> "begin…"
 			CovTypes.IF_STATEMENT -> "if…"
+			CovTypes.ARRAY_LITERAL -> "{…}"
 			else -> "??"
 		}, SHORT_TEXT_MAX)
 	}
@@ -157,4 +161,87 @@ class CovFoldingBuilder : FoldingBuilderEx() {
 			.map { FoldingDescriptor(it, it.textRange) }
 			.toList()
 			.toTypedArray()
+}
+
+class CovStructureViewFactory : PsiStructureViewFactory {
+	override fun getStructureViewBuilder(psiFile: PsiFile) = object : TreeBasedStructureViewBuilder() {
+		override fun createStructureViewModel(editor: Editor?) = CovModel(psiFile, editor)
+		override fun isRootNodeShown() = true
+	}
+
+	private class CovModel(file: PsiFile, editor: Editor?) :
+			StructureViewModelBase(file, editor, CovStructureElement(file)), StructureViewModel.ElementInfoProvider {
+		init {
+			withSuitableClasses(
+					CovBlockStatement::class.java,
+					CovNamespaceDeclaration::class.java,
+					CovFunctionDeclaration::class.java,
+					CovStructDeclaration::class.java,
+					CovForStatement::class.java,
+					CovCollapsedStatement::class.java,
+					CovTryCatchStatement::class.java,
+					CovSwitchStatement::class.java,
+					CovWhileStatement::class.java,
+					CovLoopUntilStatement::class.java,
+					CovBlockStatement::class.java,
+					CovIfStatement::class.java,
+					CovArrayLiteral::class.java)
+		}
+
+		override fun isAlwaysShowsPlus(o: StructureViewTreeElement) = false
+		override fun isAlwaysLeaf(o: StructureViewTreeElement) = false
+		override fun shouldEnterElement(o: Any?) = true
+	}
+
+	private class CovStructureElement(o: PsiElement) : PsiTreeElementBase<PsiElement>(o), SortableTreeElement,
+			LocationPresentation {
+		override fun getIcon(open: Boolean) = element.let { o ->
+			when (o) {
+				is CovFile -> COV_ICON
+				is CovFunctionDeclaration -> FUNCTION_ICON
+				is CovStructDeclaration -> STRUCT_ICON
+				is CovNamespaceDeclaration -> NAMESPACE_ICON
+				is CovForStatement,
+				is CovIfStatement,
+				is CovBlockStatement,
+				is CovLoopUntilStatement,
+				is CovWhileStatement,
+				is CovTryCatchStatement,
+				is CovSwitchStatement -> CONTROL_FLOW_ICON
+				is CovCollapsedStatement -> COLLAPSED_ICON
+			// is CovArrayLiteral -> COV_ICON
+				else -> COV_BIG_ICON
+			}
+		}
+
+		override fun getAlphaSortKey() = presentableText
+		override fun getPresentableText() = cutText(element.let { o ->
+			when (o) {
+				is CovFile -> "CovScript file"
+				is CovFunctionDeclaration -> "function ${o.symbol.text}"
+				is CovStructDeclaration -> "struct ${o.symbol.text}"
+				is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
+				is CovForStatement -> "for ${o.symbol.text}"
+				is CovArrayLiteral -> "array literal"
+				is CovLoopUntilStatement -> "loop ${o.expression}"
+				is CovWhileStatement -> "while ${o.expression}"
+				is CovTryCatchStatement -> "try catch ${o.symbol}"
+				is CovSwitchStatement -> "switch statement"
+				is CovCollapsedStatement -> "collapsed block"
+				is CovBlockStatement -> "begin block"
+				is CovIfStatement -> "if ${o.expression}"
+				else -> "??"
+			}
+		}, LONG_TEXT_MAX)
+
+		override fun getLocationString() = ""
+		override fun getLocationPrefix() = ""
+		override fun getLocationSuffix() = ""
+		override fun getChildrenBase(): List<CovStructureElement> = element.let { o ->
+			@Suppress("UNCHECKED_CAST") when (o) {
+			// TODO
+				else -> emptyList()
+			}.map(::CovStructureElement)
+		}
+	}
 }

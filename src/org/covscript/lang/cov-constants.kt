@@ -33,7 +33,13 @@ import javax.swing.Icon
 @JvmField val COV_EXT_ICON: Icon = IconLoader.getIcon("/icons/cse.png")
 @JvmField val COV_BIG_ICON: Icon = IconLoader.getIcon("/icons/cov.png")
 
+@JvmField val FUNCTION_ICON = IconLoader.getIcon("/icons/function.png")
+@JvmField val NAMESPACE_ICON = IconLoader.getIcon("/icons/namespace.png")
+@JvmField val CONTROL_FLOW_ICON = IconLoader.getIcon("/icons/control_flow.png")
 @JvmField val JOJO_ICON: Icon = IconLoader.getIcon("/icons/jojo.png")
+
+@JvmField val STRUCT_ICON = IconLoader.getIcon("/nodes/static.png")
+@JvmField val COLLAPSED_ICON = IconLoader.getIcon("/nodes/annotationtype.png")
 
 @JvmField val COV_KEYWORDS = listOf(
 		"if",
