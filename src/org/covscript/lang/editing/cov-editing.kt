@@ -2,14 +2,17 @@ package org.covscript.lang.editing
 
 import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler
 import com.intellij.lang.*
+import com.intellij.lang.folding.FoldingBuilderEx
+import com.intellij.lang.folding.FoldingDescriptor
+import com.intellij.lang.parser.GeneratedParserUtilBase
 import com.intellij.lang.refactoring.NamesValidator
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.highlighter.HighlighterIterator
 import com.intellij.openapi.project.Project
 import com.intellij.patterns.*
 import com.intellij.pom.PomTargetPsiElement
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
+import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
 import com.intellij.refactoring.rename.RenameInputValidator
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
@@ -81,27 +84,77 @@ class CovNamesValidator : NamesValidator, RenameInputValidator {
 	}
 }
 
-const val SHORT_TEXT_MAX = 8
-const val LONG_TEXT_MAX = 16
+const val SHORT_TEXT_MAX = 16
+const val LONG_TEXT_MAX = 32
 private fun cutText(it: String, textMax: Int) = if (it.length <= textMax) it else "${it.take(textMax)}…"
+private val PsiElement.isBlockStructure
+	get() = this is CovBlockStatement ||
+			this is CovNamespaceDeclaration ||
+			this is CovFunctionDeclaration ||
+			this is CovStructDeclaration ||
+			this is CovForStatement ||
+			this is CovCollapsedStatement ||
+			this is CovTryCatchStatement ||
+			this is CovSwitchStatement ||
+			this is CovWhileStatement ||
+			this is CovLoopUntilStatement ||
+			this is CovBlockStatement ||
+			this is CovIfStatement ||
+			this is CovArrayLiteral
 
 class CovBreadCrumbProvider : BreadcrumbsProvider {
 	override fun getLanguages() = arrayOf(CovLanguage)
-	override fun acceptElement(o: PsiElement) = o is CovFunctionDeclaration ||
-			o is CovStructDeclaration ||
-			o is CovNamespaceDeclaration
-
+	override fun acceptElement(o: PsiElement) = o.isBlockStructure
 	override fun getElementTooltip(o: PsiElement) = when (o) {
 		is CovFunctionDeclaration -> "function: <${o.text}>"
 		is CovStructDeclaration -> "struct: <${o.text}>"
 		is CovNamespaceDeclaration -> "namespace: <${o.text}>"
-		else -> "??"
+		else -> null
 	}
 
 	override fun getElementInfo(o: PsiElement): String = cutText(when (o) {
-		is CovFunctionDeclaration -> o.symbol.text
-		is CovStructDeclaration -> o.symbol.text
-		is CovNamespaceDeclaration -> o.symbol.text
+		is CovFunctionDeclaration -> "function ${o.symbol.text}"
+		is CovStructDeclaration -> "struct ${o.symbol.text}"
+		is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
+		is CovForStatement -> "for ${o.symbol.text}"
+		is CovArrayLiteral -> "array literal"
+		is CovLoopUntilStatement -> "loop ${o.expression}"
+		is CovWhileStatement -> "while ${o.expression}"
+		is CovTryCatchStatement -> "try catch ${o.symbol}"
+		is CovSwitchStatement -> "switch statement"
+		is CovCollapsedStatement -> "collapsed block"
+		is CovBlockStatement -> "begin block"
+		is CovIfStatement -> "if ${o.expression}"
 		else -> "??"
 	}, SHORT_TEXT_MAX)
+}
+
+class CovFoldingBuilder : FoldingBuilderEx() {
+	override fun getPlaceholderText(node: ASTNode): String = node.elementType.let { o ->
+		cutText(when (o) {
+			CovTypes.FUNCTION_DECLARATION -> "function…"
+			CovTypes.STRUCT_DECLARATION -> "struct…"
+			CovTypes.NAMESPACE_DECLARATION -> "namespace…"
+			CovTypes.FOR_STATEMENT -> "for…"
+			CovTypes.ARRAY_LITERAL -> "{…}"
+			CovTypes.LOOP_UNTIL_STATEMENT -> "loop…"
+			CovTypes.WHILE_STATEMENT -> "while…"
+			CovTypes.TRY_CATCH_STATEMENT -> "try…catch…"
+			CovTypes.SWITCH_STATEMENT -> "switch…"
+			CovTypes.COLLAPSED_STATEMENT -> "@begin…"
+			CovTypes.BLOCK_STATEMENT -> "begin…"
+			CovTypes.IF_STATEMENT -> "if…"
+			else -> "??"
+		}, SHORT_TEXT_MAX)
+	}
+
+	override fun isCollapsedByDefault(node: ASTNode) = false
+	override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean) = SyntaxTraverser
+			.psiTraverser(root)
+			.forceDisregardTypes { it == GeneratedParserUtilBase.DUMMY_BLOCK }
+			.traverse()
+			.filter { it.isBlockStructure }
+			.map { FoldingDescriptor(it, it.textRange) }
+			.toList()
+			.toTypedArray()
 }

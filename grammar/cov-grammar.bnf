@@ -148,7 +148,7 @@ expression ::=
   binaryOperator
   expression
  )? {
-methods=[primaryExprOrNull leftPrimaryExprOrNull]
+	methods=[primaryExprOrNull leftPrimaryExprOrNull]
 }
 
 prefixOperator ::=
