@@ -72,7 +72,7 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 				CovTypes.OR_KEYWORD
 		)
 
-		private val OPERATOR_LIST = listOf(
+		@JvmField val OPERATOR_LIST = listOf(
 				CovTypes.QUESTION_OP,
 				CovTypes.COLON_OP,
 				CovTypes.DIV_ASS,

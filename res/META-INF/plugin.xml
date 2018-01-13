@@ -16,12 +16,14 @@ Functions provided:<br/>
 ]]></description>
 
 	<change-notes><![CDATA[
-1.2:<br/>
+1.2<br/>
 <ul>
   <li>Bug fixes</li>
 </ul>
-<br/><br/>
-1.1:<br/>
+
+<br/>
+
+1.1<br/>
 <ul>
   <li>SDK configuration</li>
   <li>Completion improvements</li>
@@ -40,12 +42,20 @@ Functions provided:<br/>
 		<fileTypeFactory implementation="org.covscript.lang.CovPackageFileTypeFactory"/>
 		<liveTemplateContext implementation="org.covscript.lang.CovContext"/>
 		<defaultLiveTemplatesProvider implementation="org.covscript.lang.CovLiveTemplateProvider"/>
+		<colorSettingsPage implementation="org.covscript.lang.CovColorSettingsPage"/>
+		<configurationType implementation="org.covscript.lang.execution.CovRunConfigurationType"/>
+		<runConfigurationProducer implementation="org.covscript.lang.execution.CovRunConfigurationProducer"/>
+		<sdkType implementation="org.covscript.lang.module.CovSdkType"/>
+		<breadcrumbsInfoProvider implementation="org.covscript.lang.editing.CovBreadCrumbProvider"/>
+		<spellchecker.support
+				language="CovScript"
+				implementationClass="org.covscript.lang.editing.CovSpellCheckingStrategy"/>
+		<lang.namesValidator
+				language="CovScript"
+				implementationClass="org.covscript.lang.editing.CovNamesValidator"/>
 		<lang.syntaxHighlighterFactory
 				language="CovScript"
 				implementationClass="org.covscript.lang.CovSyntaxHighlighterFactory"/>
-		<colorSettingsPage implementation="org.covscript.lang.CovColorSettingsPage"/>
-		<additionalTextAttributes scheme="Darcula" file="/colorSchemes/CovColors.xml"/>
-		<additionalTextAttributes scheme="Default" file="/colorSchemes/CovColors.xml"/>
 		<lang.parserDefinition
 				language="CovScript"
 				implementationClass="org.covscript.lang.CovParserDefinition"/>
@@ -58,13 +68,17 @@ Functions provided:<br/>
 		<annotator
 				language="CovScript"
 				implementationClass="org.covscript.lang.editing.CovAnnotator"/>
-		<moduleType id="COV_MODULE_TYPE" implementationClass="org.covscript.lang.module.CovModuleType"/>
-		<configurationType implementation="org.covscript.lang.execution.CovRunConfigurationType"/>
-		<runConfigurationProducer implementation="org.covscript.lang.execution.CovRunConfigurationProducer"/>
-		<sdkType implementation="org.covscript.lang.module.CovSdkType"/>
-		<lang.formatter
-				language="CovScript"
-				implementationClass="org.covscript.lang.editing.CovFormattingModelBuilder"/>
+		<moduleType
+				id="COV_MODULE_TYPE"
+				implementationClass="org.covscript.lang.module.CovModuleType"/>
+		<quoteHandler
+				fileType="CovScript"
+				className="org.covscript.lang.editing.CovQuoteHandler"/>
+		<quoteHandler
+				fileType="CovScript Package"
+				className="org.covscript.lang.editing.CovQuoteHandler"/>
+		<additionalTextAttributes scheme="Darcula" file="/colorSchemes/CovColors.xml"/>
+		<additionalTextAttributes scheme="Default" file="/colorSchemes/CovColors.xml"/>
 	</extensions>
 
 	<actions>

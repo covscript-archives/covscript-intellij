@@ -1,9 +1,23 @@
 package org.covscript.lang.editing
 
+import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler
 import com.intellij.lang.*
+import com.intellij.lang.refactoring.NamesValidator
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.highlighter.HighlighterIterator
+import com.intellij.openapi.project.Project
+import com.intellij.patterns.*
+import com.intellij.pom.PomTargetPsiElement
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
-import org.covscript.lang.psi.CovTypes
+import com.intellij.refactoring.rename.RenameInputValidator
+import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
+import com.intellij.spellchecker.tokenizer.Tokenizer
+import com.intellij.ui.breadcrumbs.BreadcrumbsProvider
+import com.intellij.util.ProcessingContext
+import org.covscript.lang.*
+import org.covscript.lang.psi.*
 
 class CovBraceMatcher : PairedBraceMatcher {
 	companion object {
@@ -38,4 +52,56 @@ class CovCommenter : Commenter {
 	override fun getBlockCommentPrefix() = null
 	override fun getBlockCommentSuffix() = null
 	override fun getLineCommentPrefix() = "# "
+}
+
+class CovQuoteHandler : SimpleTokenSetQuoteHandler(CovTokenType.STRINGS) {
+	override fun hasNonClosedLiteral(editor: Editor?, iterator: HighlighterIterator?, offset: Int) = true
+}
+
+class CovSpellCheckingStrategy : SpellcheckingStrategy() {
+	override fun getTokenizer(element: PsiElement): Tokenizer<*> = when (element) {
+		is CovComment, is CovSymbol -> super.getTokenizer(element)
+		is CovString -> super.getTokenizer(element).takeIf { it != EMPTY_TOKENIZER } ?: TEXT_TOKENIZER
+		else -> EMPTY_TOKENIZER
+	}
+}
+
+class CovNamesValidator : NamesValidator, RenameInputValidator {
+	override fun isKeyword(s: String, project: Project?) = s in COV_KEYWORDS
+	override fun isInputValid(s: String, o: PsiElement, c: ProcessingContext) = isIdentifier(s, o.project)
+	override fun getPattern(): ElementPattern<out PsiElement> = PlatformPatterns.psiElement().with(object :
+			PatternCondition<PsiElement>("") {
+		override fun accepts(element: PsiElement, context: ProcessingContext?) =
+				(element as? PomTargetPsiElement)?.navigationElement is CovSymbol
+	})
+
+	override fun isIdentifier(name: String, project: Project?) = with(CovLexerAdapter()) {
+		start(name)
+		tokenType == CovTypes.SYM && tokenEnd == name.length
+	}
+}
+
+const val SHORT_TEXT_MAX = 8
+const val LONG_TEXT_MAX = 16
+private fun cutText(it: String, textMax: Int) = if (it.length <= textMax) it else "${it.take(textMax)}…"
+
+class CovBreadCrumbProvider : BreadcrumbsProvider {
+	override fun getLanguages() = arrayOf(CovLanguage)
+	override fun acceptElement(o: PsiElement) = o is CovFunctionDeclaration ||
+			o is CovStructDeclaration ||
+			o is CovNamespaceDeclaration
+
+	override fun getElementTooltip(o: PsiElement) = when (o) {
+		is CovFunctionDeclaration -> "function: <${o.text}>"
+		is CovStructDeclaration -> "struct: <${o.text}>"
+		is CovNamespaceDeclaration -> "namespace: <${o.text}>"
+		else -> "??"
+	}
+
+	override fun getElementInfo(o: PsiElement): String = cutText(when (o) {
+		is CovFunctionDeclaration -> o.symbol.text
+		is CovStructDeclaration -> o.symbol.text
+		is CovNamespaceDeclaration -> o.symbol.text
+		else -> "??"
+	}, SHORT_TEXT_MAX)
 }
