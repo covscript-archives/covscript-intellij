@@ -202,13 +202,13 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovVariableDeclaration -> VARIABLE_ICON
 				is CovNamespaceDeclaration -> NAMESPACE_ICON
 				is CovTryCatchStatement -> TRY_CATCH_ICON
-				is CovIfStatement -> IF_ELSE_ICON
 				is CovBlockStatement -> BLOCK_ICON
+				is CovSwitchStatement -> SWITCH_ICON
+				is CovCollapsedStatement -> COLLAPSED_ICON
+				is CovIfStatement,
 				is CovForStatement,
 				is CovLoopUntilStatement,
 				is CovWhileStatement -> CONTROL_FLOW_ICON
-				is CovSwitchStatement -> SWITCH_ICON
-				is CovCollapsedStatement -> COLLAPSED_ICON
 				else -> COV_BIG_ICON
 			}
 		}

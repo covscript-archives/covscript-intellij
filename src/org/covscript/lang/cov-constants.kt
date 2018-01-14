@@ -42,7 +42,6 @@ import javax.swing.Icon
 @JvmField val COLLAPSED_ICON = IconLoader.getIcon("/nodes/annotationtype.png")
 @JvmField val VARIABLE_ICON = IconLoader.getIcon("/nodes/variable.png")
 @JvmField val TRY_CATCH_ICON = IconLoader.getIcon("/nodes/exceptionClass.png")
-@JvmField val IF_ELSE_ICON = IconLoader.getIcon("/nodes/SecurityRole.png")
 @JvmField val SWITCH_ICON = IconLoader.getIcon("/nodes/deploy.png")
 @JvmField val BLOCK_ICON = IconLoader.getIcon("/nodes/anonymousClass.png")
 
