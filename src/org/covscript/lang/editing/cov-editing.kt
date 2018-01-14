@@ -220,7 +220,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovFunctionDeclaration -> "function ${o.symbol.text}"
 				is CovStructDeclaration -> "struct ${o.symbol.text}"
 				is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
-				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate}"
+				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.let { "iterate" } ?: "to"}"
 				is CovLoopUntilStatement -> "loop${o.expression?.run { " until $text" } ?: ""}"
 				is CovWhileStatement -> "while ${o.expression.text}"
 				is CovTryCatchStatement -> "try catch ${o.symbol.text}"
