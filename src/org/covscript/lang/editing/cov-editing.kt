@@ -88,8 +88,7 @@ class CovNamesValidator : NamesValidator, RenameInputValidator {
 	}
 }
 
-const val SHORT_TEXT_MAX = 16
-const val LONG_TEXT_MAX = 32
+const val TEXT_MAX = 16
 private fun cutText(it: String, textMax: Int) = if (it.length <= textMax) it else "${it.take(textMax)}…"
 private val PsiElement.isBlockStructure
 	get() = this is CovBlockStatement ||
@@ -130,7 +129,7 @@ class CovBreadCrumbProvider : BreadcrumbsProvider {
 		is CovBlockStatement -> "begin block"
 		is CovIfStatement -> "if ${o.expression}"
 		else -> "??"
-	}, SHORT_TEXT_MAX)
+	}, TEXT_MAX)
 }
 
 class CovFoldingBuilder : FoldingBuilderEx() {
@@ -149,7 +148,7 @@ class CovFoldingBuilder : FoldingBuilderEx() {
 			CovTypes.IF_STATEMENT -> "if…"
 			CovTypes.ARRAY_LITERAL -> "{…}"
 			else -> "??"
-		}, SHORT_TEXT_MAX)
+		}, TEXT_MAX)
 	}
 
 	override fun isCollapsedByDefault(node: ASTNode) = false
@@ -200,16 +199,16 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovFile -> COV_ICON
 				is CovFunctionDeclaration -> FUNCTION_ICON
 				is CovStructDeclaration -> STRUCT_ICON
+				is CovVariableDeclaration -> VARIABLE_ICON
 				is CovNamespaceDeclaration -> NAMESPACE_ICON
+				is CovTryCatchStatement -> TRY_CATCH_ICON
+				is CovIfStatement -> IF_ELSE_ICON
+				is CovBlockStatement -> BLOCK_ICON
 				is CovForStatement,
-				is CovIfStatement,
-				is CovBlockStatement,
 				is CovLoopUntilStatement,
-				is CovWhileStatement,
-				is CovTryCatchStatement,
-				is CovSwitchStatement -> CONTROL_FLOW_ICON
+				is CovWhileStatement -> CONTROL_FLOW_ICON
+				is CovSwitchStatement -> SWITCH_ICON
 				is CovCollapsedStatement -> COLLAPSED_ICON
-			// is CovArrayLiteral -> COV_ICON
 				else -> COV_BIG_ICON
 			}
 		}
@@ -221,25 +220,36 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovFunctionDeclaration -> "function ${o.symbol.text}"
 				is CovStructDeclaration -> "struct ${o.symbol.text}"
 				is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
-				is CovForStatement -> "for ${o.symbol.text}"
-				is CovArrayLiteral -> "array literal"
-				is CovLoopUntilStatement -> "loop ${o.expression}"
-				is CovWhileStatement -> "while ${o.expression}"
-				is CovTryCatchStatement -> "try catch ${o.symbol}"
+				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate}"
+				is CovLoopUntilStatement -> "loop${o.expression?.run { " until $text" } ?: ""}"
+				is CovWhileStatement -> "while ${o.expression.text}"
+				is CovTryCatchStatement -> "try catch ${o.symbol.text}"
 				is CovSwitchStatement -> "switch statement"
 				is CovCollapsedStatement -> "collapsed block"
 				is CovBlockStatement -> "begin block"
-				is CovIfStatement -> "if ${o.expression}"
+				is CovVariableDeclaration -> "var ${o.symbol.text}"
+				is CovIfStatement -> "if ${o.expression.text}"
 				else -> "??"
 			}
-		}, LONG_TEXT_MAX)
+		}, TEXT_MAX)
 
 		override fun getLocationString() = ""
 		override fun getLocationPrefix() = ""
 		override fun getLocationSuffix() = ""
 		override fun getChildrenBase(): List<CovStructureElement> = element.let { o ->
 			@Suppress("UNCHECKED_CAST") when (o) {
-			// TODO
+				is CovFile -> o.children.mapNotNull { (it as? CovStatement)?.allBlockStructure }
+				is CovFunctionDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
+				is CovStructDeclaration -> o.functionDeclarationList + o.variableDeclarationList
+				is CovNamespaceDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
+				is CovForStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
+				is CovLoopUntilStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
+				is CovWhileStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
+				is CovTryCatchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.allBlockStructure } }
+				is CovSwitchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.allBlockStructure } }
+				is CovBlockStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
+				is CovIfStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.allBlockStructure } }
+				is PsiElement -> o.children.mapNotNull { (it as? CovStatement)?.allBlockStructure }
 				else -> emptyList()
 			}.map(::CovStructureElement)
 		}

@@ -47,6 +47,9 @@ Functions provided:<br/>
 		<runConfigurationProducer implementation="org.covscript.lang.execution.CovRunConfigurationProducer"/>
 		<sdkType implementation="org.covscript.lang.module.CovSdkType"/>
 		<breadcrumbsInfoProvider implementation="org.covscript.lang.editing.CovBreadCrumbProvider"/>
+		<lang.psiStructureViewFactory
+				language="CovScript"
+				implementationClass="org.covscript.lang.editing.CovStructureViewFactory"/>
 		<lang.foldingBuilder
 				language="CovScript"
 				implementationClass="org.covscript.lang.editing.CovFoldingBuilder"/>

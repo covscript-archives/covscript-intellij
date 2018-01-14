@@ -112,7 +112,9 @@ blockStatement ::=
 
 statement ::=
    primaryStatement
- | collapsedStatement
+ | collapsedStatement {
+	methods=[getAllBlockStructure]
+}
 
 collapsedStatement ::= COLLAPSER_BEGIN primaryStatement? COLLAPSER_END
 
@@ -134,7 +136,9 @@ primaryStatement ::=
  | namespaceDeclaration
  | break
  | continue
- | expression
+ | expression {
+	methods=[getBlockStructures]
+}
 
 boolean ::= true | false
 newExpression ::= (NEW_KEYWORD | GCNEW_KEYWORD) dotChain
