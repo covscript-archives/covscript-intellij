@@ -49,6 +49,18 @@ class CovReplaceWithTextIntention(
 	}
 }
 
+class CovReplaceWithElementIntention(
+		private val element: PsiElement,
+		private val new: PsiElement,
+		private val info: String) : BaseIntentionAction() {
+	override fun getText() = info
+	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
+	override fun getFamilyName() = COV_NAME
+	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
+		element.replace(new)
+	}
+}
+
 class CovBlockToStatementIntention(
 		private val element: CovBlockStatement) : BaseIntentionAction() {
 	override fun getText() = "Remove unnecessary block"
@@ -59,10 +71,6 @@ class CovBlockToStatementIntention(
 			element.delete()
 			return
 		}
-		element.replace(PsiFileFactory
-				.getInstance(project)
-				.createFileFromText(CovLanguage, element.bodyOfSomething.text)
-				.let { it as? CovFile }
-				?.firstChild ?: return)
+		element.replace(element.bodyOfSomething.statementList.firstOrNull() ?: return)
 	}
 }

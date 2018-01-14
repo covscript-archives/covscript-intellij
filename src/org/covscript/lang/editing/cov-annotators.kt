@@ -29,11 +29,11 @@ class CovAnnotator : Annotator {
 					else -> holder.createErrorAnnotation(element, "Char literal cannot be more than 1 character")
 				}
 			}
-			is CovBlockStatement -> {
-				val list = element.bodyOfSomething.statementList
-				if (list.size <= 1) holder.createWeakWarningAnnotation(element, "Unnecessary block declaration")
+			is CovBlockStatement -> if (element.bodyOfSomething.statementList.size <= 1)
+				holder.createWeakWarningAnnotation(element, "Unnecessary block declaration")
 						.registerFix(CovBlockToStatementIntention(element))
-			}
+			is CovWhileStatement -> if (element.expression.text == "true") holder.createWeakWarningAnnotation(element, "Infinite while loop")
+					.registerFix(CovReplaceWithTextIntention(element, "loop\n${element.bodyOfSomething.text}end", "Replace with loop"))
 			is CovExpression -> {
 				if (element.parent is CovExpression) return
 				val left = element.leftPrimaryExprOrNull() ?: return
@@ -42,7 +42,7 @@ class CovAnnotator : Annotator {
 				val infoText = "Constant folding is possible"
 				when {
 					left.string != null && right.string != null -> {
-						if (op.text == "+") holder.createInfoAnnotation(element, infoText)
+						if (op.text == "+") holder.createWeakWarningAnnotation(element, infoText)
 								.registerFix(CovReplaceWithTextIntention(element,
 										"${left.text.dropLast(1)}${right.text.drop(1)}",
 										"Replace with concatenated string"))
@@ -52,16 +52,22 @@ class CovAnnotator : Annotator {
 						val leftDec = BigDecimal(left.text)
 						val rightDec = BigDecimal(right.text)
 						val fixText = "Replace with calculated result"
-						when (op.text) {
-							"+" -> holder.createInfoAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
-									(leftDec + rightDec).toPlainString(), fixText))
-							"-" -> holder.createInfoAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
-									(leftDec - rightDec).toPlainString(), fixText))
-							"*" -> holder.createInfoAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
-									(leftDec * rightDec).toPlainString(), fixText))
-							"/" -> holder.createInfoAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
-									(leftDec / rightDec).toPlainString(), fixText))
-						}
+						holder.createInfoAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
+								when (op.text) {
+									"+" -> (leftDec + rightDec).toPlainString()
+									"-" -> (leftDec - rightDec).toPlainString()
+									"*" -> (leftDec * rightDec).toPlainString()
+									"/" -> (leftDec / rightDec).toPlainString()
+									"%" -> (leftDec % rightDec).toPlainString()
+									"^" -> (leftDec.pow(right.text.toIntOrNull() ?: return)).toPlainString()
+									">" -> (leftDec > rightDec).toString()
+									">=" -> (leftDec >= rightDec).toString()
+									"<" -> (leftDec < rightDec).toString()
+									"<=" -> (leftDec <= rightDec).toString()
+									"==" -> (leftDec == rightDec).toString()
+									"!=" -> (leftDec != rightDec).toString()
+									else -> return
+								}, fixText))
 					}
 				}
 			}
