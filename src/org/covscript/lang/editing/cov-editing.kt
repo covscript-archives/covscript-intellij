@@ -1,5 +1,6 @@
 package org.covscript.lang.editing
 
+import com.intellij.codeInsight.editorActions.JavaLikeQuoteHandler
 import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler
 import com.intellij.ide.structureView.*
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
@@ -25,6 +26,7 @@ import com.intellij.ui.breadcrumbs.BreadcrumbsProvider
 import com.intellij.util.ProcessingContext
 import org.covscript.lang.*
 import org.covscript.lang.psi.*
+
 
 class CovBraceMatcher : PairedBraceMatcher {
 	companion object {
@@ -56,13 +58,9 @@ class CovBraceMatcher : PairedBraceMatcher {
 class CovCommenter : Commenter {
 	override fun getCommentedBlockCommentPrefix() = blockCommentPrefix
 	override fun getCommentedBlockCommentSuffix() = blockCommentSuffix
-	override fun getBlockCommentPrefix() = null
-	override fun getBlockCommentSuffix() = null
+	override fun getBlockCommentPrefix(): String? = null
+	override fun getBlockCommentSuffix(): String? = null
 	override fun getLineCommentPrefix() = "# "
-}
-
-class CovQuoteHandler : SimpleTokenSetQuoteHandler(CovTokenType.STRINGS) {
-	override fun hasNonClosedLiteral(editor: Editor?, iterator: HighlighterIterator?, offset: Int) = true
 }
 
 class CovSpellCheckingStrategy : SpellcheckingStrategy() {
@@ -89,6 +87,7 @@ class CovNamesValidator : NamesValidator, RenameInputValidator {
 }
 
 const val TEXT_MAX = 16
+const val LONG_TEXT_MAX = 24
 private fun cutText(it: String, textMax: Int) = if (it.length <= textMax) it else "${it.take(textMax)}…"
 private val PsiElement.isBlockStructure
 	get() = this is CovBlockStatement ||
@@ -154,9 +153,9 @@ class CovFoldingBuilder : FoldingBuilderEx() {
 	override fun isCollapsedByDefault(node: ASTNode) = false
 	override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean) = SyntaxTraverser
 			.psiTraverser(root)
-			.forceDisregardTypes { it == GeneratedParserUtilBase.DUMMY_BLOCK }
+			.forceDisregardTypes(GeneratedParserUtilBase.DUMMY_BLOCK::equals)
 			.traverse()
-			.filter { it.isBlockStructure }
+			.filter(PsiElement::isBlockStructure)
 			.map { FoldingDescriptor(it, it.textRange) }
 			.toList()
 			.toTypedArray()
@@ -220,7 +219,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovFunctionDeclaration -> "function ${o.symbol.text}"
 				is CovStructDeclaration -> "struct ${o.symbol.text}"
 				is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
-				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.let { "iterate" } ?: "to"}"
+				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.run { "iterate ${expression.text}" } ?: "to"}"
 				is CovLoopUntilStatement -> "loop${o.expression?.run { " until $text" } ?: ""}"
 				is CovWhileStatement -> "while ${o.expression.text}"
 				is CovTryCatchStatement -> "try catch ${o.symbol.text}"
@@ -231,7 +230,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovIfStatement -> "if ${o.expression.text}"
 				else -> "??"
 			}
-		}, TEXT_MAX)
+		}, LONG_TEXT_MAX)
 
 		override fun getLocationString() = ""
 		override fun getLocationPrefix() = ""

@@ -12,6 +12,7 @@ Functions provided:<br/>
   <li>Syntax highlighting, error reporting, completions</li>
   <li>Quick fixes and semantic-based highlights</li>
   <li>SDK configurations and code execution</li>
+  <li>Bread crumbs, spell checking, code folding, structure view</li>
 </ul>
 ]]></description>
 
@@ -19,6 +20,7 @@ Functions provided:<br/>
 1.2<br/>
 <ul>
   <li>Bug fixes</li>
+  <li>Bread crumbs, spell checking, code folding, structure view supports</li>
 </ul>
 
 <br/>
@@ -77,12 +79,6 @@ Functions provided:<br/>
 		<moduleType
 				id="COV_MODULE_TYPE"
 				implementationClass="org.covscript.lang.module.CovModuleType"/>
-		<quoteHandler
-				fileType="CovScript"
-				className="org.covscript.lang.editing.CovQuoteHandler"/>
-		<quoteHandler
-				fileType="CovScript Package"
-				className="org.covscript.lang.editing.CovQuoteHandler"/>
 		<additionalTextAttributes scheme="Darcula" file="/colorSchemes/CovColors.xml"/>
 		<additionalTextAttributes scheme="Default" file="/colorSchemes/CovColors.xml"/>
 	</extensions>

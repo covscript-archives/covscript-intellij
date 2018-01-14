@@ -21,9 +21,11 @@ import org.covscript.lang.psi.CovTypes;
 
 EOL=\n
 COMMENT=#[^\n]*{EOL}
-INCOMPLETE_STRING=\"([^\"\\]|\\[^])*
+INCOMPLETE_STRING=\"([^\"\\\n]|\\[^])*
 STRING_LITERAL={INCOMPLETE_STRING}\"
-INCOMPLETE_CHAR='([^'\\]|\\[^])*
+INCOMPLETE_COLLAPSING_STRING=\"([^\"\\]|\\[^])*
+COLLAPSING_STRING_LITERAL={INCOMPLETE_COLLAPSING_STRING}\"
+INCOMPLETE_CHAR='([^'\\\n]|\\[^])*
 CHAR_LITERAL={INCOMPLETE_CHAR}'
 
 SYM=[a-zA-Z_][0-9a-zA-Z_]*
@@ -119,6 +121,8 @@ OTHERWISE=[^ \t\r]
 {WHITE_SPACE}+ { return TokenType.WHITE_SPACE; }
 
 <COLLAPSING> {COLLAPSER_END} { yybegin(YYINITIAL); return CovTypes.COLLAPSER_END; }
+<COLLAPSING> {INCOMPLETE_COLLAPSING_STRING} { return TokenType.BAD_CHARACTER; }
+<COLLAPSING> {COLLAPSING_STRING_LITERAL} { return CovTypes.STR; }
 <COLLAPSING> {EOL} { return TokenType.WHITE_SPACE; }
 <YYINITIAL> {COLLAPSER_END} { return TokenType.BAD_CHARACTER; }
 
@@ -207,9 +211,9 @@ OTHERWISE=[^ \t\r]
 {COMMENT} { return CovTypes.LINE_COMMENT; }
 {EOL} { return CovTypes.EOL; }
 
-{STRING_LITERAL} {  return CovTypes.STR; }
+{STRING_LITERAL} { return CovTypes.STR; }
 {INCOMPLETE_STRING} { return TokenType.BAD_CHARACTER; }
-{CHAR_LITERAL} {  return CovTypes.CHAR; }
+{CHAR_LITERAL} { return CovTypes.CHAR; }
 {INCOMPLETE_CHAR} { return TokenType.BAD_CHARACTER; }
 {SYM} { return CovTypes.SYM; }
 {NUM} { return CovTypes.NUM; }

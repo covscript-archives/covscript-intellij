@@ -20,7 +20,10 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 
 	public CovRunConfigurationEditor(@NotNull CovRunConfiguration configuration) {
 		sdkComboBox.getComboBox().setSelectedItem(configuration.getSdkUsed());
-		sdkComboBox.addActionListener(actionEvent -> covExecutiveField.setText(sdkComboBox.getSdkHomePath()));
+		sdkComboBox.addPropertyChangeListener(changeEvent -> {
+			configuration.setSdkUsed(sdkComboBox.getSelectedSdk());
+			covExecutiveField.setText(configuration.getCovExecutive());
+		});
 		covExecutiveField.setText(configuration.getCovExecutive());
 		String exeTitle = "Select a CovScript Interpreter";
 		String exeDescription = exeTitle + " to execute your script";
