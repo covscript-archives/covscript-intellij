@@ -10,7 +10,6 @@ import com.intellij.openapi.roots.ProjectRootManager
 import org.covscript.lang.*
 import java.nio.file.*
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.timer
 
 class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 	init {
@@ -57,7 +56,10 @@ fun versionOf(homePath: String) = try {
 	val process = Runtime.getRuntime().exec("$path --silent")
 	//language=CovScript
 	process.outputStream.use {
-		it.write("runtime.info()\n".toByteArray())
+		it.write("""
+runtime.info()
+system.exit(0)
+""".toByteArray())
 		it.flush()
 	}
 	process.waitFor(GET_VERSION_TIME_PERIOD, TimeUnit.MILLISECONDS)
@@ -65,8 +67,10 @@ fun versionOf(homePath: String) = try {
 		val reader = it.bufferedReader()
 		var res = reader.readLine().trim()
 		while (!res.startsWith("version", true)) res = reader.readLine()
-		reader.close()
-		process.destroy()
+		forceRun {
+			reader.close()
+			process.destroy()
+		}
 		res.substringAfter(':').trim()
 	}
 } catch (e: Throwable) {
