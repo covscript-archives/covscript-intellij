@@ -24,7 +24,6 @@ import javax.swing.Icon
 @NonNls const val COV_RUN_CONFIG_ID = "COV_RUN_CONFIG_ID"
 @NonNls const val POSSIBLE_SDK_HOME_LINUX = "/usr/share/covscript"
 @NonNls const val POSSIBLE_SDK_HOME_WINDOWS = "C:/Program Files"
-@NonNls const val COV_VERSION_COMMAND = """echo "runtime.info ()" | cs_repl --silent"""
 
 @NonNls const val COV_WEBSITE = "http://covscript.org"
 

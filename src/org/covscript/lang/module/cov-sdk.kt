@@ -20,17 +20,16 @@ class CovSdkType : SdkType(COV_NAME) {
 	override fun suggestSdkName(s: String?, p1: String?) = COV_SDK_NAME
 	override fun suggestHomePath() = if (SystemInfo.isWindows) POSSIBLE_SDK_HOME_WINDOWS else POSSIBLE_SDK_HOME_LINUX
 	override fun createAdditionalDataConfigurable(model: SdkModel, modificator: SdkModificator) = null
-	override fun getVersionString(sdk: Sdk) = "Stable"
-	override fun getVersionString(sdkHome: String?) = "Stable"
+	override fun getVersionString(sdkHome: String?) = versionOf(sdkHome.orEmpty())
 	override fun saveAdditionalData(additionalData: SdkAdditionalData, element: Element) = Unit // leave blank
 	override fun getDownloadSdkUrl() = COV_WEBSITE
 	override fun setupSdkPaths(sdk: Sdk, sdkModel: SdkModel): Boolean {
-		val sdkModificator = sdk.sdkModificator
-		sdkModificator.versionString = getVersionString(sdk)
+		val modificator = sdk.sdkModificator
+		modificator.versionString = getVersionString(sdk)
 		sdk.homeDirectory
 				?.findChild("imports")
-				?.let { sdkModificator.addRoot(it, OrderRootType.CLASSES) }
-		sdkModificator.commitChanges()
+				?.let { modificator.addRoot(it, OrderRootType.CLASSES) }
+		modificator.commitChanges()
 		return true
 	}
 

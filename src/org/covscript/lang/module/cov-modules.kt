@@ -5,9 +5,11 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.*
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
-import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.roots.ProjectRootManager
 import org.covscript.lang.*
 import java.nio.file.*
+import java.util.concurrent.TimeUnit
 
 class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 	init {
@@ -46,6 +48,20 @@ class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
 		private const val ID = "COV_MODULE_TYPE"
 		@JvmStatic val instance: CovModuleType get() = ModuleTypeManager.getInstance().findByID(ID) as CovModuleType
 	}
+}
+
+fun versionOf(homePath: String) = try {
+	val path = Paths.get(homePath, "bin", "cs_repl").toAbsolutePath().toString()
+	val p = Runtime.getRuntime().exec("$path --silent")
+	//language=CovScript
+	p.outputStream.write("runtime.info()".toByteArray())
+	p.waitFor(300L, TimeUnit.MILLISECONDS)
+	p.inputStream.bufferedReader().run {
+		readLine()
+		readLine()
+	}.substringAfter(':').trim()
+} catch (e: Throwable) {
+	"Unknown"
 }
 
 fun validateCovSDK(pathString: String): Boolean {

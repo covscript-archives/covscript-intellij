@@ -34,7 +34,17 @@ class CovAnnotator : Annotator {
 						.registerFix(CovBlockToStatementIntention(element))
 			is CovWhileStatement -> if (element.expression.text == "true") holder.createWeakWarningAnnotation(element, "Infinite while loop")
 					.registerFix(CovReplaceWithTextIntention(element, "loop\n${element.bodyOfSomething.text}end", "Replace with loop"))
+			is CovLoopUntilStatement -> element.untilClause?.run {
+				if (expression.text == "false") holder.createWeakWarningAnnotation(element, "Infinite loop until")
+						.registerFix(CovRemoveElementIntention(this, "Remove until clause"))
+			}
 			is CovExpression -> {
+				run unwrapBrackets@ {
+					val innerExpr = element.primaryExprOrNull()?.expression ?: return@unwrapBrackets
+					if (innerExpr.primaryExprOrNull()?.expression != null)
+						holder.createWeakWarningAnnotation(element, "Too many brackets")
+								.registerFix(CovReplaceWithElementIntention(element, innerExpr, "Remove outer brackets"))
+				}
 				if (element.parent is CovExpression) return
 				val left = element.leftPrimaryExprOrNull() ?: return
 				val right = element.expression?.primaryExprOrNull() ?: return
@@ -52,7 +62,7 @@ class CovAnnotator : Annotator {
 						val leftDec = BigDecimal(left.text)
 						val rightDec = BigDecimal(right.text)
 						val fixText = "Replace with calculated result"
-						holder.createInfoAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
+						holder.createWeakWarningAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
 								when (op.text) {
 									"+" -> (leftDec + rightDec).toPlainString()
 									"-" -> (leftDec - rightDec).toPlainString()
@@ -85,13 +95,13 @@ class CovAnnotator : Annotator {
 					registerFix(CovCollapsedBlockToOneStatementIntention(element))
 				}
 				else holder.createWarningAnnotation(element, "Empty collapsed block")
-						.registerFix(CovRemoveBlockIntention(element, "Remove empty collapsed block"))
+						.registerFix(CovRemoveElementIntention(element, "Remove empty collapsed block"))
 		}
 	}
+}
 
-	private fun dealWithEscape(element: PsiElement, index: Int, char: Char, holder: AnnotationHolder) {
-		val range = TextRange(element.textRange.startOffset + index - 1, element.textRange.startOffset + index + 1)
-		if (char !in "abfnrtv0\\\"'") holder.createErrorAnnotation(range, "Illegal escape character")
-		else holder.createInfoAnnotation(range, null).textAttributes = CovSyntaxHighlighter.STRING_ESCAPE
-	}
+private fun dealWithEscape(element: PsiElement, index: Int, char: Char, holder: AnnotationHolder) {
+	val range = TextRange(element.textRange.startOffset + index - 1, element.textRange.startOffset + index + 1)
+	if (char !in "abfnrtv0\\\"'") holder.createErrorAnnotation(range, "Illegal escape character")
+	else holder.createInfoAnnotation(range, null).textAttributes = CovSyntaxHighlighter.STRING_ESCAPE
 }

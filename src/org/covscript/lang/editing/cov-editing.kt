@@ -1,7 +1,5 @@
 package org.covscript.lang.editing
 
-import com.intellij.codeInsight.editorActions.JavaLikeQuoteHandler
-import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler
 import com.intellij.ide.structureView.*
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
 import com.intellij.ide.util.treeView.smartTree.SortableTreeElement
@@ -13,7 +11,6 @@ import com.intellij.lang.refactoring.NamesValidator
 import com.intellij.navigation.LocationPresentation
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.highlighter.HighlighterIterator
 import com.intellij.openapi.project.Project
 import com.intellij.patterns.*
 import com.intellij.pom.PomTargetPsiElement
@@ -46,8 +43,7 @@ class CovBraceMatcher : PairedBraceMatcher {
 				BracePair(CovTypes.SWITCH_KEYWORD, CovTypes.END_KEYWORD, false),
 				BracePair(CovTypes.CASE_KEYWORD, CovTypes.END_KEYWORD, false),
 				BracePair(CovTypes.DEFAULT_KEYWORD, CovTypes.END_KEYWORD, false),
-				BracePair(CovTypes.COLLAPSER_BEGIN, CovTypes.COLLAPSER_END, false)
-		)
+				BracePair(CovTypes.COLLAPSER_BEGIN, CovTypes.COLLAPSER_END, false))
 	}
 
 	override fun getCodeConstructStart(psiFile: PsiFile?, openingBraceOffset: Int) = openingBraceOffset
@@ -120,7 +116,7 @@ class CovBreadCrumbProvider : BreadcrumbsProvider {
 		is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
 		is CovForStatement -> "for ${o.symbol.text}"
 		is CovArrayLiteral -> "array literal"
-		is CovLoopUntilStatement -> "loop ${o.expression}"
+		is CovLoopUntilStatement -> "loop ${o.untilClause?.expression}"
 		is CovWhileStatement -> "while ${o.expression}"
 		is CovTryCatchStatement -> "try catch ${o.symbol}"
 		is CovSwitchStatement -> "switch statement"
@@ -220,7 +216,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovStructDeclaration -> "struct ${o.symbol.text}"
 				is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
 				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.run { "iterate ${expression.text}" } ?: "to"}"
-				is CovLoopUntilStatement -> "loop${o.expression?.run { " until $text" } ?: ""}"
+				is CovLoopUntilStatement -> "loop${o.untilClause?.run { " until ${expression.text}" } ?: ""}"
 				is CovWhileStatement -> "while ${o.expression.text}"
 				is CovTryCatchStatement -> "try catch ${o.symbol.text}"
 				is CovSwitchStatement -> "switch statement"

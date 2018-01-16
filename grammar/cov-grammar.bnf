@@ -94,8 +94,10 @@ whileStatement ::=
 loopUntilStatement ::=
  LOOP_KEYWORD endOfLine
   bodyOfSomething
- (UNTIL_KEYWORD expression endOfLine)?
+ untilClause?
  END_KEYWORD
+
+untilClause ::= UNTIL_KEYWORD expression endOfLine
 
 forStatement ::=
  FOR_KEYWORD symbol (forTo | forIterate) endOfLine
@@ -214,5 +216,5 @@ suffixedExpression ::=
   | DEC_OP
  )*
 
-dotChain ::= symbol (DOT symbol)*
+private dotChain ::= symbol (DOT symbol)*
 
