@@ -1,11 +1,11 @@
-package org.covscript.lang
+package org.covscript.lang.action
 
 import com.intellij.CommonBundle
 import com.intellij.ide.actions.CreateFileAction
-import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.*
+import org.covscript.lang.*
 import java.time.LocalDate
 
 class NewCovFile : CreateFileAction(CAPTION, "", COV_ICON), DumbAware {

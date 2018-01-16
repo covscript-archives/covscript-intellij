@@ -95,7 +95,7 @@ Functions provided:<br/>
 	<actions>
 		<action
 				id="Cov.NewCovFile"
-				class="org.covscript.lang.NewCovFile"
+				class="org.covscript.lang.action.NewCovFile"
 				text="CovScript File"
 				description="Create a New CovScript File">
 			<add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile"/>

@@ -1,15 +1,19 @@
 package org.covscript.lang.module
 
+import com.google.common.util.concurrent.SimpleTimeLimiter
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.*
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.Ref
 import org.covscript.lang.*
 import java.nio.file.*
 import java.util.concurrent.TimeUnit
+import java.util.stream.Collectors
 
 class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 	init {
@@ -50,31 +54,46 @@ class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
 	}
 }
 
-const val GET_VERSION_TIME_PERIOD = 300L
-fun versionOf(homePath: String) = try {
-	val path = Paths.get(homePath, "bin", "cs_repl").toAbsolutePath().toString()
-	val process = Runtime.getRuntime().exec("$path --silent")
-	//language=CovScript
-	process.outputStream.use {
-		it.write("""
+const val GET_VERSION_TIME_PERIOD = 500L
+//language=CovScript
+fun versionOf(homePath: String, timeLimit: Long = GET_VERSION_TIME_PERIOD) = executeInRepl(homePath, """
 runtime.info()
 system.exit(0)
-""".toByteArray())
-		it.flush()
+""", timeLimit)
+		.firstOrNull { it.startsWith("version", true) }
+		?.run { substringAfter(':').trim() }
+		?: "Unknown"
+
+fun executeInRepl(
+		homePath: String,
+		code: String,
+		timeLimit: Long): List<String> {
+	val processRef = Ref.create<Process>()
+	return try {
+		var output: List<String> = emptyList()
+		val path = Paths.get(homePath, "bin", "cs_repl").toAbsolutePath().toString()
+		SimpleTimeLimiter().callWithTimeout({
+			val process: Process = Runtime.getRuntime().exec("$path --silent")
+			processRef.set(process)
+			process.outputStream.use {
+				it.write(code.toByteArray())
+				it.flush()
+			}
+			process.waitFor(timeLimit, TimeUnit.MILLISECONDS)
+			process.inputStream.use {
+				val reader = it.bufferedReader()
+				output = reader.lines().collect(Collectors.toList())
+				forceRun {
+					reader.close()
+					process.destroy()
+				}
+			}
+		}, timeLimit + 100, TimeUnit.MILLISECONDS, true)
+		output
+	} catch (e: Throwable) {
+		processRef.get()?.destroy()
+		emptyList()
 	}
-	process.waitFor(GET_VERSION_TIME_PERIOD, TimeUnit.MILLISECONDS)
-	process.inputStream.use {
-		val reader = it.bufferedReader()
-		var res = reader.readLine().trim()
-		while (!res.startsWith("version", true)) res = reader.readLine()
-		forceRun {
-			reader.close()
-			process.destroy()
-		}
-		res.substringAfter(':').trim()
-	}
-} catch (e: Throwable) {
-	"Unknown"
 }
 
 fun validateCovSDK(pathString: String): Boolean {
@@ -86,3 +105,5 @@ fun validateCovSDK(pathString: String): Boolean {
 }
 
 fun Path.isExe() = Files.exists(this) and Files.isExecutable(this)
+
+val Project.projectSdk get() = ProjectRootManager.getInstance(this).projectSdk
