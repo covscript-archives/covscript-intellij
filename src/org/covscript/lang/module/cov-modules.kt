@@ -10,6 +10,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import org.covscript.lang.*
 import java.nio.file.*
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.timer
 
 class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 	init {
@@ -50,6 +51,7 @@ class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
 	}
 }
 
+const val GET_VERSION_TIME_PERIOD = 300L
 fun versionOf(homePath: String) = try {
 	val path = Paths.get(homePath, "bin", "cs_repl").toAbsolutePath().toString()
 	val process = Runtime.getRuntime().exec("$path --silent")
@@ -58,14 +60,14 @@ fun versionOf(homePath: String) = try {
 		it.write("runtime.info()\n".toByteArray())
 		it.flush()
 	}
-	process.waitFor(300L, TimeUnit.MILLISECONDS)
+	process.waitFor(GET_VERSION_TIME_PERIOD, TimeUnit.MILLISECONDS)
 	process.inputStream.use {
 		val reader = it.bufferedReader()
-		reader.readLine()
-		val ret = reader.readLine().substringAfter(':').trim()
+		var res = reader.readLine().trim()
+		while (!res.startsWith("version", true)) res = reader.readLine()
 		reader.close()
 		process.destroy()
-		ret
+		res.substringAfter(':').trim()
 	}
 } catch (e: Throwable) {
 	"Unknown"
