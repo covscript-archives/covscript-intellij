@@ -1,5 +1,6 @@
 package org.covscript.lang
 
+import org.covscript.lang.module.executeInRepl
 import org.covscript.lang.module.versionOf
 import org.junit.Test
 import java.nio.file.Paths
@@ -17,5 +18,11 @@ class PathTests {
 	@Test
 	fun version() {
 		versionOf(POSSIBLE_SDK_HOME_LINUX).let(::println)
+	}
+
+	@Test
+	fun codeExecutionTest() {
+		//language=CovScript
+		executeInRepl(POSSIBLE_SDK_HOME_LINUX, "system.out.println(2333)", 1000L).forEach(::println)
 	}
 }
