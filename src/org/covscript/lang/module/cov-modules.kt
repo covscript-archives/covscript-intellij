@@ -52,14 +52,21 @@ class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
 
 fun versionOf(homePath: String) = try {
 	val path = Paths.get(homePath, "bin", "cs_repl").toAbsolutePath().toString()
-	val p = Runtime.getRuntime().exec("$path --silent")
+	val process = Runtime.getRuntime().exec("$path --silent")
 	//language=CovScript
-	p.outputStream.write("runtime.info()".toByteArray())
-	p.waitFor(300L, TimeUnit.MILLISECONDS)
-	p.inputStream.bufferedReader().run {
-		readLine()
-		readLine()
-	}.substringAfter(':').trim()
+	process.outputStream.use {
+		it.write("runtime.info()\n".toByteArray())
+		it.flush()
+	}
+	process.waitFor(300L, TimeUnit.MILLISECONDS)
+	process.inputStream.use {
+		val reader = it.bufferedReader()
+		reader.readLine()
+		val ret = reader.readLine().substringAfter(':').trim()
+		reader.close()
+		process.destroy()
+		ret
+	}
 } catch (e: Throwable) {
 	"Unknown"
 }
