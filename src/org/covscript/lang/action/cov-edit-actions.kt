@@ -21,7 +21,7 @@ import javax.swing.JTextArea
 private class InvalidCovSdkException(val path: String) : RuntimeException()
 class TryEvaluate {
 	private var textLimit = 320
-	private var timeLimit = 1500L
+	private var timeLimit = 2500L
 
 	fun tryEval(editor: Editor, text: String, project: Project?) {
 		try {
@@ -55,11 +55,7 @@ class TryEvaluate {
 		}
 	}
 
-	fun showPopupWindow(
-			result: String,
-			editor: Editor,
-			color: Int,
-			colorDark: Int) {
+	private fun showPopupWindow(result: String, editor: Editor, color: Int, colorDark: Int) {
 		val relativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(editor)
 		if (result.length < textLimit)
 			ApplicationManager.getApplication().invokeLater {
