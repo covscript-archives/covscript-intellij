@@ -9,6 +9,9 @@ import org.covscript.lang.CovSyntaxHighlighter
 import org.covscript.lang.psi.*
 import java.math.BigDecimal
 
+const val EMPTY_CHARACTERS = " \t\r\n"
+const val BEGIN_BLOCK_LEN = 6
+
 class CovAnnotator : Annotator {
 	override fun annotate(element: PsiElement, holder: AnnotationHolder) {
 		when (element) {
@@ -36,8 +39,8 @@ class CovAnnotator : Annotator {
 						.registerFix(CovBlockToStatementIntention(element))
 			is CovWhileStatement -> if (element.expression.text == "true")
 				holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.infinite-while"))
-					.registerFix(CovReplaceWithTextIntention(element, "loop\n${element.bodyOfSomething.text}end",
-							CovBundle.message("cov.lint.replace-with-loop")))
+						.registerFix(CovReplaceWithTextIntention(element, "loop\n${element.bodyOfSomething.text}end",
+								CovBundle.message("cov.lint.replace-with-loop")))
 			is CovLoopUntilStatement -> element.untilClause?.run {
 				if (expression.text == "false") holder.createWeakWarningAnnotation(element,
 						CovBundle.message("cov.lint.infinite-loop-until"))
@@ -94,12 +97,20 @@ class CovAnnotator : Annotator {
 			is CovStructDeclaration -> holder.createInfoAnnotation(element.symbol, null)
 					.textAttributes = CovSyntaxHighlighter.STRUCT_DEFINITION
 			is CovCollapsedStatement ->
-				if (element.primaryStatement != null)
+				if (element.primaryStatement != null) {
 					holder.createInfoAnnotation(element, CovBundle.message("cov.lint.collapsed-block")).run {
 						textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
 						registerFix(CovCollapsedBlockToOneStatementIntention(element))
 					}
-				else holder.createWarningAnnotation(element,
+					val firstLfIndex = element.text.indexOfFirst { it == '\n' }
+					val firstIllegal = element.text.substring(BEGIN_BLOCK_LEN, firstLfIndex)
+							.indexOfFirst { it !in EMPTY_CHARACTERS }
+					if (firstIllegal >= 0) {
+						val start = element.textRange.startOffset
+						holder.createErrorAnnotation(TextRange(start + firstIllegal + BEGIN_BLOCK_LEN, start + firstLfIndex),
+								CovBundle.message("cov.lint.collapsed-char-before-lf"))
+					}
+				} else holder.createWarningAnnotation(element,
 						CovBundle.message("cov.lint.empty-collapsed-block"))
 						.registerFix(CovRemoveElementIntention(element,
 								CovBundle.message("cov.lint.remove-collapsed-block")))

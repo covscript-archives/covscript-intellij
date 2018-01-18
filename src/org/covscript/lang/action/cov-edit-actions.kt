@@ -20,7 +20,7 @@ import javax.swing.JTextArea
 
 private class InvalidCovSdkException(val path: String) : RuntimeException()
 class TryEvaluate {
-	private var textLimit = 360
+	private var textLimit = 320
 	private var timeLimit = 1500L
 
 	fun tryEval(editor: Editor, text: String, project: Project?) {
@@ -105,6 +105,7 @@ class TryEvaluateLiceExpressionAction :
 	}
 
 	override fun update(event: AnActionEvent) {
-		event.presentation.isEnabledAndVisible = event.getData(CommonDataKeys.VIRTUAL_FILE)?.fileType == CovFileType
+		event.presentation.isEnabledAndVisible = event.getData(CommonDataKeys.PROJECT)?.projectSdk != null &&
+				event.getData(CommonDataKeys.VIRTUAL_FILE)?.fileType == CovFileType
 	}
 }
