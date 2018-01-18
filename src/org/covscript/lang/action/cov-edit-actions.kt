@@ -24,7 +24,7 @@ class TryEvaluate {
 	private var textLimit = 360
 	private var timeLimit = 1500L
 
-	fun tryEval(editor: Editor, text: String, project: Project?, popupWhenSuccess: Boolean) {
+	fun tryEval(editor: Editor, text: String, project: Project?) {
 		try {
 			val builder = StringBuilder()
 			var covRoot = ""
@@ -43,10 +43,8 @@ class TryEvaluate {
 				builder.appendln("stderr:")
 				stderr.forEach { builder.appendln(it) }
 			}
-			if (popupWhenSuccess) {
-				if (stderr.isNotEmpty()) showPopupWindow(builder.toString(), editor, 0xE20911, 0xC20022)
-				else showPopupWindow(builder.toString(), editor, 0x0013F9, 0x000CA1)
-			}
+			if (stderr.isNotEmpty()) showPopupWindow(builder.toString(), editor, 0xE20911, 0xC20022)
+			else showPopupWindow(builder.toString(), editor, 0x0013F9, 0x000CA1)
 		} catch (e: UncheckedTimeoutException) {
 			showPopupWindow("Execution timeout.\nChange time limit in Project Structure | SDKs", editor, 0xEDC209, 0xC26500)
 		} catch (e: Throwable) {
@@ -102,7 +100,7 @@ class TryEvaluateLiceExpressionAction :
 	private val core = TryEvaluate()
 	override fun actionPerformed(event: AnActionEvent) {
 		val editor = event.getData(CommonDataKeys.EDITOR) ?: return
-		core.tryEval(editor, editor.selectionModel.selectedText ?: return, event.getData(CommonDataKeys.PROJECT), true)
+		core.tryEval(editor, editor.selectionModel.selectedText ?: return, event.getData(CommonDataKeys.PROJECT))
 	}
 
 	override fun update(event: AnActionEvent) {
