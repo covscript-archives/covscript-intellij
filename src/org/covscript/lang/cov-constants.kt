@@ -5,20 +5,9 @@ import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
 
-@Nls const val COV_NAME = "CovScript"
-@Nls const val COV_PKG_NAME = "CovScript Package"
-@Nls const val COV_EXT_NAME = "CovScript Extension"
 @NonNls const val COV_EXTENSION = "csc"
 @NonNls const val COV_EXT_EXTENSION = "cse"
 @NonNls const val COV_PKG_EXTENSION = "csp"
-
-@Nls const val COV_SDK_NAME = "CovScript SDK"
-@Nls const val COV_DESCRIPTION = "$COV_NAME Source File"
-@Nls const val COV_PKG_DESCRIPTION = "$COV_NAME Package"
-@Nls const val COV_EXT_DESCRIPTION = "$COV_NAME Extension File"
-@Nls const val COV_MODULE_TYPE_DESCRIPTION = "$COV_NAME Module Type"
-
-@Nls const val COV_RUN_CONFIG_DESCRIPTION = "$COV_NAME Run Configuration Type"
 
 @NonNls const val COV_DEFAULT_MODULE_NAME = "my_bizarre_covscript_module"
 @NonNls const val COV_RUN_CONFIG_ID = "COV_RUN_CONFIG_ID"

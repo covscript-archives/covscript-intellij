@@ -145,7 +145,7 @@ class CovColorSettingsPage : ColorSettingsPage {
 
 	override fun getHighlighter() = CovSyntaxHighlighter()
 	override fun getIcon() = COV_ICON
-	override fun getDisplayName() = COV_NAME
+	override fun getDisplayName() = CovBundle.message("cov.name")
 	override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
 	override fun getAdditionalHighlightingTagToDescriptorMap() = KEYS
 	override fun getAttributeDescriptors() = DESCRIPTORS

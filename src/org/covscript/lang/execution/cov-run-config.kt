@@ -19,7 +19,7 @@ import org.jdom.Element
 import java.nio.file.Paths
 
 class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project) :
-		ModuleBasedConfiguration<RunConfigurationModule>(COV_NAME, RunConfigurationModule(project), factory) {
+		ModuleBasedConfiguration<RunConfigurationModule>(CovBundle.message("cov.name"), RunConfigurationModule(project), factory) {
 	private val covSdks get() = ProjectJdkTable.getInstance().getSdksOfType(CovSdkType.instance)
 	private var sdkName = ""
 	var sdkUsed = ProjectRootManager.getInstance(project).projectSdk
@@ -66,9 +66,9 @@ class CovRunConfigurationFactory(type: CovRunConfigurationType) : ConfigurationF
 
 object CovRunConfigurationType : ConfigurationType {
 	override fun getIcon() = COV_BIG_ICON
-	override fun getConfigurationTypeDescription() = COV_RUN_CONFIG_DESCRIPTION
+	override fun getConfigurationTypeDescription() = CovBundle.message("cov.run.config.description")
 	override fun getId() = COV_RUN_CONFIG_ID
-	override fun getDisplayName() = COV_NAME
+	override fun getDisplayName() = CovBundle.message("cov.name")
 	override fun getConfigurationFactories() = arrayOf(CovRunConfigurationFactory(this))
 }
 

@@ -42,10 +42,10 @@ class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 }
 
 class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
-	override fun getName() = COV_NAME
+	override fun getName() = CovBundle.message("cov.name")
 	override fun getNodeIcon(bool: Boolean) = COV_BIG_ICON
 	override fun createModuleBuilder() = CovModuleBuilder()
-	override fun getDescription() = COV_MODULE_TYPE_DESCRIPTION
+	override fun getDescription() = CovBundle.message("cov.module.type")
 
 	companion object InstanceHolder {
 		private const val ID = "COV_MODULE_TYPE"
@@ -67,14 +67,11 @@ system.exit(0)0
 /**
  * @return (stdout, stderr)
  */
-fun executeInRepl(
-		homePath: String,
-		code: String,
-		timeLimit: Long): Pair<List<String>, List<String>> {
+fun executeInRepl(homePath: String, code: String, timeLimit: Long): Pair<List<String>, List<String>> {
 	var processRef: Process? = null
-	return try {
-		var output: List<String> = emptyList()
-		var outputErr: List<String> = emptyList()
+	var output: List<String> = emptyList()
+	var outputErr: List<String> = emptyList()
+	try {
 		val path = Paths.get(homePath, "bin", "cs_repl").toAbsolutePath().toString()
 		SimpleTimeLimiter().callWithTimeout({
 			val process: Process = Runtime.getRuntime().exec("$path --silent")
@@ -86,21 +83,22 @@ fun executeInRepl(
 			process.waitFor(timeLimit, TimeUnit.MILLISECONDS)
 			process.inputStream.use {
 				val reader = it.bufferedReader()
-				output = reader.lines().map { it.trimStart('>') }.collect(Collectors.toList()).dropLast(1)
-				forceRun { reader.close() }
+				output = reader.lines().map {
+					it.trimStart('.', '>')
+				}.collect(Collectors.toList()).dropLast(1)
+				forceRun(reader::close)
 			}
 			process.errorStream.use {
 				val reader = it.bufferedReader()
 				outputErr = reader.lines().collect(Collectors.toList()).dropLast(1)
-				forceRun { reader.close() }
+				forceRun(reader::close)
 			}
-			forceRun { process.destroy() }
+			forceRun(process::destroy)
 		}, timeLimit + 100, TimeUnit.MILLISECONDS, true)
-		output to outputErr
 	} catch (e: Throwable) {
 		processRef?.destroy()
-		emptyList<String>() to emptyList()
 	}
+	return output to outputErr
 }
 
 fun validateCovSDK(pathString: String): Boolean {
