@@ -38,6 +38,17 @@ class CovSdkType : SdkType(CovBundle.message("cov.name")) {
 	}
 }
 
+fun SdkAdditionalData?.toCovSdkData() = this as? CovSdkData
+
+class CovSdkData : SdkAdditionalData {
+	var tryEvaluateTimeLimit = 2500L
+	var tryEvaluateTextLimit = 320
+	override fun clone() = CovSdkData().also {
+		it.tryEvaluateTextLimit = tryEvaluateTextLimit
+		it.tryEvaluateTimeLimit = tryEvaluateTimeLimit
+	}
+}
+
 class CovSdkComboBox : ComboboxWithBrowseButton() {
 	val selectedSdk get() = comboBox.selectedItem as? Sdk
 	val sdkName get() = selectedSdk?.name.orEmpty()
