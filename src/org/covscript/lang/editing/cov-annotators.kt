@@ -4,6 +4,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.covscript.lang.CovBundle
 import org.covscript.lang.CovSyntaxHighlighter
 import org.covscript.lang.psi.*
 import java.math.BigDecimal
@@ -22,46 +23,49 @@ class CovAnnotator : Annotator {
 			}
 			is CovCharLiteral -> {
 				when (element.text.length) {
-					2 -> holder.createErrorAnnotation(element, "Char literal cannot be empty")
-					3 -> if (element.text[1] == '\\') holder.createErrorAnnotation(element, "Escape character expected")
+					2 -> holder.createErrorAnnotation(element, CovBundle.message("cov.lint.char-cannot-empty"))
+					3 -> if (element.text[1] == '\\') holder.createErrorAnnotation(element,
+							CovBundle.message("cov.lint.expect-escape"))
 					4 -> if (element.text[1] == '\\') dealWithEscape(element, 2, element.text[2], holder)
-					else holder.createErrorAnnotation(element, "Char literal cannot be more than 1 character")
-					else -> holder.createErrorAnnotation(element, "Char literal cannot be more than 1 character")
+					else holder.createErrorAnnotation(element, CovBundle.message("cov.lint.char-cannot-big"))
+					else -> holder.createErrorAnnotation(element, CovBundle.message("cov.lint.char-cannot-big"))
 				}
 			}
 			is CovBlockStatement -> if (element.bodyOfSomething.statementList.size <= 1)
-				holder.createWeakWarningAnnotation(element, "Unnecessary block declaration")
+				holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.unnecessary-block"))
 						.registerFix(CovBlockToStatementIntention(element))
-			is CovWhileStatement -> if (element.expression.text == "true") holder.createWeakWarningAnnotation(element, "Infinite while loop")
-					.registerFix(CovReplaceWithTextIntention(element, "loop\n${element.bodyOfSomething.text}end", "Replace with loop"))
+			is CovWhileStatement -> if (element.expression.text == "true")
+				holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.infinite-while"))
+					.registerFix(CovReplaceWithTextIntention(element, "loop\n${element.bodyOfSomething.text}end",
+							CovBundle.message("cov.lint.replace-with-loop")))
 			is CovLoopUntilStatement -> element.untilClause?.run {
-				if (expression.text == "false") holder.createWeakWarningAnnotation(element, "Infinite loop until")
-						.registerFix(CovRemoveElementIntention(this, "Remove until clause"))
+				if (expression.text == "false") holder.createWeakWarningAnnotation(element,
+						CovBundle.message("cov.lint.infinite-loop-until"))
+						.registerFix(CovRemoveElementIntention(this, CovBundle.message("cov.lint.remove-until")))
 			}
 			is CovExpression -> {
 				run unwrapBrackets@ {
 					val innerExpr = element.primaryExprOrNull()?.expression ?: return@unwrapBrackets
 					if (innerExpr.primaryExprOrNull()?.expression != null)
-						holder.createWeakWarningAnnotation(element, "Too many brackets")
-								.registerFix(CovReplaceWithElementIntention(element, innerExpr, "Remove outer brackets"))
+						holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.too-many-brackets"))
+								.registerFix(CovReplaceWithElementIntention(element, innerExpr,
+										CovBundle.message("cov.lint.remove-outer-brackets")))
 				}
 				if (element.parent is CovExpression) return
 				val left = element.leftPrimaryExprOrNull() ?: return
 				val right = element.expression?.primaryExprOrNull() ?: return
 				val op = element.binaryOperator ?: return
-				val infoText = "Constant folding is possible"
+				val infoText = CovBundle.message("cov.lint.constant-folding")
 				when {
 					left.string != null && right.string != null -> {
 						if (op.text == "+") holder.createWeakWarningAnnotation(element, infoText)
 								.registerFix(CovReplaceWithTextIntention(element,
 										"${left.text.dropLast(1)}${right.text.drop(1)}",
-										"Replace with concatenated string"))
-						else if (op.text != ":") holder.createErrorAnnotation(element, "Operator ${op.text} is not applicable between strings")
+										CovBundle.message("cov.lint.replace-with-concatenated")))
 					}
 					left.number != null && right.number != null -> {
 						val leftDec = BigDecimal(left.text)
 						val rightDec = BigDecimal(right.text)
-						val fixText = "Replace with calculated result"
 						holder.createWeakWarningAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
 								when (op.text) {
 									"+" -> (leftDec + rightDec).toPlainString()
@@ -77,7 +81,7 @@ class CovAnnotator : Annotator {
 									"==" -> (leftDec == rightDec).toString()
 									"!=" -> (leftDec != rightDec).toString()
 									else -> return
-								}, fixText))
+								}, CovBundle.message("cov.lint.replace-with-calculated")))
 					}
 				}
 			}
@@ -90,18 +94,21 @@ class CovAnnotator : Annotator {
 			is CovStructDeclaration -> holder.createInfoAnnotation(element.symbol, null)
 					.textAttributes = CovSyntaxHighlighter.STRUCT_DEFINITION
 			is CovCollapsedStatement ->
-				if (element.primaryStatement != null) holder.createInfoAnnotation(element, "Collapsed into one line").run {
-					textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
-					registerFix(CovCollapsedBlockToOneStatementIntention(element))
-				}
-				else holder.createWarningAnnotation(element, "Empty collapsed block")
-						.registerFix(CovRemoveElementIntention(element, "Remove empty collapsed block"))
+				if (element.primaryStatement != null)
+					holder.createInfoAnnotation(element, CovBundle.message("cov.lint.collapsed-block")).run {
+						textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
+						registerFix(CovCollapsedBlockToOneStatementIntention(element))
+					}
+				else holder.createWarningAnnotation(element,
+						CovBundle.message("cov.lint.empty-collapsed-block"))
+						.registerFix(CovRemoveElementIntention(element,
+								CovBundle.message("cov.lint.remove-collapsed-block")))
 		}
 	}
 }
 
 private fun dealWithEscape(element: PsiElement, index: Int, char: Char, holder: AnnotationHolder) {
 	val range = TextRange(element.textRange.startOffset + index - 1, element.textRange.startOffset + index + 1)
-	if (char !in "abfnrtv0\\\"'") holder.createErrorAnnotation(range, "Illegal escape character")
+	if (char !in "abfnrtv0\\\"'") holder.createErrorAnnotation(range, CovBundle.message("cov.lint.illegal-escape"))
 	else holder.createInfoAnnotation(range, null).textAttributes = CovSyntaxHighlighter.STRING_ESCAPE
 }

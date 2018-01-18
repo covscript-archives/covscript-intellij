@@ -120,18 +120,18 @@ class CovSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
 class CovColorSettingsPage : ColorSettingsPage {
 	companion object {
 		private val DESCRIPTORS = arrayOf(
-				AttributesDescriptor("String//String content", CovSyntaxHighlighter.STRING),
-				AttributesDescriptor("String//Escape characters", CovSyntaxHighlighter.STRING_ESCAPE),
-				AttributesDescriptor("Keywords//Common reserved words", CovSyntaxHighlighter.KEYWORD),
-				AttributesDescriptor("Keywords//@begin and @end", CovSyntaxHighlighter.BEGIN_END_THEMSELVES),
-				AttributesDescriptor("Collapsed block", CovSyntaxHighlighter.BEGIN_END_BLOCK),
-				AttributesDescriptor("Comment", CovSyntaxHighlighter.COMMENT),
-				AttributesDescriptor("Number", CovSyntaxHighlighter.NUMBER),
-				AttributesDescriptor("Declarations//Function declaration", CovSyntaxHighlighter.FUNCTION_DEFINITION),
-				AttributesDescriptor("Declarations//Namespace declaration", CovSyntaxHighlighter.NAMESPACE_DEFINITION),
-				AttributesDescriptor("Declarations//Variable declaration", CovSyntaxHighlighter.VARIABLE_DEFINITION),
-				AttributesDescriptor("Declarations//Struct declaration", CovSyntaxHighlighter.STRUCT_DEFINITION),
-				AttributesDescriptor("Operators", CovSyntaxHighlighter.OPERATOR)
+				AttributesDescriptor(CovBundle.message("cov.settings.color.string.string"), CovSyntaxHighlighter.STRING),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.string.escape"), CovSyntaxHighlighter.STRING_ESCAPE),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.keywords.common"), CovSyntaxHighlighter.KEYWORD),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.keywords.collapsed"), CovSyntaxHighlighter.BEGIN_END_THEMSELVES),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.collapsed"), CovSyntaxHighlighter.BEGIN_END_BLOCK),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.comment"), CovSyntaxHighlighter.COMMENT),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.number"), CovSyntaxHighlighter.NUMBER),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.function"), CovSyntaxHighlighter.FUNCTION_DEFINITION),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.namespace"), CovSyntaxHighlighter.NAMESPACE_DEFINITION),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.variable"), CovSyntaxHighlighter.VARIABLE_DEFINITION),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.struct"), CovSyntaxHighlighter.STRUCT_DEFINITION),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.operators"), CovSyntaxHighlighter.OPERATOR)
 		)
 		private val KEYS = mapOf(
 				"beginEndBlock" to CovSyntaxHighlighter.BEGIN_END_BLOCK,

@@ -20,7 +20,7 @@ class CovRemoveElementIntention(private val element: PsiElement, private val int
 
 class CovCollapsedBlockToOneStatementIntention(
 		private val element: CovCollapsedStatement) : BaseIntentionAction() {
-	override fun getText() = "Convert collapsed block into ordinary statement"
+	override fun getText() = CovBundle.message("cov.lint.convert-collapsed-block")
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = CovBundle.message("cov.name")
 	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
@@ -63,7 +63,7 @@ class CovReplaceWithElementIntention(
 
 class CovBlockToStatementIntention(
 		private val element: CovBlockStatement) : BaseIntentionAction() {
-	override fun getText() = "Remove unnecessary block"
+	override fun getText() = CovBundle.message("cov.lint.remove-unnecessary-block")
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = CovBundle.message("cov.name")
 	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {

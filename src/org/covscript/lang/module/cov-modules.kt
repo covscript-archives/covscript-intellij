@@ -41,15 +41,14 @@ class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 	}
 }
 
-class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
+class CovModuleType : ModuleType<CovModuleBuilder>(COV_MODULE_ID) {
 	override fun getName() = CovBundle.message("cov.name")
 	override fun getNodeIcon(bool: Boolean) = COV_BIG_ICON
 	override fun createModuleBuilder() = CovModuleBuilder()
 	override fun getDescription() = CovBundle.message("cov.modules.type")
 
 	companion object InstanceHolder {
-		private const val ID = "COV_MODULE_TYPE"
-		@JvmStatic val instance: CovModuleType get() = ModuleTypeManager.getInstance().findByID(ID) as CovModuleType
+		@JvmStatic val instance: CovModuleType get() = ModuleTypeManager.getInstance().findByID(COV_MODULE_ID) as CovModuleType
 	}
 }
 
@@ -62,7 +61,7 @@ system.exit(0)0
 		.first
 		.firstOrNull { it.startsWith("version", true) }
 		?.run { substringAfter(':').trim() }
-		?: "Unknown"
+		?: CovBundle.message("cov.modules.sdk.unknown-version")
 
 /**
  * @return (stdout, stderr)

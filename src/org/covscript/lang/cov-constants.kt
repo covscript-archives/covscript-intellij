@@ -1,7 +1,6 @@
 package org.covscript.lang
 
 import com.intellij.openapi.util.IconLoader
-import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import javax.swing.Icon
 
@@ -11,6 +10,7 @@ import javax.swing.Icon
 
 @NonNls const val COV_DEFAULT_MODULE_NAME = "my_bizarre_covscript_module"
 @NonNls const val COV_RUN_CONFIG_ID = "COV_RUN_CONFIG_ID"
+@NonNls const val COV_MODULE_ID = "COV_MODULE_TYPE"
 @NonNls const val POSSIBLE_SDK_HOME_LINUX = "/usr/share/covscript"
 @NonNls const val POSSIBLE_SDK_HOME_WINDOWS = "C:/Program Files"
 

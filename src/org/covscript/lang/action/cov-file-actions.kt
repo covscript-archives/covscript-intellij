@@ -8,13 +8,22 @@ import com.intellij.psi.*
 import org.covscript.lang.*
 import java.time.LocalDate
 
-class NewCovFile : CreateFileAction(CAPTION, "", COV_ICON), DumbAware {
+class NewCovFile : CreateFileAction(
+		CovBundle.message("cov.actions.new-file.title"),
+		CovBundle.message("cov.actions.new-file.description"),
+		COV_ICON), DumbAware {
 	private companion object Caption {
-		private const val CAPTION = "CovScript File"
-		private val initCode get() = "#\n# Created by ${System.getenv("USER")} on ${LocalDate.now()}\n#\n\n"
+		private val initCode
+			get() = """#
+# ${CovBundle.message("cov.actions.new-file.content", System.getProperty("user.name"), LocalDate.now())}
+#
+
+"""
 	}
 
-	override fun getActionName(directory: PsiDirectory?, s: String?) = CAPTION
+	override fun getActionName(directory: PsiDirectory?, s: String?) =
+			CovBundle.message("cov.actions.new-file.title")
+
 	override fun getErrorTitle(): String = CommonBundle.getErrorTitle()
 	override fun getDefaultExtension() = COV_EXTENSION
 	override fun create(name: String, directory: PsiDirectory): Array<PsiElement> {

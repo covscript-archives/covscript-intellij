@@ -58,7 +58,7 @@ class CovSdkComboBox : ComboboxWithBrowseButton() {
 			var selectedSdk = selectedSdk
 			val project = ProjectManager.getInstance().defaultProject
 			val editor = ProjectJdksEditor(selectedSdk, project, this@CovSdkComboBox)
-			editor.title = "Select a CovScript SDK"
+			editor.title = CovBundle.message("cov.modules.sdk.selection.title")
 			editor.show()
 			if (editor.isOK) {
 				selectedSdk = editor.selectedJdk
