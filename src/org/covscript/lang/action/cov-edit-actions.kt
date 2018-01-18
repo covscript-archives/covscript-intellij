@@ -1,8 +1,10 @@
 package org.covscript.lang.action
 
 import com.google.common.util.concurrent.UncheckedTimeoutException
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -10,6 +12,7 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ui.JBUI
 import org.covscript.lang.COV_BIG_ICON
+import org.covscript.lang.CovFileType
 import org.covscript.lang.module.executeInRepl
 import org.covscript.lang.module.projectSdk
 import java.awt.Dimension
@@ -20,36 +23,36 @@ private class InvalidCovSdkException(val path: String) : RuntimeException()
 class TryEvaluate {
 	private var textLimit = 360
 	private var timeLimit = 1500L
-	private var builder = StringBuilder()
 
-	private fun StringBuilder.insertOutputIfNonBlank() = insert(0, if (isNotBlank()) "\nOutput:\n" else "")
 	fun tryEval(editor: Editor, text: String, project: Project?, popupWhenSuccess: Boolean) {
-		if (builder.isNotBlank()) builder = StringBuilder()
 		try {
+			val builder = StringBuilder()
 			var covRoot = ""
 			var covVersion = ""
 			project?.projectSdk?.let {
 				covRoot = it.homePath.orEmpty()
 				covVersion = it.versionString.orEmpty()
 			}
-			executeInRepl(covRoot, editor.selectionModel.selectedText ?: return, timeLimit)
-			builder.insertOutputIfNonBlank()
-			builder.insert(0, "Execution output under CovScript $covVersion")
-			if (popupWhenSuccess) showPopupWindow(builder.toString(), editor, 0x0013F9, 0x000CA1)
+			val (stdout, stderr) = executeInRepl(covRoot, text, timeLimit)
+			builder.appendln("Executed under CovScript $covVersion.")
+			if (stdout.isNotEmpty()) {
+				builder.appendln("stdout:")
+				stdout.forEach { builder.appendln(it) }
+			}
+			if (stderr.isNotEmpty()) {
+				builder.appendln("stderr:")
+				stderr.forEach { builder.appendln(it) }
+			}
+			if (popupWhenSuccess) {
+				if (stderr.isNotEmpty()) showPopupWindow(builder.toString(), editor, 0xE20911, 0xC20022)
+				else showPopupWindow(builder.toString(), editor, 0x0013F9, 0x000CA1)
+			}
 		} catch (e: UncheckedTimeoutException) {
-			builder.insertOutputIfNonBlank()
-			builder.insert(0, "Execution timeout.\nChange time limit in Project Structure | Facets")
-			showPopupWindow(builder.toString(), editor, 0xEDC209, 0xC26500)
+			showPopupWindow("Execution timeout.\nChange time limit in Project Structure | SDKs", editor, 0xEDC209, 0xC26500)
 		} catch (e: Throwable) {
 			val cause = e as? InvalidCovSdkException ?: e.cause as? InvalidCovSdkException
-			builder.insertOutputIfNonBlank()
-			if (cause != null) {
-				builder.insert(0, "Invalid CovScript SDK path:\n${cause.path}")
-				showPopupWindow(builder.toString(), editor, 0xEDC209, 0xC26500)
-			} else {
-				builder.insert(0, "Oops! A ${e.javaClass.simpleName} is thrown:\n${e.message}")
-				showPopupWindow(builder.toString(), editor, 0xE20911, 0xC20022)
-			}
+			if (cause != null) showPopupWindow("Invalid CovScript SDK path:\n${cause.path}", editor, 0xEDC209, 0xC26500)
+			else showPopupWindow("Oops! A ${e.javaClass.simpleName} is thrown:\n${e.message}", editor, 0xE20911, 0xC20022)
 		}
 	}
 
@@ -93,3 +96,16 @@ class TryEvaluate {
 	}
 }
 
+class TryEvaluateLiceExpressionAction :
+		AnAction("Try evaluate",
+				"", COV_BIG_ICON), DumbAware {
+	private val core = TryEvaluate()
+	override fun actionPerformed(event: AnActionEvent) {
+		val editor = event.getData(CommonDataKeys.EDITOR) ?: return
+		core.tryEval(editor, editor.selectionModel.selectedText ?: return, event.getData(CommonDataKeys.PROJECT), true)
+	}
+
+	override fun update(event: AnActionEvent) {
+		event.presentation.isEnabledAndVisible = event.getData(CommonDataKeys.VIRTUAL_FILE)?.fileType == CovFileType
+	}
+}

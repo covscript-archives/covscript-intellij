@@ -9,7 +9,6 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.Ref
 import org.covscript.lang.*
 import java.nio.file.*
 import java.util.concurrent.TimeUnit
@@ -58,23 +57,28 @@ const val GET_VERSION_TIME_PERIOD = 500L
 //language=CovScript
 fun versionOf(homePath: String, timeLimit: Long = GET_VERSION_TIME_PERIOD) = executeInRepl(homePath, """
 runtime.info()
-system.exit(0)
+system.exit(0)0
 """, timeLimit)
+		.first
 		.firstOrNull { it.startsWith("version", true) }
 		?.run { substringAfter(':').trim() }
 		?: "Unknown"
 
+/**
+ * @return (stdout, stderr)
+ */
 fun executeInRepl(
 		homePath: String,
 		code: String,
-		timeLimit: Long): List<String> {
-	val processRef = Ref.create<Process>()
+		timeLimit: Long): Pair<List<String>, List<String>> {
+	var processRef: Process? = null
 	return try {
 		var output: List<String> = emptyList()
+		var outputErr: List<String> = emptyList()
 		val path = Paths.get(homePath, "bin", "cs_repl").toAbsolutePath().toString()
 		SimpleTimeLimiter().callWithTimeout({
 			val process: Process = Runtime.getRuntime().exec("$path --silent")
-			processRef.set(process)
+			processRef = process
 			process.outputStream.use {
 				it.write(code.toByteArray())
 				it.flush()
@@ -82,17 +86,20 @@ fun executeInRepl(
 			process.waitFor(timeLimit, TimeUnit.MILLISECONDS)
 			process.inputStream.use {
 				val reader = it.bufferedReader()
-				output = reader.lines().collect(Collectors.toList())
-				forceRun {
-					reader.close()
-					process.destroy()
-				}
+				output = reader.lines().map { it.trimStart('>') }.collect(Collectors.toList()).dropLast(1)
+				forceRun { reader.close() }
 			}
+			process.errorStream.use {
+				val reader = it.bufferedReader()
+				outputErr = reader.lines().collect(Collectors.toList()).dropLast(1)
+				forceRun { reader.close() }
+			}
+			forceRun { process.destroy() }
 		}, timeLimit + 100, TimeUnit.MILLISECONDS, true)
-		output
+		output to outputErr
 	} catch (e: Throwable) {
-		processRef.get()?.destroy()
-		emptyList()
+		processRef?.destroy()
+		emptyList<String>() to emptyList()
 	}
 }
 

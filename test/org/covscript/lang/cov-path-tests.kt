@@ -23,6 +23,17 @@ class PathTests {
 	@Test
 	fun codeExecutionTest() {
 		//language=CovScript
-		executeInRepl(POSSIBLE_SDK_HOME_LINUX, "system.out.println(2333)", 1000L).forEach(::println)
+		executeInRepl(POSSIBLE_SDK_HOME_LINUX, "system.out.println(2333)", 1000L).first.forEach(::println)
+	}
+
+	@Test
+	fun codeExecutionTest2() {
+		//language=CovScript
+		val (stdout, stderr) = executeInRepl(POSSIBLE_SDK_HOME_LINUX, """
+system.out.println(2333)
+system.out.println(1+1)
+""".trimIndent(), 1000L)
+		stdout.forEach(::println)
+		stderr.forEach(::println)
 	}
 }
