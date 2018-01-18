@@ -10,6 +10,7 @@ import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ProjectRootManager
 import org.covscript.lang.*
+import java.io.InputStream
 import java.nio.file.*
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
@@ -80,24 +81,21 @@ fun executeInRepl(homePath: String, code: String, timeLimit: Long): Pair<List<St
 				it.flush()
 			}
 			process.waitFor(timeLimit, TimeUnit.MILLISECONDS)
-			process.inputStream.use {
-				val reader = it.bufferedReader()
-				output = reader.lines().map {
-					it.trimStart('.', '>')
-				}.collect(Collectors.toList()).dropLast(1)
-				forceRun(reader::close)
-			}
-			process.errorStream.use {
-				val reader = it.bufferedReader()
-				outputErr = reader.lines().collect(Collectors.toList()).dropLast(1)
-				forceRun(reader::close)
-			}
+			output = process.inputStream.use(::collectLines)
+			outputErr = process.errorStream.use(::collectLines)
 			forceRun(process::destroy)
 		}, timeLimit + 100, TimeUnit.MILLISECONDS, true)
 	} catch (e: Throwable) {
 		processRef?.destroy()
 	}
 	return output to outputErr
+}
+
+private fun collectLines(it: InputStream): List<String> {
+	val reader = it.bufferedReader()
+	val ret = reader.lines().collect(Collectors.toList()).dropLast(1)
+	forceRun(reader::close)
+	return ret
 }
 
 fun validateCovSDK(pathString: String): Boolean {
