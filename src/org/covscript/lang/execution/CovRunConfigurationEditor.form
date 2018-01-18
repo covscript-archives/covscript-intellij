@@ -13,7 +13,7 @@
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="CovScript SDK:"/>
+          <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.sdk"/>
         </properties>
       </component>
       <vspacer id="a2e1c">
@@ -31,7 +31,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="CovScript Executive:"/>
+          <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.exe"/>
         </properties>
       </component>
       <component id="17186" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="covExecutiveField">
@@ -47,7 +47,7 @@
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Working Directory:"/>
+          <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.working-dir"/>
         </properties>
       </component>
       <component id="6296d" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="workingDirField">
@@ -61,7 +61,7 @@
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Compiler Options:"/>
+          <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.compiler-args"/>
         </properties>
       </component>
       <component id="1bae3" class="javax.swing.JTextField" binding="additionalParamsField">
@@ -77,7 +77,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Script Path:"/>
+          <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.script-path"/>
         </properties>
       </component>
       <component id="a82c3" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="targetFileField">

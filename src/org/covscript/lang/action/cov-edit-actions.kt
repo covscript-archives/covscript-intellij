@@ -11,8 +11,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ui.JBUI
-import org.covscript.lang.COV_BIG_ICON
-import org.covscript.lang.CovFileType
+import org.covscript.lang.*
 import org.covscript.lang.module.executeInRepl
 import org.covscript.lang.module.projectSdk
 import java.awt.Dimension
@@ -34,23 +33,25 @@ class TryEvaluate {
 				covVersion = it.versionString.orEmpty()
 			}
 			val (stdout, stderr) = executeInRepl(covRoot, text, timeLimit)
-			builder.appendln("Executed under CovScript $covVersion.")
+			builder.appendln(CovBundle.message("cov.messages.try-eval.version-text", covVersion))
 			if (stdout.isNotEmpty()) {
-				builder.appendln("stdout:")
+				builder.appendln(CovBundle.message("cov.messages.try-eval.stdout"))
 				stdout.forEach { builder.appendln(it) }
 			}
 			if (stderr.isNotEmpty()) {
-				builder.appendln("stderr:")
+				builder.appendln(CovBundle.message("cov.messages.try-eval.stderr"))
 				stderr.forEach { builder.appendln(it) }
 			}
 			if (stderr.isNotEmpty()) showPopupWindow(builder.toString(), editor, 0xE20911, 0xC20022)
 			else showPopupWindow(builder.toString(), editor, 0x0013F9, 0x000CA1)
 		} catch (e: UncheckedTimeoutException) {
-			showPopupWindow("Execution timeout.\nChange time limit in Project Structure | SDKs", editor, 0xEDC209, 0xC26500)
+			showPopupWindow(CovBundle.message("cov.messages.try-eval.timeout"), editor, 0xEDC209, 0xC26500)
 		} catch (e: Throwable) {
 			val cause = e as? InvalidCovSdkException ?: e.cause as? InvalidCovSdkException
-			if (cause != null) showPopupWindow("Invalid CovScript SDK path:\n${cause.path}", editor, 0xEDC209, 0xC26500)
-			else showPopupWindow("Oops! A ${e.javaClass.simpleName} is thrown:\n${e.message}", editor, 0xE20911, 0xC20022)
+			if (cause != null) showPopupWindow(CovBundle.message(
+					"cov.messages.try-eval.invalid-path", cause.path), editor, 0xEDC209, 0xC26500)
+			else showPopupWindow(CovBundle.message(
+					"cov.messages.try-eval.exception", e.javaClass.simpleName, e.message.orEmpty()), editor, 0xE20911, 0xC20022)
 		}
 	}
 
@@ -75,7 +76,7 @@ class TryEvaluate {
 						.createComponentPopupBuilder(JBUI.Panels.simplePanel()
 								.addToTop(JLabel(COV_BIG_ICON))
 								.addToCenter(ScrollPaneFactory.createScrollPane(JTextArea(result).also {
-									it.toolTipText = "Evaluation output longer than $textLimit characters"
+									it.toolTipText = CovBundle.message("cov.messages.try-eval.overflowed-text", textLimit)
 									it.lineWrap = true
 									it.wrapStyleWord = true
 									it.isEditable = false
@@ -95,8 +96,8 @@ class TryEvaluate {
 }
 
 class TryEvaluateLiceExpressionAction :
-		AnAction("Try evaluate",
-				"", COV_BIG_ICON), DumbAware {
+		AnAction(CovBundle.message("cov.actions.try-eval.name"),
+				CovBundle.message("cov.actions.try-eval.description"), COV_BIG_ICON), DumbAware {
 	private val core = TryEvaluate()
 	override fun actionPerformed(event: AnActionEvent) {
 		val editor = event.getData(CommonDataKeys.EDITOR) ?: return

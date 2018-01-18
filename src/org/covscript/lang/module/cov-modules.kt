@@ -45,7 +45,7 @@ class CovModuleType : ModuleType<CovModuleBuilder>(ID) {
 	override fun getName() = CovBundle.message("cov.name")
 	override fun getNodeIcon(bool: Boolean) = COV_BIG_ICON
 	override fun createModuleBuilder() = CovModuleBuilder()
-	override fun getDescription() = CovBundle.message("cov.module.type")
+	override fun getDescription() = CovBundle.message("cov.modules.type")
 
 	companion object InstanceHolder {
 		private const val ID = "COV_MODULE_TYPE"

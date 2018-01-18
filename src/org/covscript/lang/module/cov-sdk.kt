@@ -13,11 +13,11 @@ import javax.swing.DefaultComboBoxModel
 import javax.swing.JList
 
 class CovSdkType : SdkType(CovBundle.message("cov.name")) {
-	override fun getPresentableName() = CovBundle.message("cov.module.sdk.name")
+	override fun getPresentableName() = CovBundle.message("cov.modules.sdk.name")
 	override fun getIcon() = COV_BIG_ICON
 	override fun getIconForAddAction() = icon
 	override fun isValidSdkHome(s: String?) = validateCovSDK(s.orEmpty())
-	override fun suggestSdkName(s: String?, p1: String?) = CovBundle.message("cov.module.sdk.name")
+	override fun suggestSdkName(s: String?, p1: String?) = CovBundle.message("cov.modules.sdk.name")
 	override fun suggestHomePath() = if (SystemInfo.isWindows) POSSIBLE_SDK_HOME_WINDOWS else POSSIBLE_SDK_HOME_LINUX
 	override fun createAdditionalDataConfigurable(model: SdkModel, modificator: SdkModificator) = null
 	override fun getVersionString(sdkHome: String?) = versionOf(sdkHome.orEmpty())
