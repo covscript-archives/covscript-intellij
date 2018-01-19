@@ -5,7 +5,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.util.ProcessingContext
-import org.covscript.lang.psi.CovTypes
+import org.covscript.lang.psi.*
 
 class CovCompletionContributor : CompletionContributor() {
 	private companion object Completions {
@@ -13,6 +13,13 @@ class CovCompletionContributor : CompletionContributor() {
 				"import ",
 				"package ",
 				"using "
+		).map(LookupElementBuilder::create)
+		private val loopCompletion = listOf(
+				"break",
+				"continue"
+		).map(LookupElementBuilder::create)
+		private val functionCompletion = listOf(
+				"return "
 		).map(LookupElementBuilder::create)
 		private val fileContentCompletion = listOf(
 				"if ",
@@ -26,6 +33,8 @@ class CovCompletionContributor : CompletionContributor() {
 				"@begin ",
 				"switch ",
 				"var ",
+				"throw ",
+				"try ",
 				"end"
 		).map(LookupElementBuilder::create)
 	}
@@ -42,9 +51,30 @@ class CovCompletionContributor : CompletionContributor() {
 		extend(CompletionType.BASIC,
 				psiElement(CovTypes.SYM)
 						.afterLeaf("\n")
-						.andNot(psiElement()
-								.inside(psiElement(CovTypes.BODY_OF_SOMETHING))),
+						.andNot(
+								psiElement()
+										.inside(psiElement(CovTypes.BODY_OF_SOMETHING))),
 				CovProvider(fileHeaderCompletion))
+		extend(CompletionType.BASIC,
+				psiElement(CovTypes.SYM)
+						.afterLeaf("\n")
+						.inside(
+								psiElement(CovTypes.BODY_OF_SOMETHING))
+						.andOr(
+								psiElement()
+										.inside(CovWhileStatement::class.java),
+								psiElement()
+										.inside(CovLoopUntilStatement::class.java)),
+				CovProvider(loopCompletion))
+		extend(CompletionType.BASIC,
+				psiElement(CovTypes.SYM)
+						.afterLeaf("\n")
+						.inside(
+								psiElement(CovTypes.BODY_OF_SOMETHING))
+						.andOr(
+								psiElement()
+										.inside(CovFunctionDeclaration::class.java)),
+				CovProvider(functionCompletion))
 		extend(CompletionType.BASIC,
 				psiElement(CovTypes.SYM)
 						.afterLeaf("\n"),
