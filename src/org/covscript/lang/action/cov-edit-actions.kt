@@ -12,8 +12,7 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ui.JBUI
 import org.covscript.lang.*
-import org.covscript.lang.module.executeInRepl
-import org.covscript.lang.module.projectSdk
+import org.covscript.lang.module.*
 import java.awt.Dimension
 import javax.swing.JLabel
 import javax.swing.JTextArea
@@ -31,6 +30,9 @@ class TryEvaluate {
 			project?.projectSdk?.let {
 				covRoot = it.homePath.orEmpty()
 				covVersion = it.versionString.orEmpty()
+				val data = it.sdkAdditionalData as? CovSdkData ?: return@let
+				textLimit = data.tryEvaluateTextLimit
+				timeLimit = data.tryEvaluateTimeLimit
 			}
 			val (stdout, stderr) = executeInRepl(covRoot, text, timeLimit)
 			builder.appendln(CovBundle.message("cov.messages.try-eval.version-text", covVersion))

@@ -3,6 +3,8 @@ package org.covscript.lang.module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.AdditionalDataConfigurable;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkModificator;
+import org.covscript.lang.CovBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +27,6 @@ public class CovAdditionalDataConfigurable implements AdditionalDataConfigurable
 		DefaultFormatterFactory factory = new DefaultFormatterFactory(new NumberFormatter(format));
 		timeLimitField.setFormatterFactory(factory);
 		textLimitField.setFormatterFactory(factory);
-
 	}
 
 	@Override public void setSdk(@NotNull Sdk sdk) {
@@ -41,10 +42,30 @@ public class CovAdditionalDataConfigurable implements AdditionalDataConfigurable
 	}
 
 	@Override public boolean isModified() {
-		return false;
+		if (sdk == null) return false;
+		CovSdkData data = toCovSdkData(sdk.getSdkAdditionalData());
+		return data == null ||
+				!textLimitField.getValue().equals(Integer.valueOf(data.getTryEvaluateTextLimit()).longValue()) ||
+				!timeLimitField.getValue().equals(data.getTryEvaluateTimeLimit());
+	}
+
+	@Override public void reset() {
+		if (sdk == null) return;
+		CovSdkData data = toCovSdkData(sdk.getSdkAdditionalData());
+		if (data == null) return;
+		timeLimitField.setValue(data.getTryEvaluateTimeLimit());
+		textLimitField.setValue(data.getTryEvaluateTextLimit());
+	}
+
+	@Override public @NotNull String getTabName() {
+		return CovBundle.message("cov.modules.sdk.try-eval.title");
 	}
 
 	@Override public void apply() throws ConfigurationException {
-
+		if (sdk == null) throw new ConfigurationException("Sdk is null!");
+		SdkModificator modificator = sdk.getSdkModificator();
+		modificator.setSdkAdditionalData(new CovSdkData(((Number) timeLimitField.getValue()).longValue(),
+				((Number) textLimitField.getValue()).intValue()));
+		modificator.commitChanges();
 	}
 }

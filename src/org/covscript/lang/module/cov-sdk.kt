@@ -19,13 +19,14 @@ class CovSdkType : SdkType(CovBundle.message("cov.name")) {
 	override fun isValidSdkHome(s: String?) = validateCovSDK(s.orEmpty())
 	override fun suggestSdkName(s: String?, p1: String?) = CovBundle.message("cov.modules.sdk.name")
 	override fun suggestHomePath() = if (SystemInfo.isWindows) POSSIBLE_SDK_HOME_WINDOWS else POSSIBLE_SDK_HOME_LINUX
-	override fun createAdditionalDataConfigurable(model: SdkModel, modificator: SdkModificator) = null
+	override fun createAdditionalDataConfigurable(md: SdkModel, m: SdkModificator) = CovAdditionalDataConfigurable()
 	override fun getVersionString(sdkHome: String?) = versionOf(sdkHome.orEmpty())
 	override fun saveAdditionalData(additionalData: SdkAdditionalData, element: Element) = Unit // leave blank
 	override fun getDownloadSdkUrl() = COV_WEBSITE
 	override fun setupSdkPaths(sdk: Sdk, sdkModel: SdkModel): Boolean {
 		val modificator = sdk.sdkModificator
-		modificator.versionString = getVersionString(sdk)
+		modificator.sdkAdditionalData = sdk.sdkAdditionalData ?: CovSdkData()
+		modificator.versionString = getVersionString(sdk) ?: CovBundle.message("cov.modules.sdk.unknown-version")
 		sdk.homeDirectory
 				?.findChild("imports")
 				?.let { modificator.addRoot(it, OrderRootType.CLASSES) }
@@ -40,9 +41,9 @@ class CovSdkType : SdkType(CovBundle.message("cov.name")) {
 
 fun SdkAdditionalData?.toCovSdkData() = this as? CovSdkData
 
-class CovSdkData : SdkAdditionalData {
-	var tryEvaluateTimeLimit = 2500L
-	var tryEvaluateTextLimit = 320
+class CovSdkData(
+		var tryEvaluateTimeLimit: Long = 2500L,
+		var tryEvaluateTextLimit: Int = 320) : SdkAdditionalData {
 	override fun clone() = CovSdkData().also {
 		it.tryEvaluateTextLimit = tryEvaluateTextLimit
 		it.tryEvaluateTimeLimit = tryEvaluateTimeLimit
@@ -52,7 +53,6 @@ class CovSdkData : SdkAdditionalData {
 class CovSdkComboBox : ComboboxWithBrowseButton() {
 	val selectedSdk get() = comboBox.selectedItem as? Sdk
 	val sdkName get() = selectedSdk?.name.orEmpty()
-	val sdkHomePath get() = selectedSdk?.homePath.orEmpty()
 
 	init {
 		comboBox.setRenderer(object : ColoredListCellRenderer<Sdk?>() {
