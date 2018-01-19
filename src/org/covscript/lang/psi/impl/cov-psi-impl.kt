@@ -16,6 +16,8 @@ fun CovExpression.leftPrimaryExprOrNull() =
 					it.suffixedExpressionList.isEmpty()
 		}
 
+val CovSymbol.reference get() = CovSymbolRef(this)
+
 val CovStatement.allBlockStructure: PsiElement?
 	get() = collapsedStatement ?: functionDeclaration ?: structDeclaration ?: namespaceDeclaration ?: forStatement
 	?: loopUntilStatement ?: whileStatement ?: tryCatchStatement ?: switchStatement ?: blockStatement ?: ifStatement

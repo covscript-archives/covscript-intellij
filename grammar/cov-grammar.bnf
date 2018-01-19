@@ -16,8 +16,8 @@ file ::=
  fileHeader*
  statement*
 
+private endOfLine ::= (EOL comment?)+
 number ::= NUM
-symbol ::= SYM
 break ::= BREAK_KEYWORD
 continue ::= CONTINUE_KEYWORD
 true ::= TRUE_KEYWORD
@@ -26,7 +26,9 @@ null ::= NULL_KEYWORD
 comment ::= LINE_COMMENT+
 string ::= STR
 charLiteral ::= CHAR
-private endOfLine ::= (EOL comment?)+
+symbol ::= SYM {
+	methods=[getReference]
+}
 
 fileHeader ::=
    usingDeclaration
@@ -39,7 +41,9 @@ importDeclaration ::= IMPORT_KEYWORD symbol
 usingDeclaration ::= USING_KEYWORD symbol
 packageDeclaration ::= PACKAGE_KEYWORD symbol
 
-variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expression
+variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expression {
+	mixin='org.covscript.lang.psi.impl.CovVariableDeclarationMixin'
+}
 
 parameterList ::= LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET
 functionDeclaration ::=
