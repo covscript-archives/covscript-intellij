@@ -29,8 +29,8 @@ charLiteral ::= CHAR
 endOfLine ::= (EOL comment?)+
 
 fileHeader ::=
-   importDeclaration
- | usingDeclaration
+   usingDeclaration
+ | importDeclaration
  | packageDeclaration
  | endOfLine
  | comment
@@ -94,10 +94,8 @@ whileStatement ::=
 loopUntilStatement ::=
  LOOP_KEYWORD endOfLine
   bodyOfSomething
- untilClause?
+ (UNTIL_KEYWORD expression endOfLine)?
  END_KEYWORD
-
-untilClause ::= UNTIL_KEYWORD expression endOfLine
 
 forStatement ::=
  FOR_KEYWORD symbol (forTo | forIterate) endOfLine
@@ -120,8 +118,9 @@ statement ::=
 
 collapsedStatement ::= COLLAPSER_BEGIN primaryStatement? COLLAPSER_END
 
-primaryStatement ::=
+private primaryStatement ::=
    endOfLine
+ | importDeclaration
  | throwStatement
  | returnStatement
  | variableDeclaration
@@ -142,13 +141,12 @@ primaryStatement ::=
 	methods=[getBlockStructures]
 }
 
-boolean ::= true | false
+private boolean ::= true | false
 newExpression ::= (NEW_KEYWORD | GCNEW_KEYWORD) dotChain
 arrayLiteral ::= LEFT_B_BRACKET (expression (COMMA expression)*)? RIGHT_B_BRACKET
 functionLiteral ::= LEFT_S_BRACKET RIGHT_S_BRACKET parameterList ARROW expression
 
 expression ::=
- prefixOperator?
  suffixedExpression
  (
   binaryOperator
@@ -194,7 +192,7 @@ binaryOperator ::=
  | GE_OP
  | UN_OP
 
-primaryExpression ::=
+private primaryExpression ::=
    newExpression
  | symbol
  | number
@@ -204,9 +202,12 @@ primaryExpression ::=
  | charLiteral
  | arrayLiteral
  | functionLiteral
- | LEFT_BRACKET expression RIGHT_BRACKET
+ | bracketExpression
+
+bracketExpression ::= LEFT_BRACKET expression RIGHT_BRACKET
 
 suffixedExpression ::=
+ prefixOperator?
  primaryExpression
  (
     (LEFT_S_BRACKET expression RIGHT_S_BRACKET)

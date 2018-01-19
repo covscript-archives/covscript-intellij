@@ -1,6 +1,7 @@
 package org.covscript.lang.editing
 
 import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.util.ProcessingContext
@@ -8,22 +9,44 @@ import org.covscript.lang.psi.CovTypes
 
 class CovCompletionContributor : CompletionContributor() {
 	private companion object Completions {
-		private val basicCompletionList = listOf(
+		private val fileHeaderCompletion = listOf(
 				"import ",
 				"package ",
-				"using ")
+				"using "
+		).map(LookupElementBuilder::create)
+		private val fileContentCompletion = listOf(
+				"if ",
+				"for ",
+				"loop ",
+				"while ",
+				"block",
+				"function ",
+				"namespace ",
+				"struct ",
+				"@begin ",
+				"switch ",
+				"end"
+		).map(LookupElementBuilder::create)
+	}
+
+	private class CovProvider(private val list: List<LookupElement>) :
+			CompletionProvider<CompletionParameters>() {
+		override fun addCompletions(
+				parameters: CompletionParameters,
+				context: ProcessingContext?,
+				result: CompletionResultSet) = list.forEach(result::addElement)
 	}
 
 	init {
-		extend(CompletionType.BASIC, psiElement(CovTypes.SYM).afterLeaf("\n")
-				, object :
-				CompletionProvider<CompletionParameters>() {
-			override fun addCompletions(
-					parameters: CompletionParameters,
-					context: ProcessingContext?,
-					result: CompletionResultSet) {
-				basicCompletionList.forEach { result.addElement(LookupElementBuilder.create(it)) }
-			}
-		})
+		extend(CompletionType.BASIC,
+				psiElement(CovTypes.SYM)
+						.afterLeaf("\n")
+						.andNot(psiElement()
+								.inside(psiElement(CovTypes.BODY_OF_SOMETHING))),
+				CovProvider(fileHeaderCompletion))
+		extend(CompletionType.BASIC,
+				psiElement(CovTypes.SYM)
+						.afterLeaf("\n"),
+				CovProvider(fileContentCompletion))
 	}
 }

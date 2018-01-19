@@ -41,15 +41,15 @@ class CovAnnotator : Annotator {
 				holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.infinite-while"))
 						.registerFix(CovReplaceWithTextIntention(element, "loop\n${element.bodyOfSomething.text}end",
 								CovBundle.message("cov.lint.replace-with-loop")))
-			is CovLoopUntilStatement -> element.untilClause?.run {
-				if (expression.text == "false") holder.createWeakWarningAnnotation(element,
+			is CovLoopUntilStatement -> element.expression?.run {
+				if (text == "false") holder.createWeakWarningAnnotation(element,
 						CovBundle.message("cov.lint.infinite-loop-until"))
 						.registerFix(CovRemoveElementIntention(this, CovBundle.message("cov.lint.remove-until")))
 			}
 			is CovExpression -> {
 				run unwrapBrackets@ {
-					val innerExpr = element.primaryExprOrNull()?.expression ?: return@unwrapBrackets
-					if (innerExpr.primaryExprOrNull()?.expression != null)
+					val innerExpr = element.suffixedExpression.bracketExpression?.expression ?: return@unwrapBrackets
+					if (innerExpr.binaryOperator == null && innerExpr.suffixedExpression.bracketExpression != null)
 						holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.too-many-brackets"))
 								.registerFix(CovReplaceWithElementIntention(element, innerExpr,
 										CovBundle.message("cov.lint.remove-outer-brackets")))
@@ -97,7 +97,7 @@ class CovAnnotator : Annotator {
 			is CovStructDeclaration -> holder.createInfoAnnotation(element.symbol, null)
 					.textAttributes = CovSyntaxHighlighter.STRUCT_DEFINITION
 			is CovCollapsedStatement ->
-				if (element.primaryStatement != null) {
+				if (element.children.any { it.javaClass.simpleName.startsWith("Cov") }) {
 					holder.createInfoAnnotation(element, CovBundle.message("cov.lint.collapsed-block")).run {
 						textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
 						registerFix(CovCollapsedBlockToOneStatementIntention(element))

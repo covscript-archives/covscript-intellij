@@ -7,6 +7,7 @@ import com.intellij.psi.*
 import org.covscript.lang.*
 import org.covscript.lang.psi.CovBlockStatement
 import org.covscript.lang.psi.CovCollapsedStatement
+import org.covscript.lang.psi.impl.anythingInside
 
 class CovRemoveElementIntention(private val element: PsiElement, private val intentionText: String) :
 		BaseIntentionAction() {
@@ -24,7 +25,7 @@ class CovCollapsedBlockToOneStatementIntention(
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = CovBundle.message("cov.name")
 	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
-		val statement = element.primaryStatement ?: return
+		val statement = element.anythingInside ?: return
 		element.replace(PsiFileFactory
 				.getInstance(project)
 				.createFileFromText(CovLanguage, statement.text.replace("\n", ""))

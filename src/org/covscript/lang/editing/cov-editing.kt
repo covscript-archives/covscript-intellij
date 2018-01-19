@@ -23,6 +23,7 @@ import com.intellij.ui.breadcrumbs.BreadcrumbsProvider
 import com.intellij.util.ProcessingContext
 import org.covscript.lang.*
 import org.covscript.lang.psi.*
+import org.covscript.lang.psi.impl.allBlockStructure
 
 
 class CovBraceMatcher : PairedBraceMatcher {
@@ -116,7 +117,7 @@ class CovBreadCrumbProvider : BreadcrumbsProvider {
 		is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
 		is CovForStatement -> "for ${o.symbol.text}"
 		is CovArrayLiteral -> "array literal"
-		is CovLoopUntilStatement -> "loop ${o.untilClause?.expression}"
+		is CovLoopUntilStatement -> "loop ${o.expression}"
 		is CovWhileStatement -> "while ${o.expression}"
 		is CovTryCatchStatement -> "try catch ${o.symbol}"
 		is CovSwitchStatement -> "switch statement"
@@ -216,7 +217,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovStructDeclaration -> "struct ${o.symbol.text}"
 				is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
 				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.run { "iterate ${expression.text}" } ?: "to"}"
-				is CovLoopUntilStatement -> "loop${o.untilClause?.run { " until ${expression.text}" } ?: ""}"
+				is CovLoopUntilStatement -> "loop${o.expression?.run { " until $text" } ?: ""}"
 				is CovWhileStatement -> "while ${o.expression.text}"
 				is CovTryCatchStatement -> "try catch ${o.symbol.text}"
 				is CovSwitchStatement -> "switch statement"

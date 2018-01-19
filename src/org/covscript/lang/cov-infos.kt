@@ -7,8 +7,7 @@ import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.*
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.FileViewProvider
-import com.intellij.psi.PsiFile
+import com.intellij.psi.*
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 import java.util.*
@@ -30,13 +29,15 @@ class CovFileTypeFactory : FileTypeFactory() {
 	override fun createFileTypes(consumer: FileTypeConsumer) = consumer.consume(CovFileType, COV_EXTENSION)
 }
 
-class CovContext : TemplateContextType(CovBundle.message("cov.name"), CovBundle.message("cov.name")) {
-	override fun isInContext(file: PsiFile, p1: Int) = file.name.endsWith(".$COV_EXTENSION")
+class CovContext : TemplateContextType(
+		CovBundle.message("cov.live-templates.statement.id"),
+		CovBundle.message("cov.live-templates.statement.name")) {
+	override fun isInContext(file: PsiFile, offset: Int) = file.fileType == CovFileType
 }
 
 class CovLiveTemplateProvider : DefaultLiveTemplatesProvider {
 	override fun getDefaultLiveTemplateFiles() = arrayOf("liveTemplates/CovScript")
-	override fun getHiddenLiveTemplateFiles() = null
+	override fun getHiddenLiveTemplateFiles() = emptyArray<String>()
 }
 
 object CovPackageFileType : LanguageFileType(CovLanguage) {
