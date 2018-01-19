@@ -59,11 +59,12 @@ structDeclaration ::=
 
 bodyOfSomething ::= (statement endOfLine)*
 
+tryBody ::= bodyOfSomething
 returnStatement ::= RETURN_KEYWORD expression?
 throwStatement ::= THROW_KEYWORD expression
 tryCatchStatement ::=
  TRY_KEYWORD endOfLine
-  bodyOfSomething
+  tryBody
  CATCH_KEYWORD symbol endOfLine
   bodyOfSomething
  END_KEYWORD

@@ -23,7 +23,6 @@ import com.intellij.ui.breadcrumbs.BreadcrumbsProvider
 import com.intellij.util.ProcessingContext
 import org.covscript.lang.*
 import org.covscript.lang.psi.*
-import org.covscript.lang.psi.impl.allBlockStructure
 
 
 class CovBraceMatcher : PairedBraceMatcher {
@@ -241,7 +240,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovForStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
 				is CovLoopUntilStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
 				is CovWhileStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
-				is CovTryCatchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.allBlockStructure } }
+				is CovTryCatchStatement -> listOf(o.bodyOfSomething, o.tryBody.bodyOfSomething).flatMap { it.statementList.mapNotNull { it?.allBlockStructure } }
 				is CovSwitchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.allBlockStructure } }
 				is CovBlockStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
 				is CovIfStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.allBlockStructure } }
