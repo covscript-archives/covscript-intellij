@@ -4,6 +4,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
 import org.covscript.lang.CovBundle
 import org.covscript.lang.CovSyntaxHighlighter
 import org.covscript.lang.psi.*
@@ -34,6 +35,14 @@ class CovAnnotator : Annotator {
 					else -> holder.createErrorAnnotation(element, CovBundle.message("cov.lint.char-cannot-big"))
 				}
 			}
+			is CovBreak -> if (null == element.parentOfType(CovLoopUntilStatement::class, CovWhileStatement::class))
+				holder.createErrorAnnotation(element, CovBundle.message("cov.lint.break-outside-loop"))
+			is CovContinue -> if (null == element.parentOfType(CovLoopUntilStatement::class, CovWhileStatement::class))
+				holder.createErrorAnnotation(element, CovBundle.message("cov.lint.continue-outside-loop"))
+			is CovReturnStatement -> if (null == element.parentOfType<CovFunctionDeclaration>())
+				holder.createErrorAnnotation(element, CovBundle.message("cov.lint.return-outside-function"))
+			is CovThrowStatement -> if (null == element.parentOfType<CovBodyOfSomething>())
+				holder.createErrorAnnotation(element, CovBundle.message("cov.lint.throw-outside-body"))
 			is CovBlockStatement -> if (element.bodyOfSomething.statementList.size <= 1)
 				holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.unnecessary-block"))
 						.registerFix(CovBlockToStatementIntention(element))
