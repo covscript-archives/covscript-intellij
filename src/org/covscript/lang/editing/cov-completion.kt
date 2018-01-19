@@ -4,7 +4,6 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns.psiElement
-import com.intellij.psi.PsiErrorElement
 import com.intellij.util.ProcessingContext
 import org.covscript.lang.psi.CovTypes
 
@@ -14,11 +13,6 @@ class CovCompletionContributor : CompletionContributor() {
 				"import ",
 				"package ",
 				"using "
-		).map(LookupElementBuilder::create)
-		private val switchCompletion = listOf(
-				"case ",
-				"default",
-				"end"
 		).map(LookupElementBuilder::create)
 		private val fileContentCompletion = listOf(
 				"if ",
@@ -51,12 +45,6 @@ class CovCompletionContributor : CompletionContributor() {
 						.andNot(psiElement()
 								.inside(psiElement(CovTypes.BODY_OF_SOMETHING))),
 				CovProvider(fileHeaderCompletion))
-		extend(CompletionType.BASIC,
-				psiElement(PsiErrorElement::class.java)
-						.afterLeaf("\n")
-						.withAncestor(4, psiElement(CovTypes.SWITCH_STATEMENT))
-						.andNot(psiElement().withAncestor(2, psiElement(CovTypes.BODY_OF_SOMETHING))),
-				CovProvider(switchCompletion))
 		extend(CompletionType.BASIC,
 				psiElement(CovTypes.SYM)
 						.afterLeaf("\n"),

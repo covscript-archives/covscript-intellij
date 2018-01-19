@@ -26,7 +26,7 @@ null ::= NULL_KEYWORD
 comment ::= LINE_COMMENT+
 string ::= STR
 charLiteral ::= CHAR
-endOfLine ::= (EOL comment?)+
+private endOfLine ::= (EOL comment?)+
 
 fileHeader ::=
    usingDeclaration
