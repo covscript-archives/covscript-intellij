@@ -27,7 +27,7 @@ comment ::= LINE_COMMENT+
 string ::= STR
 charLiteral ::= CHAR
 symbol ::= SYM {
-	mixin=['org.covscript.lang.psi.impl.CovSymbolMixin']
+	mixin='org.covscript.lang.psi.impl.CovSymbolMixin'
 }
 
 fileHeader ::=
