@@ -61,7 +61,9 @@ structDeclaration ::=
   ((variableDeclaration | functionDeclaration) endOfLine)*
  END_KEYWORD
 
-bodyOfSomething ::= (statement endOfLine)*
+bodyOfSomething ::= (statement endOfLine)* {
+	methods=[processDeclarations]
+}
 
 tryBody ::= bodyOfSomething
 returnStatement ::= RETURN_KEYWORD expression?

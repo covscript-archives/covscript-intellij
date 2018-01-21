@@ -4,6 +4,8 @@
 package org.covscript.lang.psi.impl
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.ResolveState
+import com.intellij.psi.scope.PsiScopeProcessor
 import org.covscript.lang.psi.*
 
 fun CovExpression.primaryExprOrNull() =
@@ -15,6 +17,19 @@ fun CovExpression.leftPrimaryExprOrNull() =
 					it.expressionList.isEmpty() &&
 					it.suffixedExpressionList.isEmpty()
 		}
+
+fun CovBodyOfSomething.processDeclarations(
+		processor: PsiScopeProcessor,
+		substitutor: ResolveState,
+		lastParent: PsiElement?,
+		place: PsiElement): Boolean {
+	var run: PsiElement? = lastParent?.prevSibling ?: lastChild
+	while (run != null) {
+		if (!run.processDeclarations(processor, substitutor, null, place)) return false
+		run = run.prevSibling
+	}
+	return true
+}
 
 val CovStatement.allBlockStructure: PsiElement?
 	get() = collapsedStatement ?: functionDeclaration ?: structDeclaration ?: namespaceDeclaration ?: forStatement

@@ -49,8 +49,8 @@ class TryEvaluate {
 		} catch (e: UncheckedTimeoutException) {
 			showPopupWindow(CovBundle.message("cov.messages.try-eval.timeout"), editor, 0xEDC209, 0xC26500)
 		} catch (e: Throwable) {
-			val cause = e as? InvalidCovSdkException ?: e.cause as? InvalidCovSdkException
-			if (cause != null) showPopupWindow(CovBundle.message(
+			val cause = e.cause ?: e
+			if (cause is InvalidCovSdkException) showPopupWindow(CovBundle.message(
 					"cov.messages.try-eval.invalid-path", cause.path), editor, 0xEDC209, 0xC26500)
 			else showPopupWindow(CovBundle.message(
 					"cov.messages.try-eval.exception", e.javaClass.simpleName, e.message.orEmpty()), editor, 0xE20911, 0xC20022)
@@ -73,11 +73,11 @@ class TryEvaluate {
 				JBPopupFactory.getInstance()
 						.createComponentPopupBuilder(JBUI.Panels.simplePanel()
 								.addToTop(JLabel(COV_BIG_ICON))
-								.addToCenter(ScrollPaneFactory.createScrollPane(JTextArea(result).also {
-									it.toolTipText = CovBundle.message("cov.messages.try-eval.overflowed-text", textLimit)
-									it.lineWrap = true
-									it.wrapStyleWord = true
-									it.isEditable = false
+								.addToCenter(ScrollPaneFactory.createScrollPane(JTextArea(result).apply {
+									toolTipText = CovBundle.message("cov.messages.try-eval.overflowed-text", textLimit)
+									lineWrap = true
+									wrapStyleWord = true
+									isEditable = false
 								}))
 								.apply {
 									preferredSize = Dimension(500, 500)

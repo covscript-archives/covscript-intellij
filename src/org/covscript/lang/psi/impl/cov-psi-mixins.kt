@@ -16,11 +16,12 @@ abstract class CovVariableDeclarationMixin(node: ASTNode) :
 			.getInstance(project)
 			.createFileFromText(CovLanguage, name)
 			.firstChild
+			.let(::replace)
 
 	override fun getReferences(): Array<PsiReference> = references ?: SyntaxTraverser
 			.psiTraverser(parent.parent)
 			.filter { it is CovSymbol && it.text == symbol.text }
-			.mapNotNull { it.reference }
+			.mapNotNull(PsiElement::getReference)
 			.toList()
 			.toTypedArray()
 			.also { references = it }

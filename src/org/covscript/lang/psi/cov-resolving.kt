@@ -16,15 +16,19 @@ class CovSymbolRef(symbol: CovSymbol, private var refTo: CovVariableDeclaration?
 	override fun getVariants(): Array<Any> = arrayOf()
 	override fun isReferenceTo(o: PsiElement?) = o === refTo || (o as? CovVariableDeclaration)?.symbol?.text == element.text
 	override fun resolve() = refTo ?: super.resolve().let { it as? CovVariableDeclaration }?.also { refTo = it }
-	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> = ResolveCache
-			.getInstance(project)
-			.resolveWithCaching(this, Resolver, true, incompleteCode)
+	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
+		if (element.parent !is CovSuffixedExpression) return arrayOf(PsiElementResolveResult(element))
+		if (project.isDisposed) return emptyArray()
+		return ResolveCache
+				.getInstance(project)
+				.resolveWithCaching(this, Resolver, true, incompleteCode)
+	}
 
 	private companion object Resolver : ResolveCache.PolyVariantResolver<CovSymbolRef> {
 		override fun resolve(ref: CovSymbolRef, incompleteCode: Boolean): Array<out ResolveResult> {
 			val currentSymbol = ref.element ?: return emptyArray()
-			if (currentSymbol.parent !is CovSuffixedExpression) return emptyArray()
 			val processor = SymbolResolveProcessor(ref, incompleteCode)
+			treeWalkUp(currentSymbol, processor)
 			val statement = PsiTreeUtil.getParentOfType(currentSymbol, CovStatement::class.java) ?: return emptyArray()
 			statement.processDeclarations(processor, ResolveState.initial(), currentSymbol, processor.place)
 			return processor.candidates
@@ -45,16 +49,26 @@ class SymbolResolveProcessor(name: String, val place: PsiElement, val incomplete
 		ResolveProcessor(name) {
 	constructor(ref: CovSymbolRef, incompleteCode: Boolean) : this(ref.canonicalText, ref.element, incompleteCode)
 
-	var isFilter = true
 	private val processedElements = hashSetOf<PsiElement>()
 	private fun addCandidate(symbol: CovSymbol) = addCandidate(PsiElementResolveResult(symbol, true))
 	override fun <T : Any?> getHint(hintKey: Key<T>): T? = null
 	override fun execute(element: PsiElement, resolveState: ResolveState) =
 			if (element is CovSymbol && element !in processedElements) {
 				val accessible = name == element.text
-				if ((!isFilter || accessible) && ((element as? StubBasedPsiElement<*>)?.stub != null || !PsiTreeUtil.hasErrorElements(element)))
+				if (accessible && ((element as? StubBasedPsiElement<*>)?.stub != null || !PsiTreeUtil.hasErrorElements(element)))
 					addCandidate(element)
 				processedElements.add(element)
-				!(isFilter and accessible) // || (place as PsiReference).element is LuaGlobal
+				!accessible // || (place as PsiReference).element is LuaGlobal
 			} else true
+}
+
+fun treeWalkUp(place: PsiElement, processor: PsiScopeProcessor): Boolean {
+	var lastParent: PsiElement? = null
+	var run: PsiElement? = place
+	while (run != null) {
+		if (!run.processDeclarations(processor, ResolveState.initial(), lastParent, place)) return false
+		lastParent = run
+		run = run.parent
+	}
+	return true
 }
