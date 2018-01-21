@@ -68,18 +68,16 @@ class CovSpellCheckingStrategy : SpellcheckingStrategy() {
 }
 
 class CovNamesValidator : NamesValidator, RenameInputValidator {
-	override fun isKeyword(s: String, project: Project?) = s in COV_KEYWORDS
-	override fun isInputValid(s: String, o: PsiElement, c: ProcessingContext) = isIdentifier(s, o.project)
-	override fun getPattern(): ElementPattern<out PsiElement> = PlatformPatterns.psiElement().with(object :
-			PatternCondition<PsiElement>("") {
+	companion object : PatternCondition<PsiElement>("") {
 		override fun accepts(element: PsiElement, context: ProcessingContext?) =
 				(element as? PomTargetPsiElement)?.navigationElement is CovSymbol
-	})
-
-	override fun isIdentifier(name: String, project: Project?) = with(CovLexerAdapter()) {
-		start(name)
-		tokenType == CovTypes.SYM && tokenEnd == name.length
 	}
+
+	override fun isKeyword(s: String, project: Project?) = s in COV_KEYWORDS
+	override fun isInputValid(s: String, o: PsiElement, c: ProcessingContext) = isIdentifier(s, o.project)
+	override fun getPattern(): ElementPattern<out PsiElement> = PlatformPatterns.psiElement().with(Companion)
+	override fun isIdentifier(name: String, project: Project?) =
+			name.isNotBlank() and name.all { it.isLetterOrDigit() || it == '_' } and !name.first().isDigit()
 }
 
 const val TEXT_MAX = 16

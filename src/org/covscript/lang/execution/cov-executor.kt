@@ -54,9 +54,9 @@ class CovCommandLineState(
 
 		override fun update(event: AnActionEvent) {
 			super.update(event)
-			if (!handler.isProcessTerminated) event.presentation.isEnabled = true
-			else when {
-				!console.canPause() || !console.hasDeferredOutput() -> event.presentation.isEnabled = false
+			when {
+				!handler.isProcessTerminated -> event.presentation.isEnabled = true
+				!console.canPause() or !console.hasDeferredOutput() -> event.presentation.isEnabled = false
 				else -> {
 					event.presentation.isEnabled = true
 					console.performWhenNoDeferredOutput { update(event) }

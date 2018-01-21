@@ -55,16 +55,17 @@ class CovModuleType : ModuleType<CovModuleBuilder>(COV_MODULE_ID) {
 
 const val GET_VERSION_TIME_PERIOD = 500L
 //language=CovScript
-fun versionOf(homePath: String, timeLimit: Long = GET_VERSION_TIME_PERIOD) = executeInRepl(homePath, """
-runtime.info()
-system.exit(0)0
-""", timeLimit)
-		.first
-		.firstOrNull { it.startsWith("version", true) }
-		?.run { substringAfter(':').trim() }
-		?: CovBundle.message("cov.modules.sdk.unknown-version")
+fun versionOf(homePath: String, timeLimit: Long = GET_VERSION_TIME_PERIOD) =
+		executeInRepl(homePath, "runtime.info()", timeLimit)
+				.first
+				.firstOrNull { it.startsWith("version", true) }
+				?.run { substringAfter(':').trim() }
+				?: CovBundle.message("cov.modules.sdk.unknown-version")
 
 /**
+ * @param homePath the home path of the CovScript SDK currently used
+ * @param code doesn't need to `system.exit(0)`, because this function will automatically add one
+ * @param timeLimit the time limit. Will wait for this long and kill process after 100 ms
  * @return (stdout, stderr)
  */
 fun executeInRepl(homePath: String, code: String, timeLimit: Long): Pair<List<String>, List<String>> {
@@ -77,7 +78,7 @@ fun executeInRepl(homePath: String, code: String, timeLimit: Long): Pair<List<St
 			val process: Process = Runtime.getRuntime().exec("$path --silent")
 			processRef = process
 			process.outputStream.use {
-				it.write(code.toByteArray())
+				it.write("$code\nsystem.exit(0)".toByteArray())
 				it.flush()
 			}
 			process.waitFor(timeLimit, TimeUnit.MILLISECONDS)

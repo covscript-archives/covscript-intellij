@@ -33,8 +33,8 @@ class CovSymbolRef(symbol: CovSymbol, private var refTo: CovVariableDeclaration?
 }
 
 abstract class ResolveProcessor(val name: String) : PsiScopeProcessor {
-	var candidateSet: MutableSet<PsiElementResolveResult> = HashSet()
-	val elements get() = candidateSet.map { it.element }
+	private var candidateSet: MutableSet<PsiElementResolveResult> = HashSet()
+	val elements get() = candidateSet.map(PsiElementResolveResult::getElement)
 	val candidates get() = candidateSet.toTypedArray()
 	override fun handleEvent(event: PsiScopeProcessor.Event, o: Any?) = Unit
 	fun hasCandidates() = candidateSet.isNotEmpty()

@@ -12,7 +12,7 @@ abstract class CovVariableDeclarationMixin(node: ASTNode) :
 		PsiNameIdentifierOwner {
 	private var references: Array<PsiReference>? = null
 	override fun getNameIdentifier() = symbol
-	override fun setName(name: String) = PsiFileFactory
+	override fun setName(name: String): PsiElement = PsiFileFactory
 			.getInstance(project)
 			.createFileFromText(CovLanguage, name)
 			.firstChild
@@ -22,7 +22,6 @@ abstract class CovVariableDeclarationMixin(node: ASTNode) :
 			.filter { it is CovSymbol && it.text == symbol.text }
 			.mapNotNull { it.reference }
 			.toList()
-			.also(::println)
 			.toTypedArray()
 			.also { references = it }
 
@@ -36,5 +35,5 @@ abstract class CovSymbolMixin(node: ASTNode) :
 		CovSymbol,
 		ASTWrapperPsiElement(node) {
 	private val refCache by lazy { CovSymbolRef(this) }
-	override fun getReference() = if (parent is CovVariableDeclaration) null else refCache
+	override fun getReference() = if (parent is CovSuffixedExpression) refCache else null
 }
