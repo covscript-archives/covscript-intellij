@@ -49,7 +49,9 @@ parameterList ::= LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET
 functionDeclaration ::=
  FUNCTION_KEYWORD symbol parameterList endOfLine
   bodyOfSomething
- END_KEYWORD
+ END_KEYWORD {
+	mixin='org.covscript.lang.psi.impl.CovFunctionDeclarationMixin'
+}
 
 namespaceDeclaration ::=
  NAMESPACE_KEYWORD symbol endOfLine
