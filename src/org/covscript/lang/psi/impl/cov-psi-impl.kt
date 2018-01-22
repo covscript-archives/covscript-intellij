@@ -3,8 +3,7 @@
 
 package org.covscript.lang.psi.impl
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.ResolveState
+import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.covscript.lang.psi.*
 
@@ -46,3 +45,10 @@ val CovCollapsedStatement.anythingInside: PsiElement?
 	get() = functionDeclaration ?: structDeclaration ?: namespaceDeclaration ?: forStatement
 	?: loopUntilStatement ?: whileStatement ?: tryCatchStatement ?: switchStatement ?: blockStatement ?: ifStatement
 	?: variableDeclaration
+
+fun collectFrom(startPoint: PsiElement, name: String) = SyntaxTraverser
+		.psiTraverser(startPoint)
+		.filter { it is CovSymbol && it.text == name }
+		.mapNotNull(PsiElement::getReference)
+		.toList()
+		.toTypedArray()

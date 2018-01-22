@@ -30,6 +30,10 @@ symbol ::= SYM {
 	mixin='org.covscript.lang.psi.impl.CovSymbolMixin'
 }
 
+parameter ::= SYM {
+	mixin='org.covscript.lang.psi.impl.CovParameterMixin'
+}
+
 fileHeader ::=
    usingDeclaration
  | importDeclaration
@@ -45,9 +49,8 @@ variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expression {
 	mixin='org.covscript.lang.psi.impl.CovVariableDeclarationMixin'
 }
 
-parameterList ::= LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET
 functionDeclaration ::=
- FUNCTION_KEYWORD symbol parameterList endOfLine
+ FUNCTION_KEYWORD symbol LEFT_BRACKET (parameter (COMMA parameter)*)? RIGHT_BRACKET endOfLine
   bodyOfSomething
  END_KEYWORD {
 	mixin='org.covscript.lang.psi.impl.CovFunctionDeclarationMixin'
@@ -68,14 +71,22 @@ bodyOfSomething ::= (statement endOfLine)* {
 }
 
 tryBody ::= bodyOfSomething
-returnStatement ::= RETURN_KEYWORD expression?
-throwStatement ::= THROW_KEYWORD expression
+returnStatement ::= RETURN_KEYWORD expression? {
+	methods=[processDeclarations]
+}
+
+throwStatement ::= THROW_KEYWORD expression {
+	methods=[processDeclarations]
+}
+
 tryCatchStatement ::=
  TRY_KEYWORD endOfLine
   tryBody
  CATCH_KEYWORD symbol endOfLine
   bodyOfSomething
- END_KEYWORD
+ END_KEYWORD {
+ 	methods=[processDeclarations]
+}
 
 ifStatement ::=
  IF_KEYWORD expression endOfLine
@@ -84,7 +95,9 @@ ifStatement ::=
    ELSE_KEYWORD endOfLine
     bodyOfSomething
   )?
- END_KEYWORD
+ END_KEYWORD {
+	methods=[processDeclarations]
+}
 
 switchStatement ::=
  SWITCH_KEYWORD expression endOfLine
@@ -93,12 +106,16 @@ switchStatement ::=
     bodyOfSomething
    END_KEYWORD endOfLine
   )*
- END_KEYWORD
+ END_KEYWORD {
+	methods=[processDeclarations]
+}
 
 whileStatement ::=
  WHILE_KEYWORD expression endOfLine
   bodyOfSomething
- END_KEYWORD
+ END_KEYWORD {
+	methods=[processDeclarations]
+}
 
 loopUntilStatement ::=
  LOOP_KEYWORD endOfLine
@@ -146,14 +163,12 @@ private primaryStatement ::=
  | namespaceDeclaration
  | break
  | continue
- | expression {
-	methods=[getBlockStructures]
-}
+ | expression
 
 private boolean ::= true | false
-newExpression ::= (NEW_KEYWORD | GCNEW_KEYWORD) dotChain
+newExpression ::= (NEW_KEYWORD | GCNEW_KEYWORD) symbol (DOT symbol)*
 arrayLiteral ::= LEFT_B_BRACKET (expression (COMMA expression)*)? RIGHT_B_BRACKET
-functionLiteral ::= LEFT_S_BRACKET RIGHT_S_BRACKET parameterList ARROW expression
+functionLiteral ::= LEFT_S_BRACKET RIGHT_S_BRACKET LEFT_BRACKET (parameter (COMMA parameter)*)? RIGHT_BRACKET ARROW expression
 
 expression ::=
  suffixedExpression
@@ -225,6 +240,4 @@ suffixedExpression ::=
   | INC_OP
   | DEC_OP
  )*
-
-private dotChain ::= symbol (DOT symbol)*
 
