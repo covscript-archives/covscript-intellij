@@ -109,7 +109,7 @@ class CovAnnotator : Annotator {
 				if (element.children.any { it.javaClass.simpleName.startsWith("Cov") }) {
 					holder.createInfoAnnotation(element, CovBundle.message("cov.lint.collapsed-block")).run {
 						textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
-						registerFix(CovCollapsedBlockToOneStatementIntention(element))
+						registerFix(collapsedToOneLine(element))
 					}
 					val firstLfIndex = element.text.indexOfFirst { it == '\n' }
 					val firstIllegal = element.text.substring(BEGIN_BLOCK_LEN, firstLfIndex)

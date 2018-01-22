@@ -4,7 +4,8 @@ import com.intellij.codeInsight.intention.impl.BaseIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
-import org.covscript.lang.*
+import org.covscript.lang.CovBundle
+import org.covscript.lang.CovLanguage
 import org.covscript.lang.psi.CovBlockStatement
 import org.covscript.lang.psi.CovCollapsedStatement
 import org.covscript.lang.psi.impl.anythingInside
@@ -19,20 +20,12 @@ class CovRemoveElementIntention(private val element: PsiElement, private val int
 	}
 }
 
-class CovCollapsedBlockToOneStatementIntention(
-		private val element: CovCollapsedStatement) : BaseIntentionAction() {
-	override fun getText() = CovBundle.message("cov.lint.convert-collapsed-block")
-	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
-	override fun getFamilyName() = CovBundle.message("cov.name")
-	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
-		val statement = element.anythingInside ?: return
-		element.replace(PsiFileFactory
-				.getInstance(project)
-				.createFileFromText(CovLanguage, statement.text.replace("\n", ""))
-				.let { it as? CovFile }
-				?.firstChild ?: return)
-	}
-}
+fun collapsedToOneLine(element: CovCollapsedStatement) =
+		CovReplaceWithTextIntention(
+				element,
+				CovBundle.message("cov.lint.convert-collapsed-block"),
+				element.anythingInside?.text?.replace("\n", "") ?: element.text
+		)
 
 class CovReplaceWithTextIntention(
 		private val element: PsiElement,
@@ -42,11 +35,11 @@ class CovReplaceWithTextIntention(
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = CovBundle.message("cov.name")
 	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
-		element.replace(PsiFileFactory
+		PsiFileFactory
 				.getInstance(project)
 				.createFileFromText(CovLanguage, new)
-				.let { it as? CovFile }
-				?.firstChild ?: return)
+				?.firstChild
+				?.let(element::replace)
 	}
 }
 

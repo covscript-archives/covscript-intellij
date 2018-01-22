@@ -58,7 +58,7 @@ class SymbolResolveProcessor(name: String, val place: PsiElement, val incomplete
 				if (accessible && ((element as? StubBasedPsiElement<*>)?.stub != null || !PsiTreeUtil.hasErrorElements(element)))
 					addCandidate(element)
 				processedElements.add(element)
-				!accessible // || (place as PsiReference).element is LuaGlobal
+				!accessible
 			} else true
 }
 
