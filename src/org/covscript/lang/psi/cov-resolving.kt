@@ -17,7 +17,7 @@ class CovSymbolRef(symbol: CovSymbol, private var refTo: CovVariableDeclaration?
 	override fun isReferenceTo(o: PsiElement?) = o === refTo || (o as? CovVariableDeclaration)?.symbol?.text == element.text
 	override fun resolve() = refTo ?: super.resolve().let { it as? CovVariableDeclaration }?.also { refTo = it }
 	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
-		if (element.parent !is CovSuffixedExpression) return arrayOf(PsiElementResolveResult(element))
+		if (element.parent !is CovSuffixedExpression) return emptyArray()
 		if (project.isDisposed) return emptyArray()
 		return ResolveCache
 				.getInstance(project)

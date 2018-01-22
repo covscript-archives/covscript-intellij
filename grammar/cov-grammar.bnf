@@ -120,7 +120,7 @@ blockStatement ::=
 statement ::=
    primaryStatement
  | collapsedStatement {
-	methods=[getAllBlockStructure]
+	methods=[getAllBlockStructure processDeclarations]
 }
 
 collapsedStatement ::= COLLAPSER_BEGIN primaryStatement? COLLAPSER_END

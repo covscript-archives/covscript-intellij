@@ -18,7 +18,7 @@ fun CovExpression.leftPrimaryExprOrNull() =
 					it.suffixedExpressionList.isEmpty()
 		}
 
-fun CovBodyOfSomething.processDeclarations(
+fun PsiElement.processDeclarations(
 		processor: PsiScopeProcessor,
 		substitutor: ResolveState,
 		lastParent: PsiElement?,
