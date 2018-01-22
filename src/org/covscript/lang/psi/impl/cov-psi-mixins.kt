@@ -3,6 +3,8 @@ package org.covscript.lang.psi.impl
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.*
+import com.intellij.psi.scope.PsiScopeProcessor
+import com.intellij.psi.util.PsiTreeUtil
 import org.covscript.lang.CovLanguage
 import org.covscript.lang.psi.*
 
@@ -25,6 +27,13 @@ abstract class CovVariableDeclarationMixin(node: ASTNode) :
 			.toList()
 			.toTypedArray()
 			.also { references = it }
+
+	override fun processDeclarations(
+			processor: PsiScopeProcessor,
+			substitutor: ResolveState,
+			lastParent: PsiElement?,
+			place: PsiElement) =
+			PsiTreeUtil.isAncestor(this, place, true) or processor.execute(symbol, substitutor)
 
 	override fun subtreeChanged() {
 		references = null

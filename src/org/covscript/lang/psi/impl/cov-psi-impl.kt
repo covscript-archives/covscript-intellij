@@ -22,6 +22,12 @@ fun CovBodyOfSomething.processDeclarations(
 		processor: PsiScopeProcessor,
 		substitutor: ResolveState,
 		lastParent: PsiElement?,
+		place: PsiElement) = processDeclTrivial(processor, substitutor, lastParent, place)
+
+fun PsiElement.processDeclTrivial(
+		processor: PsiScopeProcessor,
+		substitutor: ResolveState,
+		lastParent: PsiElement?,
 		place: PsiElement): Boolean {
 	var run: PsiElement? = lastParent?.prevSibling ?: lastChild
 	while (run != null) {

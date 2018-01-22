@@ -160,9 +160,9 @@ namespace <namespaceName>std</namespaceName>
 
   function <functionName>main</functionName>(args)
     var <variableName>thisIsAnArray</variableName> = {a, b, c}
-    const var <variableName>str</variableName> = "boy " +
-        "next door<escapeCharacter>\n</escapeCharacter>" +
-        to_string(y)
+    const var <variableName>str</variableName> = "boy next door<escapeCharacter>\n</escapeCharacter>" + to_string(y)
+    # @begin and @end are not highlighted as well as their inside part
+    # due to the limitation of IntelliJ's preview system
     @begin<beginEndBlock>
       system.out.println(str +
       x.to_string())
