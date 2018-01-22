@@ -1,5 +1,6 @@
 package org.covscript.lang.psi
 
+import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
@@ -13,9 +14,13 @@ class CovSymbolRef(symbol: CovSymbol, private var refTo: PsiElement? = null) :
 	override fun equals(other: Any?) = (other as? CovSymbolRef)?.element == element
 	override fun hashCode() = element.hashCode()
 	override fun getCanonicalText(): String = element.text
-	override fun getVariants(): Array<Any> = arrayOf()
-	override fun isReferenceTo(o: PsiElement?) = o === refTo ||
-			((o as? CovVariableDeclaration)?.symbol ?: (o as? CovFunctionDeclaration)?.symbol ?: o)?.text == element.text
+	override fun getVariants(): Array<out Any> {
+		val variantsProcessor = SymbolResolveProcessor(this, true)
+		treeWalkUp(element, variantsProcessor)
+		return variantsProcessor.resultElement
+	}
+	override fun isReferenceTo(o: PsiElement?) = o == refTo ||
+			(o as? PsiNameIdentifierOwner)?.nameIdentifier?.text == element.text
 
 	override fun resolve() = refTo ?: super.resolve().also { refTo = it }
 	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
@@ -41,13 +46,13 @@ class CovSymbolRef(symbol: CovSymbol, private var refTo: PsiElement? = null) :
 
 abstract class ResolveProcessor(val name: String) : PsiScopeProcessor {
 	private var candidateSet = hashSetOf<PsiElementResolveResult>()
-	val elements get() = candidateSet.map(PsiElementResolveResult::getElement)
 	val candidates get() = candidateSet.toTypedArray()
+	val resultElement get() = candidates.map(LookupElementBuilder::create).toTypedArray()
 	override fun handleEvent(event: PsiScopeProcessor.Event, o: Any?) = Unit
 	fun addCandidate(candidate: PsiElementResolveResult) = candidateSet.add(candidate)
 }
 
-class SymbolResolveProcessor(name: String, val place: PsiElement, val incompleteCode: Boolean) :
+open class SymbolResolveProcessor(name: String, val place: PsiElement, val incompleteCode: Boolean) :
 		ResolveProcessor(name) {
 	constructor(ref: CovSymbolRef, incompleteCode: Boolean) : this(ref.canonicalText, ref.element, incompleteCode)
 
