@@ -89,6 +89,5 @@ class CompletionProcessor(val place: PsiElement, val incompleteCode: Boolean) :
 }
 
 class CovRefactoringSupportProvider : RefactoringSupportProvider() {
-	override fun isInplaceRenameAvailable(element: PsiElement, context: PsiElement?) = element is CovSymbol
-	override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?) = element is CovSymbol
+	override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?) = true
 }
