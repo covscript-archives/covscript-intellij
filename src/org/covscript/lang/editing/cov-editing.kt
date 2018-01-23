@@ -74,7 +74,9 @@ class CovNamesValidator : NamesValidator, RenameInputValidator {
 	}
 
 	override fun isKeyword(s: String, project: Project?) = s in COV_KEYWORDS
-	override fun isInputValid(s: String, o: PsiElement, c: ProcessingContext) = isIdentifier(s, o.project)
+	override fun isInputValid(name: String, ele: PsiElement, context: ProcessingContext) =
+			isIdentifier(name, ele.project) && !isKeyword(name, ele.project)
+
 	override fun getPattern(): ElementPattern<out PsiElement> = PlatformPatterns.psiElement().with(Companion)
 	override fun isIdentifier(name: String, project: Project?) =
 			name.isNotBlank() and name.all { it.isLetterOrDigit() || it == '_' } and !name.first().isDigit()

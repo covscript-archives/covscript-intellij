@@ -73,9 +73,9 @@ Functions provided:<br/>
 		<runConfigurationProducer implementation="org.covscript.lang.execution.CovRunConfigurationProducer"/>
 		<sdkType implementation="org.covscript.lang.module.CovSdkType"/>
 		<breadcrumbsInfoProvider implementation="org.covscript.lang.editing.CovBreadCrumbProvider"/>
-		<lang.findUsagesProvider
+		<lang.refactoringSupport
 				language="CovScript"
-				implementationClass="org.covscript.lang.psi.CovFindUsageProvider"/>
+				implementationClass="org.covscript.lang.psi.CovRefactoringSupportProvider"/>
 		<lang.psiStructureViewFactory
 				language="CovScript"
 				implementationClass="org.covscript.lang.editing.CovStructureViewFactory"/>

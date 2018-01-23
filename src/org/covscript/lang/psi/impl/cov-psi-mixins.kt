@@ -12,12 +12,18 @@ abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclarati
 }
 
 abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), PsiNameIdentifierOwner {
-	private var references: Array<PsiReference>? = null
-	override fun setName(name: String): PsiElement = CovTokenType.fromText(name, project).let(::replace)
+	private var refCache: Array<PsiReference>? = null
+	override fun setName(newName: String) = CovTokenType.fromText(newName, project).let(::replace)
+			.also {
+				if (it is TrivialDeclaration)
+					it.refCache = references.mapNotNull { it.handleElementRename(newName).reference }.toTypedArray()
+			}
+
+	override fun getName(): String = nameIdentifier.text
 	abstract override fun getNameIdentifier(): PsiElement
 	abstract val startPoint: PsiElement
-	override fun getReferences(): Array<PsiReference> = references ?: collectFrom(startPoint, nameIdentifier.text)
-			.also { references = it }
+	override fun getReferences(): Array<PsiReference> = refCache ?: collectFrom(startPoint, nameIdentifier.text)
+			.also { refCache = it }
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor,
@@ -26,7 +32,7 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 			place: PsiElement) = processor.execute(nameIdentifier, substitutor)
 
 	override fun subtreeChanged() {
-		references = null
+		refCache = null
 		super.subtreeChanged()
 	}
 }

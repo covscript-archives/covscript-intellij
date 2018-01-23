@@ -1,12 +1,14 @@
 package org.covscript.lang.psi
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.refactoring.RefactoringSupportProvider
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiTreeUtil
+import org.covscript.lang.psi.impl.treeWalkUp
 
 class CovSymbolRef(symbol: CovSymbol, private var refTo: PsiElement? = null) :
 		PsiPolyVariantReferenceBase<CovSymbol>(symbol, TextRange(0, symbol.textLength), true) {
@@ -14,6 +16,7 @@ class CovSymbolRef(symbol: CovSymbol, private var refTo: PsiElement? = null) :
 	override fun equals(other: Any?) = (other as? CovSymbolRef)?.element == element
 	override fun hashCode() = element.hashCode()
 	override fun getCanonicalText(): String = element.text
+	override fun handleElementRename(newName: String) = CovTokenType.fromText(newName, project).let(element::replace)
 	override fun getVariants(): Array<out Any> {
 		val variantsProcessor = CompletionProcessor(this, true)
 		treeWalkUp(element, variantsProcessor)
@@ -85,13 +88,7 @@ class CompletionProcessor(val place: PsiElement, val incompleteCode: Boolean) :
 	}
 }
 
-fun treeWalkUp(place: PsiElement, processor: PsiScopeProcessor): Boolean {
-	var lastParent: PsiElement? = null
-	var run: PsiElement? = place
-	while (run != null) {
-		if (!run.processDeclarations(processor, ResolveState.initial(), lastParent, place)) return false
-		lastParent = run
-		run = run.parent
-	}
-	return true
+class CovRefactoringSupportProvider : RefactoringSupportProvider() {
+	override fun isInplaceRenameAvailable(element: PsiElement, context: PsiElement?) = element is CovSymbol
+	override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?) = element is CovSymbol
 }
