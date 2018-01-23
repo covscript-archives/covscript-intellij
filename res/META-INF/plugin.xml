@@ -13,6 +13,7 @@ Functions provided:<br/>
   <li>Inspections and quick fixes</li>
   <li>Semantic-based highlights</li>
   <li>Jump to definition</li>
+  <li>Renaming</li>
   <li>SDK configurations, try-evaluate and code execution</li>
   <li>Bread crumbs, spell checking, code folding, structure view</li>
 </ul>
@@ -26,6 +27,7 @@ Functions provided:<br/>
   <li>More inspections (mainly context-based)</li>
   <li>Completion improvements</li>
   <li>Reference resolving (jump to definition)</li>
+  <li>Renaming</li>
 </ul>
 
 <br/>
