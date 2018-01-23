@@ -57,10 +57,10 @@ open class SymbolResolveProcessor(name: String, val place: PsiElement, val incom
 	constructor(ref: CovSymbolRef, incompleteCode: Boolean) : this(ref.canonicalText, ref.element, incompleteCode)
 
 	private val processedElements = hashSetOf<PsiElement>()
-	private fun addCandidate(symbol: CovSymbol) = addCandidate(PsiElementResolveResult(symbol, true))
+	private fun addCandidate(symbol: PsiElement) = addCandidate(PsiElementResolveResult(symbol, true))
 	override fun <T : Any?> getHint(hintKey: Key<T>): T? = null
 	override fun execute(element: PsiElement, resolveState: ResolveState) =
-			if (element is CovSymbol && element !in processedElements) {
+			if ((element is CovSymbol || element is CovParameter) && element !in processedElements) {
 				val accessible = name == element.text
 				if (accessible && !((element as? StubBasedPsiElement<*>)?.stub == null && PsiTreeUtil.hasErrorElements(element)))
 					addCandidate(element)

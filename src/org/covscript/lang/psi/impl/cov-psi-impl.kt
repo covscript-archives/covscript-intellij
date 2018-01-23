@@ -17,6 +17,14 @@ fun CovExpression.leftPrimaryExprOrNull() =
 					it.suffixedExpressionList.isEmpty()
 		}
 
+fun CovForStatement.processDeclarations(
+		processor: PsiScopeProcessor,
+		substitutor: ResolveState,
+		lastParent: PsiElement?,
+		place: PsiElement) =
+		if (!parameter.processDeclarations(processor, substitutor, lastParent, place)) false
+		else processDeclTrivial(processor, substitutor, lastParent, place)
+
 fun PsiElement.processDeclarations(
 		processor: PsiScopeProcessor,
 		substitutor: ResolveState,

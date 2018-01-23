@@ -40,8 +40,8 @@ abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclarati
 			lastParent: PsiElement?,
 			place: PsiElement): Boolean {
 		parameterList.forEach { if (!it.processDeclarations(processor, substitutor, lastParent, place)) return false }
-		if (!processDeclTrivial(processor, substitutor, lastParent, place)) return false
-		return super.processDeclarations(processor, substitutor, lastParent, place)
+		return if (!processDeclTrivial(processor, substitutor, lastParent, place)) false
+		else super.processDeclarations(processor, substitutor, lastParent, place)
 	}
 }
 
@@ -50,9 +50,7 @@ abstract class CovParameterMixin(node: ASTNode) : CovParameter, TrivialDeclarati
 	override val startPoint: PsiElement get() = parent
 }
 
-abstract class CovSymbolMixin(node: ASTNode) :
-		CovSymbol,
-		ASTWrapperPsiElement(node) {
+abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(node) {
 	private val refCache by lazy { CovSymbolRef(this) }
 	private val isUsage get() = parent is CovSuffixedExpression
 	override fun getReference() = if (isUsage) refCache else null

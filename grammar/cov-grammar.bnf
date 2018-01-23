@@ -124,7 +124,7 @@ loopUntilStatement ::=
  END_KEYWORD
 
 forStatement ::=
- FOR_KEYWORD symbol (forTo | forIterate) endOfLine
+ FOR_KEYWORD parameter (forTo | forIterate) endOfLine
   bodyOfSomething
  END_KEYWORD
 
