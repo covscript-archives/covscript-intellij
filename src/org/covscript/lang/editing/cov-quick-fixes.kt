@@ -3,11 +3,10 @@ package org.covscript.lang.editing
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import org.covscript.lang.CovBundle
-import org.covscript.lang.CovLanguage
-import org.covscript.lang.psi.CovBlockStatement
-import org.covscript.lang.psi.CovCollapsedStatement
+import org.covscript.lang.psi.*
 import org.covscript.lang.psi.impl.anythingInside
 
 class CovRemoveElementIntention(private val element: PsiElement, private val intentionText: String) :
@@ -35,11 +34,7 @@ class CovReplaceWithTextIntention(
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = CovBundle.message("cov.name")
 	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
-		PsiFileFactory
-				.getInstance(project)
-				.createFileFromText(CovLanguage, new)
-				?.firstChild
-				?.let(element::replace)
+		CovTokenType.fromText(new, project).let(element::replace)
 	}
 }
 
@@ -61,10 +56,6 @@ class CovBlockToStatementIntention(
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = CovBundle.message("cov.name")
 	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
-		if (element.bodyOfSomething.statementList.isEmpty()) {
-			element.delete()
-			return
-		}
-		element.replace(element.bodyOfSomething.statementList.firstOrNull() ?: return)
+		element.bodyOfSomething.statementList.firstOrNull()?.let(element::replace) ?: element.delete()
 	}
 }
