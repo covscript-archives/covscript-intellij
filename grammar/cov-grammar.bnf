@@ -71,22 +71,16 @@ bodyOfSomething ::= (statement endOfLine)* {
 }
 
 tryBody ::= bodyOfSomething
-returnStatement ::= RETURN_KEYWORD expression? {
-	methods=[processDeclarations]
-}
+returnStatement ::= RETURN_KEYWORD expression?
 
-throwStatement ::= THROW_KEYWORD expression {
-	methods=[processDeclarations]
-}
+throwStatement ::= THROW_KEYWORD expression
 
 tryCatchStatement ::=
  TRY_KEYWORD endOfLine
   tryBody
  CATCH_KEYWORD symbol endOfLine
   bodyOfSomething
- END_KEYWORD {
- 	methods=[processDeclarations]
-}
+ END_KEYWORD
 
 ifStatement ::=
  IF_KEYWORD expression endOfLine
@@ -95,9 +89,7 @@ ifStatement ::=
    ELSE_KEYWORD endOfLine
     bodyOfSomething
   )?
- END_KEYWORD {
-	methods=[processDeclarations]
-}
+ END_KEYWORD
 
 switchStatement ::=
  SWITCH_KEYWORD expression endOfLine
@@ -106,16 +98,12 @@ switchStatement ::=
     bodyOfSomething
    END_KEYWORD endOfLine
   )*
- END_KEYWORD {
-	methods=[processDeclarations]
-}
+ END_KEYWORD
 
 whileStatement ::=
  WHILE_KEYWORD expression endOfLine
   bodyOfSomething
- END_KEYWORD {
-	methods=[processDeclarations]
-}
+ END_KEYWORD
 
 loopUntilStatement ::=
  LOOP_KEYWORD endOfLine
@@ -126,7 +114,9 @@ loopUntilStatement ::=
 forStatement ::=
  FOR_KEYWORD parameter (forTo | forIterate) endOfLine
   bodyOfSomething
- END_KEYWORD
+ END_KEYWORD {
+	methods=[processDeclarations]
+}
 
 forTo ::= EQ expression TO_KEYWORD expression (STEP_KEYWORD expression)?
 forIterate ::= ITERATE_KEYWORD expression

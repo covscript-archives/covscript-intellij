@@ -10,6 +10,7 @@ import org.covscript.lang.CovLanguage
 class CovTokenType(debugName: String) : IElementType(debugName, CovLanguage) {
 	companion object {
 		@JvmField val COMMENTS = TokenSet.create(CovTypes.COMMENT)
+		@JvmField val SYMBOLS = TokenSet.create(CovTypes.SYMBOL, CovTypes.PARAMETER)
 		@JvmField val STRINGS = TokenSet.create(CovTypes.STR, CovTypes.CHAR)
 		@JvmField val CONCATENATABLE_TOKENS = TokenSet.orSet(COMMENTS, STRINGS)
 		fun fromText(name: String, project: Project): PsiElement = PsiFileFactory

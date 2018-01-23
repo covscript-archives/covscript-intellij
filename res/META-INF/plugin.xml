@@ -10,7 +10,9 @@ CovScript language support.<br/>
 Functions provided:<br/>
 <ul>
   <li>Syntax highlighting, error reporting, completions</li>
-  <li>Quick fixes and semantic-based highlights</li>
+  <li>Inspections and quick fixes</li>
+  <li>Semantic-based highlights</li>
+  <li>Jump to definition</li>
   <li>SDK configurations, try-evaluate and code execution</li>
   <li>Bread crumbs, spell checking, code folding, structure view</li>
 </ul>
@@ -23,6 +25,7 @@ Functions provided:<br/>
   <li>Internal refactorings, rebuild AST</li>
   <li>More inspections (mainly context-based)</li>
   <li>Completion improvements</li>
+  <li>Reference resolving (jump to definition)</li>
 </ul>
 
 <br/>
@@ -70,6 +73,9 @@ Functions provided:<br/>
 		<runConfigurationProducer implementation="org.covscript.lang.execution.CovRunConfigurationProducer"/>
 		<sdkType implementation="org.covscript.lang.module.CovSdkType"/>
 		<breadcrumbsInfoProvider implementation="org.covscript.lang.editing.CovBreadCrumbProvider"/>
+		<lang.findUsagesProvider
+				language="CovScript"
+				implementationClass="org.covscript.lang.psi.CovFindUsageProvider"/>
 		<lang.psiStructureViewFactory
 				language="CovScript"
 				implementationClass="org.covscript.lang.editing.CovStructureViewFactory"/>
