@@ -1,6 +1,5 @@
 package org.covscript.lang.execution;
 
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -8,9 +7,12 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import org.covscript.lang.CovBundle;
 import org.covscript.lang.CovFileType;
 import org.covscript.lang.module.CovSdkComboBox;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguration> {
 	private @NotNull JPanel mainPanel;
@@ -32,18 +34,18 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 		});
 		logPath.addChangeListener(actionEvent -> logPathField.setEnabled(logPath.isSelected()));
 		importPath.addChangeListener(actionEvent -> importPathField.setEnabled(importPath.isSelected()));
-		String exeTitle = CovBundle.message("cov.messages.run.select-interpreter");
-		String exeDescription = CovBundle.message("cov.messages.run.select-interpreter.description");
-		FileChooserDescriptor exeDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor();
-		covExecutiveField.addBrowseFolderListener(exeTitle, exeDescription, null, exeDescriptor);
-		String workTitle = CovBundle.message("cov.messages.run.select-working-dir");
-		String workDescription = CovBundle.message("cov.messages.run.select-working-dir.description");
-		FileChooserDescriptor workDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-		workingDirField.addBrowseFolderListener(workTitle, workDescription, null, workDescriptor);
-		String scriptTitle = CovBundle.message("cov.messages.run.select-cov-file");
-		String scriptDescription = CovBundle.message("cov.messages.run.select-cov-file.description");
-		FileChooserDescriptor scriptDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(CovFileType.INSTANCE);
-		targetFileField.addBrowseFolderListener(scriptTitle, scriptDescription, null, scriptDescriptor);
+		covExecutiveField.addBrowseFolderListener(CovBundle.message("cov.messages.run.select-interpreter"),
+				CovBundle.message("cov.messages.run.select-interpreter.description"),
+				null,
+				FileChooserDescriptorFactory.createSingleFileDescriptor());
+		workingDirField.addBrowseFolderListener(CovBundle.message("cov.messages.run.select-working-dir"),
+				CovBundle.message("cov.messages.run.select-working-dir.description"),
+				null,
+				FileChooserDescriptorFactory.createSingleFolderDescriptor());
+		targetFileField.addBrowseFolderListener(CovBundle.message("cov.messages.run.select-cov-file"),
+				CovBundle.message("cov.messages.run.select-cov-file.description"),
+				null,
+				FileChooserDescriptorFactory.createSingleFileDescriptor(CovFileType.INSTANCE));
 		resetEditorFrom(configuration);
 	}
 
@@ -53,7 +55,9 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 		compileOnly.setSelected(configuration.getCompileOnlyOption());
 		waitBeforeExit.setSelected(configuration.getWaitB4ExitOption());
 		logPathField.setText(configuration.getLogPath());
+		logPathField.setEnabled(logPath.isSelected());
 		importPathField.setText(configuration.getImportPath());
+		importPathField.setEnabled(importPath.isSelected());
 		covExecutiveField.setText(configuration.getCovExecutive());
 		targetFileField.setText(configuration.getTargetFile());
 		workingDirField.setText(configuration.getWorkingDir());
@@ -61,16 +65,36 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 	}
 
 	@Override protected void applyEditorTo(@NotNull CovRunConfiguration configuration) throws ConfigurationException {
-		configuration.setLogPathOption(logPath.isSelected());
-		configuration.setImportPathOption(importPath.isSelected());
+		boolean logPathOp = logPath.isSelected();
+		configuration.setLogPathOption(logPathOp);
+		boolean importPathOp = importPath.isSelected();
+		configuration.setImportPathOption(importPathOp);
 		configuration.setCompileOnlyOption(compileOnly.isSelected());
 		configuration.setWaitB4ExitOption(waitBeforeExit.isSelected());
-		configuration.setImportPath(importPathField.getText());
-		configuration.setLogPath(logPathField.getText());
-		configuration.setCovExecutive(covExecutiveField.getText());
-		configuration.setTargetFile(targetFileField.getText());
-		configuration.setWorkingDir(workingDirField.getText());
+		if (importPathOp) {
+			String importPath = importPathField.getText();
+			if (Files.isDirectory(Paths.get(importPath))) configuration.setImportPath(importPath);
+			else reportInvalidPath(importPath);
+		}
+		if (logPathOp) {
+			String logPath = logPathField.getText();
+			if (Files.isDirectory(Paths.get(logPath).getParent())) configuration.setLogPath(logPath);
+			else reportInvalidPath(logPath);
+		}
+		String covExecutable = covExecutiveField.getText();
+		if (Files.isExecutable(Paths.get(covExecutable))) configuration.setCovExecutive(covExecutable);
+		else reportInvalidPath(covExecutable);
+		String targetFile = targetFileField.getText();
+		if (Files.isReadable(Paths.get(targetFile))) configuration.setTargetFile(targetFile);
+		else reportInvalidPath(targetFile);
+		String workingDirectory = workingDirField.getText();
+		if (Files.isDirectory(Paths.get(workingDirectory))) configuration.setWorkingDir(workingDirectory);
+		else reportInvalidPath(workingDirectory);
 		configuration.setSdkUsed(sdkComboBox.getSelectedSdk());
+	}
+
+	@Contract("_ -> fail") private void reportInvalidPath(@NotNull String importPath) throws ConfigurationException {
+		throw new ConfigurationException(CovBundle.message("cov.messages.try-eval.invalid-path", importPath));
 	}
 
 	@Override protected @NotNull JPanel createEditor() {
