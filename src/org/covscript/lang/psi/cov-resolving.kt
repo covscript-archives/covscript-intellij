@@ -61,6 +61,9 @@ abstract class ResolveProcessor(val place: PsiElement) : PsiScopeProcessor {
 	fun addCandidate(symbol: PsiElement) = addCandidate(PsiElementResolveResult(symbol, true))
 	fun addCandidate(candidate: PsiElementResolveResult) = candidateSet.add(candidate)
 	fun hasCandidate(candidate: PsiElement) = candidateSet.any { it.element == candidate }
+
+	protected fun isInScope(element: PsiElement) =
+			PsiTreeUtil.isAncestor(element.parent?.parent?.parent, place, false)
 }
 
 class SymbolResolveProcessor(private val name: String, place: PsiElement, val incompleteCode: Boolean) :
@@ -71,8 +74,7 @@ class SymbolResolveProcessor(private val name: String, place: PsiElement, val in
 	override fun <T : Any?> getHint(hintKey: Key<T>): T? = null
 	override fun execute(element: PsiElement, resolveState: ResolveState) =
 			if (element.canResolve && element !in processedElements) {
-				val accessible = name == element.text &&
-						PsiTreeUtil.isAncestor(element.parent?.parent?.parent, place, false)
+				val accessible = name == element.text && isInScope(element)
 				if (accessible and element.hasNoError)
 					addCandidate(element)
 				processedElements.add(element)
@@ -85,10 +87,8 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) : Reso
 
 	override fun <T : Any?> getHint(hintKey: Key<T>): T? = null
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
-		if (element.canResolve and
-				hasCandidate(element) and
-				element.hasNoError and
-				PsiTreeUtil.isAncestor(element.parent?.parent?.parent, place, false)) addCandidate(element)
+		if (element.canResolve and hasCandidate(element) and element.hasNoError and isInScope(element))
+			addCandidate(element)
 		return true
 	}
 }
