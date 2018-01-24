@@ -26,6 +26,7 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 	private @NotNull JCheckBox waitBeforeExit;
 	private @NotNull TextFieldWithBrowseButton logPathField;
 	private @NotNull TextFieldWithBrowseButton importPathField;
+	private @NotNull JTextField progArgsField;
 
 	public CovRunConfigurationEditor(@NotNull CovRunConfiguration configuration) {
 		sdkComboBox.addPropertyChangeListener(changeEvent -> {
@@ -61,6 +62,7 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 		covExecutiveField.setText(configuration.getCovExecutive());
 		targetFileField.setText(configuration.getTargetFile());
 		workingDirField.setText(configuration.getWorkingDir());
+		progArgsField.setText(configuration.getProgramArgs());
 		sdkComboBox.getComboBox().setSelectedItem(configuration.getSdkUsed());
 	}
 
@@ -91,6 +93,7 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 		if (Files.isDirectory(Paths.get(workingDirectory))) configuration.setWorkingDir(workingDirectory);
 		else reportInvalidPath(workingDirectory);
 		configuration.setSdkUsed(sdkComboBox.getSelectedSdk());
+		configuration.setProgramArgs(progArgsField.getText());
 	}
 
 	@Contract("_ -> fail") private void reportInvalidPath(@NotNull String importPath) throws ConfigurationException {

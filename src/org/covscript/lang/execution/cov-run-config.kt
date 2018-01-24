@@ -38,7 +38,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 	var waitB4ExitOption = false
 	var workingDir = ""
 	var targetFile = ""
-	var additionalParams = ""
+	var programArgs = ""
 	var covExecutive = sdkUsed?.run { Paths.get(homePath, "bin", "cs").toAbsolutePath().toString() }.orEmpty()
 	override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = CovRunConfigurationEditor(this)
 	override fun getState(executor: Executor, environment: ExecutionEnvironment) = CovCommandLineState(this, environment)
@@ -52,7 +52,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 		JDOMExternalizer.readBoolean(element, "compileOnlyOption").let { compileOnlyOption = it }
 		JDOMExternalizer.readBoolean(element, "waitB4ExitOption").let { waitB4ExitOption = it }
 		JDOMExternalizer.readString(element, "covExecutive")?.let { covExecutive = it }
-		JDOMExternalizer.readString(element, "additionalParams")?.let { additionalParams = it }
+		JDOMExternalizer.readString(element, "programArgs")?.let { programArgs = it }
 		JDOMExternalizer.readString(element, "targetFile")?.let { targetFile = it }
 		JDOMExternalizer.readString(element, "workingDir")?.let { workingDir = it }
 		JDOMExternalizer.readString(element, "sdkName")?.let { name ->
@@ -71,7 +71,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 		JDOMExternalizer.write(element, "compileOnlyOption", compileOnlyOption)
 		JDOMExternalizer.write(element, "waitB4ExitOption", waitB4ExitOption)
 		JDOMExternalizer.write(element, "covExecutive", covExecutive)
-		JDOMExternalizer.write(element, "additionalParams", additionalParams)
+		JDOMExternalizer.write(element, "programArgs", programArgs)
 		JDOMExternalizer.write(element, "targetFile", targetFile)
 		JDOMExternalizer.write(element, "workingDir", workingDir)
 		JDOMExternalizer.write(element, "sdkName", sdkName)

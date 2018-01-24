@@ -38,6 +38,7 @@ class CovCommandLineState(
 			params += configuration.logPath
 		}
 		params += configuration.targetFile
+		params += configuration.programArgs.split(' ').filter(String::isNotBlank)
 		val handler = OSProcessHandler(GeneralCommandLine(params).also {
 			it.withCharset(Charset.forName("UTF-8"))
 			it.withWorkDirectory(configuration.workingDir)
