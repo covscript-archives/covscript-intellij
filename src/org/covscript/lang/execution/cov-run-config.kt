@@ -30,16 +30,26 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 				covExecutive = Paths.get(it.homePath, "bin", "cs").toAbsolutePath().toString()
 			}
 		}
+	var logPath = ""
+	var importPath = ""
+	var logPathOption = false
+	var importPathOption = false
+	var compileOnlyOption = false
+	var waitB4ExitOption = false
 	var workingDir = ""
 	var targetFile = ""
-	var additionalParams = ""
 	var covExecutive = sdkUsed?.run { Paths.get(homePath, "bin", "cs").toAbsolutePath().toString() }.orEmpty()
 	override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = CovRunConfigurationEditor(this)
 	override fun getState(executor: Executor, environment: ExecutionEnvironment) = CovCommandLineState(this, environment)
 	override fun getValidModules() = allModules.filter { ProjectRootManager.getInstance(it.project).projectSdk?.sdkType is CovSdkType }
 	override fun readExternal(element: Element) {
 		super.readExternal(element)
-		JDOMExternalizer.readString(element, "additionalParams")?.let { additionalParams = it }
+		JDOMExternalizer.readString(element, "logPath")?.let { logPath = it }
+		JDOMExternalizer.readString(element, "importPath")?.let { importPath = it }
+		JDOMExternalizer.readBoolean(element, "logPathOption").let { logPathOption = it }
+		JDOMExternalizer.readBoolean(element, "importPathOption").let { importPathOption = it }
+		JDOMExternalizer.readBoolean(element, "compileOnlyOption").let { compileOnlyOption = it }
+		JDOMExternalizer.readBoolean(element, "waitB4ExitOption").let { waitB4ExitOption = it }
 		JDOMExternalizer.readString(element, "covExecutive")?.let { covExecutive = it }
 		JDOMExternalizer.readString(element, "targetFile")?.let { targetFile = it }
 		JDOMExternalizer.readString(element, "workingDir")?.let { workingDir = it }
@@ -52,7 +62,12 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 	override fun writeExternal(element: Element) {
 		PathMacroManager.getInstance(project).expandPaths(element)
 		super.writeExternal(element)
-		JDOMExternalizer.write(element, "additionalParams", additionalParams)
+		JDOMExternalizer.write(element, "logPath", logPath)
+		JDOMExternalizer.write(element, "importPath", importPath)
+		JDOMExternalizer.write(element, "logPathOption", logPathOption)
+		JDOMExternalizer.write(element, "importPathOption", importPathOption)
+		JDOMExternalizer.write(element, "compileOnlyOption", compileOnlyOption)
+		JDOMExternalizer.write(element, "waitB4ExitOption", waitB4ExitOption)
 		JDOMExternalizer.write(element, "covExecutive", covExecutive)
 		JDOMExternalizer.write(element, "targetFile", targetFile)
 		JDOMExternalizer.write(element, "workingDir", workingDir)

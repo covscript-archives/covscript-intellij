@@ -25,17 +25,25 @@ class CovCommandLineState(
 					SearchScopeProvider.createSearchScope(env.project, env.runProfile))
 
 	override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {
-		val handler = OSProcessHandler(GeneralCommandLine(listOf(
-				listOf(configuration.covExecutive),
-				configuration.additionalParams.split(' ').filter(String::isNotBlank),
-				listOf(configuration.targetFile)
-		).flatMap { it }).also {
+		val params = mutableListOf<String>()
+		params += configuration.covExecutive
+		if (configuration.compileOnlyOption) params += "--compile-only"
+		if (configuration.waitB4ExitOption) params += "--wait-before-exit"
+		if (configuration.importPathOption) {
+			params += "--import-path"
+			params += configuration.importPath
+		}
+		if (configuration.logPathOption) {
+			params += "--log-path"
+			params += configuration.logPath
+		}
+		params += configuration.targetFile
+		val handler = OSProcessHandler(GeneralCommandLine(params).also {
 			it.withCharset(Charset.forName("UTF-8"))
 			it.withWorkDirectory(configuration.workingDir)
-		}).also {
-			ProcessTerminatedListener.attach(it)
-			it.startNotify()
-		}
+		})
+		ProcessTerminatedListener.attach(handler)
+		handler.startNotify()
 		val console = consoleBuilder.console
 		console.print("${handler.commandLine}\n", ConsoleViewContentType.NORMAL_OUTPUT)
 		console.attachToProcess(handler)
