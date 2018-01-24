@@ -61,13 +61,3 @@ fun collectFrom(startPoint: PsiElement, name: String) = SyntaxTraverser
 		.toList()
 		.toTypedArray()
 
-fun treeWalkUp(place: PsiElement, processor: PsiScopeProcessor): Boolean {
-	var lastParent: PsiElement? = null
-	var run: PsiElement? = place
-	while (run != null) {
-		if (!run.processDeclarations(processor, ResolveState.initial(), lastParent, place)) return false
-		lastParent = run
-		run = run.parent
-	}
-	return true
-}

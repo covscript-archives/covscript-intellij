@@ -78,8 +78,10 @@ class CovNamesValidator : NamesValidator, RenameInputValidator {
 			isIdentifier(name, ele.project) && !isKeyword(name, ele.project)
 
 	override fun getPattern(): ElementPattern<out PsiElement> = PlatformPatterns.psiElement().with(Companion)
-	override fun isIdentifier(name: String, project: Project?) =
-			name.isNotBlank() and name.all { it.isLetterOrDigit() || it == '_' } and !name.first().isDigit()
+	override fun isIdentifier(name: String, project: Project?) = name.isNotBlank() and
+			name.all { it.isLetterOrDigit() || it == '_' } and
+			!name.first().isDigit() and
+			!isKeyword(name, project)
 }
 
 const val TEXT_MAX = 16

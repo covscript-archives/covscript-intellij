@@ -8,25 +8,29 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiTreeUtil
-import org.covscript.lang.psi.impl.treeWalkUp
+import com.intellij.psi.util.PsiTreeUtil.treeWalkUp
 
-class CovSymbolRef(symbol: CovSymbol, private var refTo: PsiElement? = null) :
-		PsiPolyVariantReferenceBase<CovSymbol>(symbol, TextRange(0, symbol.textLength), true) {
+class CovSymbolRef(private val symbol: CovSymbol, private var refTo: PsiElement? = null) :
+		PsiPolyVariantReference {
 	private val project = symbol.project
+	override fun getElement() = symbol
+	override fun getRangeInElement() = TextRange(0, symbol.textLength)
+	override fun bindToElement(element: PsiElement) = element.also { refTo = it }
+	override fun isSoft() = true
 	override fun equals(other: Any?) = (other as? CovSymbolRef)?.element == element
-	override fun hashCode() = element.hashCode()
-	override fun getCanonicalText(): String = element.text
-	override fun handleElementRename(newName: String) = CovTokenType.fromText(newName, project).let(element::replace)
+	override fun hashCode() = symbol.hashCode()
+	override fun getCanonicalText(): String = symbol.text
+	override fun handleElementRename(newName: String) = CovTokenType.fromText(newName, project).let(symbol::replace)
 	override fun getVariants(): Array<out Any> {
 		val variantsProcessor = CompletionProcessor(this, true)
-		treeWalkUp(element, variantsProcessor)
+		treeWalkUp(variantsProcessor, symbol, symbol.containingFile, ResolveState.initial())
 		return variantsProcessor.resultElement
 	}
 
 	override fun isReferenceTo(o: PsiElement?) = o == refTo ||
-			(o as? PsiNameIdentifierOwner)?.nameIdentifier?.text == element.text
+			(o as? PsiNameIdentifierOwner)?.nameIdentifier?.text == symbol.text
 
-	override fun resolve() = refTo ?: super.resolve().also { refTo = it }
+	override fun resolve() = refTo ?: multiResolve(false).firstOrNull()?.element.also { refTo = it }
 	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
 		if (element.parent !is CovSuffixedExpression) return emptyArray()
 		if (project.isDisposed) return emptyArray()
@@ -37,53 +41,54 @@ class CovSymbolRef(symbol: CovSymbol, private var refTo: PsiElement? = null) :
 
 	private companion object Resolver : ResolveCache.PolyVariantResolver<CovSymbolRef> {
 		override fun resolve(ref: CovSymbolRef, incompleteCode: Boolean): Array<out ResolveResult> {
-			val currentSymbol = ref.element ?: return emptyArray()
 			val processor = SymbolResolveProcessor(ref, incompleteCode)
-			treeWalkUp(currentSymbol, processor)
+			treeWalkUp(processor, ref.symbol, ref.symbol.containingFile, ResolveState.initial())
 			PsiTreeUtil
-					.getParentOfType(currentSymbol, CovStatement::class.java)
-					?.processDeclarations(processor, ResolveState.initial(), currentSymbol, processor.place)
+					.getParentOfType(ref.symbol, CovStatement::class.java)
+					?.processDeclarations(processor, ResolveState.initial(), ref.symbol, processor.place)
 			return processor.candidates
 		}
 	}
 }
 
-abstract class ResolveProcessor : PsiScopeProcessor {
+abstract class ResolveProcessor(val place: PsiElement) : PsiScopeProcessor {
 	private var candidateSet = hashSetOf<PsiElementResolveResult>()
 	val candidates get() = candidateSet.toTypedArray()
 	val resultElement get() = candidates.map(LookupElementBuilder::create).toTypedArray()
 	override fun handleEvent(event: PsiScopeProcessor.Event, o: Any?) = Unit
+	protected val PsiElement.canResolve get() = this is CovSymbol || this is CovParameter
+	protected val PsiElement.hasNoError get() = (this as? StubBasedPsiElement<*>)?.stub != null || !PsiTreeUtil.hasErrorElements(this)
 	fun addCandidate(symbol: PsiElement) = addCandidate(PsiElementResolveResult(symbol, true))
 	fun addCandidate(candidate: PsiElementResolveResult) = candidateSet.add(candidate)
 	fun hasCandidate(candidate: PsiElement) = candidateSet.any { it.element == candidate }
 }
 
-class SymbolResolveProcessor(private val name: String, val place: PsiElement, val incompleteCode: Boolean) :
-		ResolveProcessor() {
+class SymbolResolveProcessor(private val name: String, place: PsiElement, val incompleteCode: Boolean) :
+		ResolveProcessor(place) {
 	constructor(ref: CovSymbolRef, incompleteCode: Boolean) : this(ref.canonicalText, ref.element, incompleteCode)
 
 	private val processedElements = hashSetOf<PsiElement>()
 	override fun <T : Any?> getHint(hintKey: Key<T>): T? = null
 	override fun execute(element: PsiElement, resolveState: ResolveState) =
-			if ((element is CovSymbol || element is CovParameter) && element !in processedElements) {
-				val accessible = name == element.text
-				if (accessible && !((element as? StubBasedPsiElement<*>)?.stub == null && PsiTreeUtil.hasErrorElements(element)))
+			if (element.canResolve && element !in processedElements) {
+				val accessible = name == element.text &&
+						PsiTreeUtil.isAncestor(element.parent?.parent?.parent, place, false)
+				if (accessible and element.hasNoError)
 					addCandidate(element)
 				processedElements.add(element)
 				!accessible
 			} else true
 }
 
-class CompletionProcessor(val place: PsiElement, val incompleteCode: Boolean) :
-		ResolveProcessor() {
+class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) : ResolveProcessor(place) {
 	constructor(ref: CovSymbolRef, incompleteCode: Boolean) : this(ref.element, incompleteCode)
 
 	override fun <T : Any?> getHint(hintKey: Key<T>): T? = null
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
-		if ((element is CovSymbol || element is CovParameter) && hasCandidate(element)) {
-			if (!((element as? StubBasedPsiElement<*>)?.stub == null && PsiTreeUtil.hasErrorElements(element)))
-				addCandidate(element)
-		}
+		if (element.canResolve and
+				hasCandidate(element) and
+				element.hasNoError and
+				PsiTreeUtil.isAncestor(element.parent?.parent?.parent, place, false)) addCandidate(element)
 		return true
 	}
 }
