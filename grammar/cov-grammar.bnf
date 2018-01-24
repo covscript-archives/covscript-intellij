@@ -80,9 +80,11 @@ throwStatement ::= THROW_KEYWORD expression
 tryCatchStatement ::=
  TRY_KEYWORD endOfLine
   tryBody
- CATCH_KEYWORD symbol endOfLine
+ CATCH_KEYWORD parameter endOfLine
   bodyOfSomething
- END_KEYWORD
+ END_KEYWORD {
+	mixin='org.covscript.lang.psi.impl.CovTryCatchDeclarationMixin'
+}
 
 ifStatement ::=
  IF_KEYWORD expression endOfLine

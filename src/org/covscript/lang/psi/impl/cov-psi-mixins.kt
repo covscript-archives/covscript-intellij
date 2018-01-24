@@ -53,6 +53,13 @@ abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclara
 	override val startPoint: PsiElement get() = parent.parent
 }
 
+abstract class CovTryCatchDeclarationMixin(node: ASTNode) : CovTryCatchStatement, ASTWrapperPsiElement(node) {
+	override fun processDeclarations(
+			processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			parameter.processDeclarations(processor, state, lastParent, place) &&
+					super.processDeclarations(processor, state, lastParent, place)
+}
+
 abstract class CovParameterMixin(node: ASTNode) : CovParameter, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = this
 	override val startPoint: PsiElement get() = parent
