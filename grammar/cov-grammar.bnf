@@ -59,7 +59,9 @@ functionDeclaration ::=
 namespaceDeclaration ::=
  NAMESPACE_KEYWORD symbol endOfLine
   bodyOfSomething
- END_KEYWORD
+ END_KEYWORD {
+	mixin='org.covscript.lang.psi.impl.CovNamespaceDeclarationMixin'
+}
 
 structDeclaration ::=
  STRUCT_KEYWORD symbol endOfLine

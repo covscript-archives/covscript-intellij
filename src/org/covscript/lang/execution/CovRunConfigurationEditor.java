@@ -97,7 +97,7 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 	}
 
 	@Contract("_ -> fail") private void reportInvalidPath(@NotNull String importPath) throws ConfigurationException {
-		throw new ConfigurationException(CovBundle.message("cov.messages.try-eval.invalid-path", importPath));
+		throw new ConfigurationException(CovBundle.message("cov.run.config.invalid-path", importPath));
 	}
 
 	@Override protected @NotNull JPanel createEditor() {

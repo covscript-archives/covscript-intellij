@@ -8,12 +8,12 @@ import org.covscript.lang.psi.*
 
 abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = symbol
-	override val startPoint: PsiElement get() = parent.parent
+	override val startPoint: PsiElement get() = parent.parent.parent
 }
 
 abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), PsiNameIdentifierOwner {
 	private var refCache: Array<PsiReference>? = null
-	override fun setName(newName: String) = CovTokenType.fromText(newName, project).let(::replace)
+	override fun setName(newName: String) = CovTokenType.fromText(newName, project).let(nameIdentifier::replace)
 			.also {
 				if (it is TrivialDeclaration)
 					it.refCache = references.mapNotNull { it.handleElementRename(newName).reference }.toTypedArray()
@@ -26,10 +26,8 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 			.also { refCache = it }
 
 	override fun processDeclarations(
-			processor: PsiScopeProcessor,
-			substitutor: ResolveState,
-			lastParent: PsiElement?,
-			place: PsiElement) = processor.execute(nameIdentifier, substitutor)
+			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			processDeclTrivial(processor, substitutor, lastParent, place) and processor.execute(nameIdentifier, substitutor)
 
 	override fun subtreeChanged() {
 		refCache = null
@@ -46,9 +44,13 @@ abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclarati
 			lastParent: PsiElement?,
 			place: PsiElement): Boolean {
 		parameterList.forEach { if (!it.processDeclarations(processor, substitutor, lastParent, place)) return false }
-		return if (!processDeclTrivial(processor, substitutor, lastParent, place)) false
-		else super.processDeclarations(processor, substitutor, lastParent, place)
+		return super.processDeclarations(processor, substitutor, lastParent, place)
 	}
+}
+
+abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclaration, TrivialDeclaration(node) {
+	override fun getNameIdentifier() = symbol
+	override val startPoint: PsiElement get() = parent.parent
 }
 
 abstract class CovParameterMixin(node: ASTNode) : CovParameter, TrivialDeclaration(node) {

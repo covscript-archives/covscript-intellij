@@ -9,11 +9,12 @@ CovScript language support.<br/>
 
 Functions provided:<br/>
 <ul>
-  <li>Syntax highlighting, error reporting, completions</li>
+  <li>Syntax highlighting, error reporting</li>
   <li>Inspections and quick fixes</li>
   <li>Semantic-based highlights</li>
   <li>Jump to definition</li>
   <li>Renaming</li>
+  <li>Code completion</li>
   <li>Try Evaluate</li>
   <li>SDK management</li>
   <li>Code execution with handy configurator</li>
@@ -26,6 +27,8 @@ Functions provided:<br/>
 <ul>
   <li>Reference resolving bug fixes</li>
   <li>New run configurator UI, added validation</li>
+  <li>Lots of minor improvements</li>
+  <li>Context-based completions</li>
 </ul>
 
 <br/>

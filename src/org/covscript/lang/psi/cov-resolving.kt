@@ -24,7 +24,7 @@ class CovSymbolRef(private val symbol: CovSymbol, private var refTo: PsiElement?
 	override fun getVariants(): Array<out Any> {
 		val variantsProcessor = CompletionProcessor(this, true)
 		treeWalkUp(variantsProcessor, symbol, symbol.containingFile, ResolveState.initial())
-		return variantsProcessor.resultElement
+		return variantsProcessor.resultElement.toTypedArray()
 	}
 
 	override fun isReferenceTo(o: PsiElement?) = o == refTo ||
@@ -46,49 +46,52 @@ class CovSymbolRef(private val symbol: CovSymbol, private var refTo: PsiElement?
 			PsiTreeUtil
 					.getParentOfType(ref.symbol, CovStatement::class.java)
 					?.processDeclarations(processor, ResolveState.initial(), ref.symbol, processor.place)
-			return processor.candidates
+			return processor.candidateSet.toTypedArray()
 		}
 	}
 }
 
-abstract class ResolveProcessor(val place: PsiElement) : PsiScopeProcessor {
-	private var candidateSet = hashSetOf<PsiElementResolveResult>()
-	val candidates get() = candidateSet.toTypedArray()
-	val resultElement get() = candidates.map(LookupElementBuilder::create).toTypedArray()
+abstract class ResolveProcessor<ResolveResult>(val place: PsiElement) : PsiScopeProcessor {
+	val candidateSet = hashSetOf<ResolveResult>()
 	override fun handleEvent(event: PsiScopeProcessor.Event, o: Any?) = Unit
 	protected val PsiElement.canResolve get() = this is CovSymbol || this is CovParameter
 	protected val PsiElement.hasNoError get() = (this as? StubBasedPsiElement<*>)?.stub != null || !PsiTreeUtil.hasErrorElements(this)
-	fun addCandidate(symbol: PsiElement) = addCandidate(PsiElementResolveResult(symbol, true))
-	fun addCandidate(candidate: PsiElementResolveResult) = candidateSet.add(candidate)
-	fun hasCandidate(candidate: PsiElement) = candidateSet.any { it.element == candidate }
+	fun addCandidate(candidate: ResolveResult) = candidateSet.add(candidate)
 
-	protected fun isInScope(element: PsiElement) =
-			PsiTreeUtil.isAncestor(element.parent?.parent?.parent, place, false)
+	protected fun isInScope(element: PsiElement) = PsiTreeUtil.isAncestor(
+			if (element is CovParameter) element.parent
+			else element.parent?.parent?.parent, place, false)
 }
 
 class SymbolResolveProcessor(private val name: String, place: PsiElement, val incompleteCode: Boolean) :
-		ResolveProcessor(place) {
+		ResolveProcessor<PsiElementResolveResult>(place) {
 	constructor(ref: CovSymbolRef, incompleteCode: Boolean) : this(ref.canonicalText, ref.element, incompleteCode)
 
+	private fun addCandidate(symbol: PsiElement) = addCandidate(PsiElementResolveResult(symbol, true))
 	private val processedElements = hashSetOf<PsiElement>()
 	override fun <T : Any?> getHint(hintKey: Key<T>): T? = null
-	override fun execute(element: PsiElement, resolveState: ResolveState) =
-			if (element.canResolve && element !in processedElements) {
-				val accessible = name == element.text && isInScope(element)
-				if (accessible and element.hasNoError)
-					addCandidate(element)
-				processedElements.add(element)
-				!accessible
-			} else true
+	override fun execute(element: PsiElement, resolveState: ResolveState) = when {
+		candidateSet.isNotEmpty() -> false
+		element.canResolve && element !in processedElements -> {
+			val accessible = name == element.text && isInScope(element)
+			if (accessible and element.hasNoError) addCandidate(element)
+			processedElements.add(element)
+			!accessible
+		}
+		else -> true
+	}
 }
 
-class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) : ResolveProcessor(place) {
+class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) : ResolveProcessor<String>(place) {
 	constructor(ref: CovSymbolRef, incompleteCode: Boolean) : this(ref.element, incompleteCode)
 
+	val resultElement get() = candidateSet.map(LookupElementBuilder::create)
 	override fun <T : Any?> getHint(hintKey: Key<T>): T? = null
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
-		if (element.canResolve and hasCandidate(element) and element.hasNoError and isInScope(element))
-			addCandidate(element)
+		if (element.canResolve and element.hasNoError and isInScope(element)) {
+			val symbol = element.text
+			if (symbol !in candidateSet) addCandidate(symbol)
+		}
 		return true
 	}
 }
