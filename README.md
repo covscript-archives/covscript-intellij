@@ -6,5 +6,6 @@
 ![](https://plugins.jetbrains.com/files/10326/screenshot_17807.png)
 ![](https://plugins.jetbrains.com/files/10326/screenshot_17808.png)
 ![](https://plugins.jetbrains.com/files/10326/screenshot_17822.png)
+![](https://plugins.jetbrains.com/files/10326/screenshot_17825.png)
 
 The IntelliJ IDEA Plugin for CovScript
