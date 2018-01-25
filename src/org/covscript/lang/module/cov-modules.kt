@@ -95,7 +95,7 @@ fun executeInRepl(homePath: String, code: String, timeLimit: Long): Pair<List<St
 
 private fun collectLines(it: InputStream): List<String> {
 	val reader = it.bufferedReader()
-	val ret = reader.lines().collect(Collectors.toList()).dropLast(1)
+	val ret = reader.lines().collect(Collectors.toList())
 	forceRun(reader::close)
 	return ret
 }
