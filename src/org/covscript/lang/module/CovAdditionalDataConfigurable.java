@@ -64,8 +64,11 @@ public class CovAdditionalDataConfigurable implements AdditionalDataConfigurable
 	@Override public void apply() throws ConfigurationException {
 		if (sdk == null) throw new ConfigurationException("Sdk is null!");
 		SdkModificator modificator = sdk.getSdkModificator();
-		modificator.setSdkAdditionalData(new CovSdkData(((Number) timeLimitField.getValue()).longValue(),
-				((Number) textLimitField.getValue()).intValue()));
+		Object timeLimitFieldValue = timeLimitField.getValue();
+		Object textLimitFieldValue = textLimitField.getValue();
+		if (!(timeLimitFieldValue instanceof Number && textLimitFieldValue instanceof Number)) return;
+		modificator.setSdkAdditionalData(new CovSdkData(((Number) timeLimitFieldValue).longValue(),
+				((Number) textLimitFieldValue).intValue()));
 		modificator.commitChanges();
 	}
 }
