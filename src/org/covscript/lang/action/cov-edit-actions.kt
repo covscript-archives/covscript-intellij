@@ -93,7 +93,7 @@ class TryEvaluate {
 	}
 }
 
-class TryEvaluateLiceExpressionAction :
+class TryEvaluateCovExpressionAction :
 		AnAction(CovBundle.message("cov.actions.try-eval.name"),
 				CovBundle.message("cov.actions.try-eval.description"), COV_BIG_ICON), DumbAware {
 	private val core = TryEvaluate()

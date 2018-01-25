@@ -138,7 +138,7 @@ Functions provided:<br/>
 		</action>
 		<action
 				id="Cov.TryEvaluate"
-				class="org.covscript.lang.action.TryEvaluateLiceExpressionAction">
+				class="org.covscript.lang.action.TryEvaluateCovExpressionAction">
 			<keyboard-shortcut keymap="$default" first-keystroke="ctrl shift e"/>
 			<add-to-group group-id="EditorPopupMenu1" anchor="first"/>
 		</action>
