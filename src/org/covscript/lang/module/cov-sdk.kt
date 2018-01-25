@@ -44,10 +44,7 @@ fun SdkAdditionalData?.toCovSdkData() = this as? CovSdkData
 class CovSdkData(
 		var tryEvaluateTimeLimit: Long = 2500L,
 		var tryEvaluateTextLimit: Int = 320) : SdkAdditionalData {
-	override fun clone() = CovSdkData().also {
-		it.tryEvaluateTextLimit = tryEvaluateTextLimit
-		it.tryEvaluateTimeLimit = tryEvaluateTimeLimit
-	}
+	override fun clone() = CovSdkData(tryEvaluateTimeLimit, tryEvaluateTextLimit)
 }
 
 class CovSdkComboBox : ComboboxWithBrowseButton() {
