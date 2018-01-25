@@ -26,7 +26,7 @@ Functions provided:<br/>
 1.5.1<br/>
 <ul>
   <li>Auto-popup completions</li>
-  <li>Parser bug fix</li>
+  <li>Parser fatal bug fix</li>
   <li>Detail improvements</li>
 </ul>
 

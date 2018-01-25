@@ -8,7 +8,7 @@
 
   tokenTypeClass='org.covscript.lang.psi.CovTokenType'
   elementTypeHolderClass='org.covscript.lang.psi.CovTypes'
-  elementTypeClass='org.covscript.lang.psi.CovTokenType'
+  elementTypeClass='org.covscript.lang.psi.CovElementType'
   psiImplUtilClass='org.covscript.lang.psi.impl.CovPsiImplUtils'
 }
 

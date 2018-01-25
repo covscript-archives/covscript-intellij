@@ -9,9 +9,9 @@ import org.covscript.lang.CovLanguage
 
 class CovTokenType(debugName: String) : IElementType(debugName, CovLanguage) {
 	companion object {
-		@JvmField val COMMENTS = TokenSet.create(CovTypes.COMMENT)
+		@JvmField val COMMENTS = TokenSet.create(CovTypes.LINE_COMMENT, CovTypes.COMMENT)
 		@JvmField val SYMBOLS = TokenSet.create(CovTypes.SYMBOL, CovTypes.PARAMETER)
-		@JvmField val STRINGS = TokenSet.create(CovTypes.STR, CovTypes.CHAR)
+		@JvmField val STRINGS = TokenSet.create(CovTypes.STR, CovTypes.CHAR, CovTypes.STRING, CovTypes.CHAR_LITERAL)
 		@JvmField val CONCATENATABLE_TOKENS = TokenSet.orSet(COMMENTS, STRINGS)
 		fun fromText(name: String, project: Project): PsiElement = PsiFileFactory
 				.getInstance(project)
@@ -19,3 +19,5 @@ class CovTokenType(debugName: String) : IElementType(debugName, CovLanguage) {
 				.firstChild
 	}
 }
+
+class CovElementType(debugName: String) : IElementType(debugName, CovLanguage)
