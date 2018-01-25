@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import org.covscript.lang.psi.*
 
@@ -46,6 +47,9 @@ class CovCompletionContributor : CompletionContributor() {
 				context: ProcessingContext?,
 				result: CompletionResultSet) = list.forEach(result::addElement)
 	}
+
+	override fun invokeAutoPopup(position: PsiElement, typeChar: Char) =
+			position !is CovComment && typeChar in " \t\n.("
 
 	init {
 		extend(CompletionType.BASIC,

@@ -3,8 +3,10 @@
 
 package org.covscript.lang.psi.impl
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
+import com.intellij.psi.tree.IElementType
 import org.covscript.lang.psi.*
 
 fun CovExpression.primaryExprOrNull() =
@@ -61,3 +63,16 @@ fun collectFrom(startPoint: PsiElement, name: String) = SyntaxTraverser
 		.toList()
 		.toTypedArray()
 
+val CovComment.tokenType: IElementType get() = CovTypes.COMMENT
+val CovComment.isValidHost get() = true
+fun CovComment.updateText(string: String): CovComment = ElementManipulators.handleContentChange(this, string)
+fun CovComment.createLiteralTextEscaper() = object : LiteralTextEscaper<CovComment>(this@createLiteralTextEscaper) {
+	private var numOfSemicolon = 1
+	override fun isOneLine() = true
+	override fun getOffsetInHost(offsetInDecoded: Int, rangeInHost: TextRange) = offsetInDecoded + numOfSemicolon
+	override fun decode(rangeInHost: TextRange, builder: StringBuilder): Boolean {
+		numOfSemicolon = myHost.text.indexOfFirst { it != '#' }
+		builder.append(myHost.text, rangeInHost.startOffset + numOfSemicolon, rangeInHost.endOffset)
+		return true
+	}
+}

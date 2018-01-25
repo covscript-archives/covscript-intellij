@@ -23,7 +23,11 @@ continue ::= CONTINUE_KEYWORD
 true ::= TRUE_KEYWORD
 false ::= FALSE_KEYWORD
 null ::= NULL_KEYWORD
-comment ::= LINE_COMMENT+
+comment ::= LINE_COMMENT+ {
+	methods=[updateText getTokenType isValidHost createLiteralTextEscaper]
+	implements=['com.intellij.psi.PsiLanguageInjectionHost' 'com.intellij.psi.PsiComment']
+}
+
 string ::= STR
 charLiteral ::= CHAR
 symbol ::= SYM {
