@@ -5,6 +5,7 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.labels.LinkLabel;
+import org.covscript.lang.CovBundle;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -27,7 +28,7 @@ public class CovSetupSdkWizardStep extends ModuleWizardStep {
 	@Override public boolean validate() throws ConfigurationException {
 		if (StringUtil.isEmpty(sdkPathField.getSdkName())) {
 			covWebsiteDescription.setVisible(true);
-			throw new ConfigurationException("Invalid CovScript SDK");
+			throw new ConfigurationException(CovBundle.message("cov.modules.sdk.invalid"));
 		}
 		covWebsiteDescription.setVisible(false);
 		return super.validate();
