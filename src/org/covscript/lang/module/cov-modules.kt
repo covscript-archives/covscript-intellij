@@ -11,7 +11,8 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ProjectRootManager
 import org.covscript.lang.*
 import java.io.InputStream
-import java.nio.file.*
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 import java.util.stream.Collectors
 
@@ -99,14 +100,9 @@ private fun collectLines(it: InputStream): List<String> {
 	return ret
 }
 
-fun validateCovSDK(pathString: String): Boolean {
-	val csPath = Paths.get(pathString, "bin", "cs")
-	val csReplPath = Paths.get(pathString, "bin", "cs_repl")
-	val csExePath = Paths.get(pathString, "bin", "cs.exe")
-	val csExeReplPath = Paths.get(pathString, "bin", "cs_repl.exe")
-	return (csPath.isExe() || csExePath.isExe()) && (csReplPath.isExe() || csExeReplPath.isExe())
-}
-
-fun Path.isExe() = Files.exists(this) and Files.isExecutable(this)
+fun validateCovSDK(pathString: String) = (Files.isExecutable(Paths.get(pathString, "bin", "cs")) or
+		Files.isExecutable(Paths.get(pathString, "bin", "cs.exe"))) and
+		(Files.isExecutable(Paths.get(pathString, "bin", "cs_repl")) or
+				Files.isExecutable(Paths.get(pathString, "bin", "cs_repl.exe")))
 
 val Project.projectSdk get() = ProjectRootManager.getInstance(this).projectSdk
