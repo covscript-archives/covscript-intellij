@@ -16,15 +16,15 @@ file ::=
  fileHeader*
  statement*
 
-private endOfLine ::= (EOL comment?)+
+private endOfLine ::= (comment | EOL)+
 number ::= NUM
 break ::= BREAK_KEYWORD
 continue ::= CONTINUE_KEYWORD
 true ::= TRUE_KEYWORD
 false ::= FALSE_KEYWORD
 null ::= NULL_KEYWORD
-comment ::= LINE_COMMENT+ {
-	methods=[updateText getTokenType isValidHost createLiteralTextEscaper]
+comment ::= LINE_COMMENT {
+	methods=[getTokenType isValidHost updateText createLiteralTextEscaper]
 	implements=['com.intellij.psi.PsiLanguageInjectionHost' 'com.intellij.psi.PsiComment']
 }
 
@@ -43,7 +43,6 @@ fileHeader ::=
  | importDeclaration
  | packageDeclaration
  | endOfLine
- | comment
 
 importDeclaration ::= IMPORT_KEYWORD symbol
 usingDeclaration ::= USING_KEYWORD symbol

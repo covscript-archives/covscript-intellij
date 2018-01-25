@@ -65,13 +65,13 @@ fun collectFrom(startPoint: PsiElement, name: String) = SyntaxTraverser
 
 val CovComment.tokenType: IElementType get() = CovTypes.COMMENT
 val CovComment.isValidHost get() = true
-fun CovComment.updateText(string: String): CovComment = ElementManipulators.handleContentChange(this, string)
+fun CovComment.updateText(string: String): CovComment = replace(CovTokenType.fromText(string, project)) as CovComment
 fun CovComment.createLiteralTextEscaper() = object : LiteralTextEscaper<CovComment>(this@createLiteralTextEscaper) {
 	private var numOfSemicolon = 1
 	override fun isOneLine() = true
 	override fun getOffsetInHost(offsetInDecoded: Int, rangeInHost: TextRange) = offsetInDecoded + numOfSemicolon
 	override fun decode(rangeInHost: TextRange, builder: StringBuilder): Boolean {
-		numOfSemicolon = myHost.text.indexOfFirst { it != '#' }
+		numOfSemicolon = myHost.text.indexOfFirst { it != ';' }
 		builder.append(myHost.text, rangeInHost.startOffset + numOfSemicolon, rangeInHost.endOffset)
 		return true
 	}

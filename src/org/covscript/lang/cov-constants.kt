@@ -1,7 +1,7 @@
 package org.covscript.lang
 
 import com.intellij.openapi.util.IconLoader
-import org.jetbrains.annotations.
+import org.jetbrains.annotations.NonNls
 
 @NonNls const val COV_EXTENSION = "csc"
 @NonNls const val COV_EXT_EXTENSION = "cse"
