@@ -21,7 +21,7 @@ public class CovSetupSdkWizardStep extends ModuleWizardStep {
 
 	public CovSetupSdkWizardStep(@NotNull CovModuleBuilder builder) {
 		this.builder = builder;
-		covPathExample.setVisible(false);
+		covWebsiteDescription.setVisible(false);
 		covWebsiteLink.setListener((label, o) -> BrowserLauncher.getInstance().open(covWebsiteLink.getText()), null);
 	}
 
