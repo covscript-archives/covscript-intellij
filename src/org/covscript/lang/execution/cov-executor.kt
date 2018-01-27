@@ -26,7 +26,7 @@ class CovCommandLineState(
 
 	override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {
 		val params = mutableListOf<String>()
-		params += configuration.covExecutive
+		params += configuration.covExecutable
 		if (configuration.compileOnlyOption) params += "--compile-only"
 		if (configuration.waitB4ExitOption) params += "--wait-before-exit"
 		if (configuration.importPathOption) {

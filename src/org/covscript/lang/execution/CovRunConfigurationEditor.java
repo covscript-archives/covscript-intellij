@@ -29,10 +29,7 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 	private @NotNull JTextField progArgsField;
 
 	public CovRunConfigurationEditor(@NotNull CovRunConfiguration configuration) {
-		sdkComboBox.addPropertyChangeListener(changeEvent -> {
-			configuration.setSdkUsed(sdkComboBox.getSelectedSdk());
-			covExecutiveField.setText(configuration.getCovExecutive());
-		});
+		sdkComboBox.addPropertyChangeListener(changeEvent -> covExecutiveField.setText(configuration.getCovExecutable()));
 		logPath.addChangeListener(actionEvent -> logPathField.setEnabled(logPath.isSelected()));
 		importPath.addChangeListener(actionEvent -> importPathField.setEnabled(importPath.isSelected()));
 		covExecutiveField.addBrowseFolderListener(CovBundle.message("cov.messages.run.select-interpreter"),
@@ -59,7 +56,7 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 		logPathField.setEnabled(logPath.isSelected());
 		importPathField.setText(configuration.getImportPath());
 		importPathField.setEnabled(importPath.isSelected());
-		covExecutiveField.setText(configuration.getCovExecutive());
+		covExecutiveField.setText(configuration.getCovExecutable());
 		targetFileField.setText(configuration.getTargetFile());
 		workingDirField.setText(configuration.getWorkingDir());
 		progArgsField.setText(configuration.getProgramArgs());
@@ -84,7 +81,7 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 			else reportInvalidPath(logPath);
 		}
 		String covExecutable = covExecutiveField.getText();
-		if (Files.isExecutable(Paths.get(covExecutable))) configuration.setCovExecutive(covExecutable);
+		if (Files.isExecutable(Paths.get(covExecutable))) configuration.setCovExecutable(covExecutable);
 		else reportInvalidPath(covExecutable);
 		String targetFile = targetFileField.getText();
 		if (Files.isReadable(Paths.get(targetFile))) configuration.setTargetFile(targetFile);
@@ -96,8 +93,8 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 		configuration.setProgramArgs(progArgsField.getText());
 	}
 
-	@Contract("_ -> fail") private void reportInvalidPath(@NotNull String importPath) throws ConfigurationException {
-		throw new ConfigurationException(CovBundle.message("cov.run.config.invalid-path", importPath));
+	@Contract("_ -> fail") private void reportInvalidPath(@NotNull String path) throws ConfigurationException {
+		throw new ConfigurationException(CovBundle.message("cov.run.config.invalid-path", path));
 	}
 
 	@Override protected @NotNull JPanel createEditor() {
