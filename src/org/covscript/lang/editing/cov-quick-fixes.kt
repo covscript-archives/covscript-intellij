@@ -8,8 +8,10 @@ import com.intellij.psi.PsiFile
 import org.covscript.lang.CovBundle
 import org.covscript.lang.psi.*
 import org.covscript.lang.psi.impl.anythingInside
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 
-class CovRemoveElementIntention(private val element: PsiElement, private val intentionText: String) :
+class CovRemoveElementIntention(private val element: PsiElement, @Nls private val intentionText: String) :
 		BaseIntentionAction() {
 	override fun getText() = intentionText
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
@@ -22,14 +24,14 @@ class CovRemoveElementIntention(private val element: PsiElement, private val int
 fun collapsedToOneLine(element: CovCollapsedStatement) =
 		CovReplaceWithTextIntention(
 				element,
-				CovBundle.message("cov.lint.convert-collapsed-block"),
-				element.anythingInside?.text?.replace("\n", "") ?: element.text
+				element.anythingInside?.text?.replace("\n", "") ?: element.text,
+				CovBundle.message("cov.lint.convert-collapsed-block")
 		)
 
 class CovReplaceWithTextIntention(
 		private val element: PsiElement,
-		private val new: String,
-		private val info: String) : BaseIntentionAction() {
+		@NonNls private val new: String,
+		@Nls private val info: String) : BaseIntentionAction() {
 	override fun getText() = info
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = CovBundle.message("cov.name")
@@ -41,7 +43,7 @@ class CovReplaceWithTextIntention(
 class CovReplaceWithElementIntention(
 		private val element: PsiElement,
 		private val new: PsiElement,
-		private val info: String) : BaseIntentionAction() {
+		@Nls private val info: String) : BaseIntentionAction() {
 	override fun getText() = info
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = CovBundle.message("cov.name")
