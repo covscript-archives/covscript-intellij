@@ -113,9 +113,9 @@ class CovBreadCrumbProvider : BreadcrumbsProvider {
 	}
 
 	override fun getElementInfo(o: PsiElement): String = cutText(when (o) {
-		is CovFunctionDeclaration -> "function ${o.symbol.text}"
-		is CovStructDeclaration -> "struct ${o.symbol.text}"
-		is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
+		is CovFunctionDeclaration -> o.symbol.text
+		is CovStructDeclaration -> o.symbol.text
+		is CovNamespaceDeclaration -> o.symbol.text
 		is CovForStatement -> "for ${o.parameter.text}"
 		is CovArrayLiteral -> "array literal"
 		is CovLoopUntilStatement -> "loop ${o.expression}"
