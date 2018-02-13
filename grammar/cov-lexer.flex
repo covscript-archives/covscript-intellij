@@ -20,7 +20,7 @@ import org.covscript.lang.psi.CovTypes;
 %eof}
 
 EOL=\n
-COMMENT=#[^\n]*{EOL}
+COMMENT=#[^\n]*
 INCOMPLETE_STRING=\"([^\"\\\n]|\\[^])*
 STRING_LITERAL={INCOMPLETE_STRING}\"
 INCOMPLETE_COLLAPSING_STRING=\"([^\"\\]|\\[^])*
@@ -30,44 +30,6 @@ CHAR_LITERAL={INCOMPLETE_CHAR}'
 
 SYM=[a-zA-Z_][0-9a-zA-Z_]*
 NUM=[0-9]+(\.[0-9]+)?
-
-IF_KEYWORD=if
-ELSE_KEYWORD=else
-END_KEYWORD=end
-NEW_KEYWORD=new
-GCNEW_KEYWORD=gcnew
-TYPEID_KEYWORD=typeid
-WHILE_KEYWORD=while
-FOR_KEYWORD=for
-PACKAGE_KEYWORD=package
-USING_KEYWORD=using
-TRUE_KEYWORD=true
-FALSE_KEYWORD=false
-NULL_KEYWORD=null
-IMPORT_KEYWORD=import
-VAR_KEYWORD=var
-CONST_KEYWORD=const
-NAMESPACE_KEYWORD=namespace
-FUNCTION_KEYWORD=function
-BREAK_KEYWORD=break
-CONTINUE_KEYWORD=continue
-RETURN_KEYWORD=return
-BLOCK_KEYWORD=block
-TO_KEYWORD=to
-ITERATE_KEYWORD=iterate
-UNTIL_KEYWORD=until
-LOOP_KEYWORD=loop
-STEP_KEYWORD=step
-THROW_KEYWORD=throw
-TRY_KEYWORD=try
-CATCH_KEYWORD=catch
-STRUCT_KEYWORD=struct
-SWITCH_KEYWORD=switch
-CASE_KEYWORD=case
-DEFAULT_KEYWORD=default
-AND_KEYWORD=and
-OR_KEYWORD=or
-NOT_KEYWORD=not
 
 COLLAPSER_BEGIN=@begin
 COLLAPSER_END=@end
@@ -129,44 +91,44 @@ OTHERWISE=[^ \t\r]
 <YYINITIAL> {COLLAPSER_BEGIN} { yybegin(COLLAPSING); return CovTypes.COLLAPSER_BEGIN; }
 <COLLAPSING> {COLLAPSER_BEGIN} { return TokenType.BAD_CHARACTER; }
 
-{NAMESPACE_KEYWORD} { return CovTypes.NAMESPACE_KEYWORD; }
-{IF_KEYWORD} { return CovTypes.IF_KEYWORD; }
-{ELSE_KEYWORD} { return CovTypes.ELSE_KEYWORD; }
-{END_KEYWORD} { return CovTypes.END_KEYWORD; }
-{NEW_KEYWORD} { return CovTypes.NEW_KEYWORD; }
-{GCNEW_KEYWORD} { return CovTypes.GCNEW_KEYWORD; }
-{TYPEID_KEYWORD} { return CovTypes.TYPEID_KEYWORD; }
-{WHILE_KEYWORD} { return CovTypes.WHILE_KEYWORD; }
-{FOR_KEYWORD} { return CovTypes.FOR_KEYWORD; }
-{PACKAGE_KEYWORD} { return CovTypes.PACKAGE_KEYWORD; }
-{USING_KEYWORD} { return CovTypes.USING_KEYWORD; }
-{TRUE_KEYWORD} { return CovTypes.TRUE_KEYWORD; }
-{FALSE_KEYWORD} { return CovTypes.FALSE_KEYWORD; }
-{NULL_KEYWORD} { return CovTypes.NULL_KEYWORD; }
-{IMPORT_KEYWORD} { return CovTypes.IMPORT_KEYWORD; }
-{VAR_KEYWORD} { return CovTypes.VAR_KEYWORD; }
-{CONST_KEYWORD} { return CovTypes.CONST_KEYWORD; }
-{NAMESPACE_KEYWORD} { return CovTypes.NAMESPACE_KEYWORD; }
-{FUNCTION_KEYWORD} { return CovTypes.FUNCTION_KEYWORD; }
-{BREAK_KEYWORD} { return CovTypes.BREAK_KEYWORD; }
-{CONTINUE_KEYWORD} { return CovTypes.CONTINUE_KEYWORD; }
-{RETURN_KEYWORD} { return CovTypes.RETURN_KEYWORD; }
-{BLOCK_KEYWORD} { return CovTypes.BLOCK_KEYWORD; }
-{TO_KEYWORD} { return CovTypes.TO_KEYWORD; }
-{ITERATE_KEYWORD} { return CovTypes.ITERATE_KEYWORD; }
-{UNTIL_KEYWORD} { return CovTypes.UNTIL_KEYWORD; }
-{LOOP_KEYWORD} { return CovTypes.LOOP_KEYWORD; }
-{STEP_KEYWORD} { return CovTypes.STEP_KEYWORD; }
-{THROW_KEYWORD} { return CovTypes.THROW_KEYWORD; }
-{TRY_KEYWORD} { return CovTypes.TRY_KEYWORD; }
-{CATCH_KEYWORD} { return CovTypes.CATCH_KEYWORD; }
-{STRUCT_KEYWORD} { return CovTypes.STRUCT_KEYWORD; }
-{SWITCH_KEYWORD} { return CovTypes.SWITCH_KEYWORD; }
-{CASE_KEYWORD} { return CovTypes.CASE_KEYWORD; }
-{DEFAULT_KEYWORD} { return CovTypes.DEFAULT_KEYWORD; }
-{AND_KEYWORD} { return CovTypes.AND_KEYWORD; }
-{OR_KEYWORD} { return CovTypes.OR_KEYWORD; }
-{NOT_KEYWORD} { return CovTypes.NOT_KEYWORD; }
+namespace { return CovTypes.NAMESPACE_KEYWORD; }
+if { return CovTypes.IF_KEYWORD; }
+else { return CovTypes.ELSE_KEYWORD; }
+end { return CovTypes.END_KEYWORD; }
+new { return CovTypes.NEW_KEYWORD; }
+gcnew { return CovTypes.GCNEW_KEYWORD; }
+typeid { return CovTypes.TYPEID_KEYWORD; }
+while { return CovTypes.WHILE_KEYWORD; }
+for { return CovTypes.FOR_KEYWORD; }
+package { return CovTypes.PACKAGE_KEYWORD; }
+using { return CovTypes.USING_KEYWORD; }
+true { return CovTypes.TRUE_KEYWORD; }
+false { return CovTypes.FALSE_KEYWORD; }
+null { return CovTypes.NULL_KEYWORD; }
+import { return CovTypes.IMPORT_KEYWORD; }
+var { return CovTypes.VAR_KEYWORD; }
+const { return CovTypes.CONST_KEYWORD; }
+namespace { return CovTypes.NAMESPACE_KEYWORD; }
+function { return CovTypes.FUNCTION_KEYWORD; }
+break { return CovTypes.BREAK_KEYWORD; }
+continue { return CovTypes.CONTINUE_KEYWORD; }
+return { return CovTypes.RETURN_KEYWORD; }
+block { return CovTypes.BLOCK_KEYWORD; }
+to { return CovTypes.TO_KEYWORD; }
+iterate { return CovTypes.ITERATE_KEYWORD; }
+until { return CovTypes.UNTIL_KEYWORD; }
+loop { return CovTypes.LOOP_KEYWORD; }
+step { return CovTypes.STEP_KEYWORD; }
+throw { return CovTypes.THROW_KEYWORD; }
+try { return CovTypes.TRY_KEYWORD; }
+catch { return CovTypes.CATCH_KEYWORD; }
+struct { return CovTypes.STRUCT_KEYWORD; }
+switch { return CovTypes.SWITCH_KEYWORD; }
+case { return CovTypes.CASE_KEYWORD; }
+default { return CovTypes.DEFAULT_KEYWORD; }
+and { return CovTypes.AND_KEYWORD; }
+or { return CovTypes.OR_KEYWORD; }
+not { return CovTypes.NOT_KEYWORD; }
 
 {ARROW} { return CovTypes.ARROW; }
 {QUESTION_OP} { return CovTypes.QUESTION_OP; }

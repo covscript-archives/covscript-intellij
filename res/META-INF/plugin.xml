@@ -1,7 +1,7 @@
 <idea-plugin>
 	<id>org.covscript</id>
 	<name>CovScript</name>
-	<version>1.6.1</version>
+	<version>1.7</version>
 	<vendor email="ice1000kotlin@foxmail.com" url="http://covscript.org">ice1000</vendor>
 
 	<description><![CDATA[
@@ -23,33 +23,30 @@ Functions provided:<br/>
 ]]></description>
 
 	<change-notes><![CDATA[
+1.7<br/>
+Now it's capable with PyCharm/CLion/Rider/etc..<br/>
+<ul>
+  <li>Deprecated SDK and use project settings</li>
+  <li>New icon</li>
+</ul><br/>
 1.6.1<br/>
 <ul>
   <li>Lots of typo fixes</li>
-</ul>
-
-<br/>
-
+</ul><br/>
 1.6<br/>
 <ul>
   <li>Auto-popup completions</li>
   <li>Parser fatal bug fix</li>
   <li>SDK Configuration fatal bug fix</li>
   <li>Detail improvements</li>
-</ul>
-
-<br/>
-
+</ul><br/>
 1.5<br/>
 <ul>
   <li>Reference resolving bug fixes</li>
   <li>New run configurator UI, added validation</li>
   <li>Lots of minor improvements</li>
   <li>Context-based completions</li>
-</ul>
-
-<br/>
-
+</ul><br/>
 1.4<br/>
 <ul>
   <li>Bug fixes</li>
@@ -58,29 +55,20 @@ Functions provided:<br/>
   <li>Completion improvements</li>
   <li>Reference resolving (jump to definition)</li>
   <li>Renaming</li>
-</ul>
-
-<br/>
-
+</ul><br/>
 1.3<br/>
 <ul>
   <li>Bug fixes</li>
   <li>Quick fixes improvements</li>
   <li>Version string detection</li>
   <li>Try evaluate based on cs_repl</li>
-</ul>
-
-<br/>
-
+</ul><br/>
 1.2<br/>
 <ul>
   <li>Bug fixes</li>
   <li>Bread crumbs, spell checking, code folding, structure view supports</li>
   <li>Improved quick fixes</li>
-</ul>
-
-<br/>
-
+</ul><br/>
 1.1<br/>
 <ul>
   <li>SDK configuration</li>
@@ -104,6 +92,7 @@ Functions provided:<br/>
 		<sdkType implementation="org.covscript.lang.module.CovSdkType"/>
 		<breadcrumbsInfoProvider implementation="org.covscript.lang.editing.CovBreadCrumbProvider"/>
 		<directoryProjectGenerator implementation="org.covscript.lang.module.CovProjectGenerator"/>
+		<errorHandler implementation="de.halirutan.mathematica.errorreporting.cov.GitHubErrorReporter"/>
 		<lang.refactoringSupport
 				language="CovScript"
 				implementationClass="org.covscript.lang.psi.CovRefactoringSupportProvider"/>

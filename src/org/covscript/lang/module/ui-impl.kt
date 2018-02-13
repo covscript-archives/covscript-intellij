@@ -22,11 +22,12 @@ class CovSetupModuleWizardStepImpl(private val builder: CovModuleBuilder) : CovS
 	init {
 		covWebsiteDescription.isVisible = false
 		covWebsiteLink.setListener({ _, _ -> BrowserLauncher.instance.open(covWebsiteLink.text) }, null)
+		covHomeField.addBrowseFolderListener(TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFolderDescriptor()))
 	}
 
 	@Throws(ConfigurationException::class)
 	override fun validate(): Boolean {
-		if (validateCovHome(covHomeField.text)) {
+		if (!validateCovHome(covHomeField.text)) {
 			covWebsiteDescription.isVisible = true
 			throw ConfigurationException(CovBundle.message("cov.project.invalid"))
 		}
