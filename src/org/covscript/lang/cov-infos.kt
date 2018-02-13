@@ -34,7 +34,11 @@ class CovFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, CovLan
 }
 
 class CovFileTypeFactory : FileTypeFactory() {
-	override fun createFileTypes(consumer: FileTypeConsumer) = consumer.consume(CovFileType, COV_EXTENSION)
+	override fun createFileTypes(consumer: FileTypeConsumer) {
+		consumer.consume(CovFileType, COV_EXTENSION)
+		consumer.consume(CovPackageFileType, COV_PKG_EXTENSION)
+		consumer.consume(CovExtensionFileType, COV_EXT_EXTENSION)
+	}
 }
 
 class CovContext : TemplateContextType(
@@ -58,19 +62,11 @@ object CovPackageFileType : LanguageFileType(CovLanguage) {
 object CovExtensionFileType : FileType {
 	override fun getDefaultExtension() = COV_EXT_EXTENSION
 	override fun getIcon() = CovIcons.COV_EXT_ICON
-	override fun getCharset(file: VirtualFile, bytes: ByteArray) = null
+	override fun getCharset(file: VirtualFile, bytes: ByteArray): String? = null
 	override fun getName() = CovBundle.message("cov.extension.name")
 	override fun getDescription() = CovBundle.message("cov.extension.name.description")
 	override fun isBinary() = true
 	override fun isReadOnly() = true
-}
-
-class CovPackageFileTypeFactory : FileTypeFactory() {
-	override fun createFileTypes(consumer: FileTypeConsumer) = consumer.consume(CovPackageFileType, COV_PKG_EXTENSION)
-}
-
-class CovExtensionFileTypeFactory : FileTypeFactory() {
-	override fun createFileTypes(consumer: FileTypeConsumer) = consumer.consume(CovExtensionFileType, COV_EXT_EXTENSION)
 }
 
 

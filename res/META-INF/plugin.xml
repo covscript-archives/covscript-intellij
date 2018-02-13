@@ -96,8 +96,6 @@ Functions provided:<br/>
 
 	<extensions defaultExtensionNs="com.intellij">
 		<fileTypeFactory implementation="org.covscript.lang.CovFileTypeFactory"/>
-		<fileTypeFactory implementation="org.covscript.lang.CovExtensionFileTypeFactory"/>
-		<fileTypeFactory implementation="org.covscript.lang.CovPackageFileTypeFactory"/>
 		<liveTemplateContext implementation="org.covscript.lang.CovContext"/>
 		<defaultLiveTemplatesProvider implementation="org.covscript.lang.CovLiveTemplateProvider"/>
 		<colorSettingsPage implementation="org.covscript.lang.CovColorSettingsPage"/>
