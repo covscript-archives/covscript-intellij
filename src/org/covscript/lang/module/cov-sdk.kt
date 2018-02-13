@@ -20,13 +20,12 @@ class CovSdkType : SdkType(CovBundle.message("cov.name")) {
 	override fun isValidSdkHome(s: String?) = validateCovSDK(s.orEmpty())
 	override fun suggestSdkName(s: String?, p1: String?) = CovBundle.message("cov.modules.sdk.name")
 	override fun suggestHomePath() = if (SystemInfo.isWindows) POSSIBLE_SDK_HOME_WINDOWS else POSSIBLE_SDK_HOME_LINUX
-	override fun createAdditionalDataConfigurable(md: SdkModel, m: SdkModificator) = CovAdditionalDataConfigurable()
+	override fun createAdditionalDataConfigurable(md: SdkModel, m: SdkModificator): AdditionalDataConfigurable? = null
 	override fun getVersionString(sdkHome: String?) = versionOf(sdkHome.orEmpty())
 	override fun saveAdditionalData(additionalData: SdkAdditionalData, element: Element) = Unit // leave blank
 	override fun getDownloadSdkUrl() = COV_WEBSITE
 	override fun setupSdkPaths(sdk: Sdk, sdkModel: SdkModel): Boolean {
 		val modificator = sdk.sdkModificator
-		modificator.sdkAdditionalData = sdk.sdkAdditionalData ?: CovSdkData()
 		modificator.versionString = getVersionString(sdk) ?: CovBundle.message("cov.modules.sdk.unknown-version")
 		sdk.homeDirectory
 				?.findChild("imports")
@@ -37,50 +36,5 @@ class CovSdkType : SdkType(CovBundle.message("cov.name")) {
 
 	companion object InstanceHolder {
 		val instance get() = SdkType.findInstance(CovSdkType::class.java)
-	}
-}
-
-fun SdkAdditionalData?.toCovSdkData() = this as? CovSdkData
-
-class CovSdkData(
-		var tryEvaluateTimeLimit: Long = 2500L,
-		var tryEvaluateTextLimit: Int = 320) : SdkAdditionalData {
-	override fun clone() = CovSdkData(tryEvaluateTimeLimit, tryEvaluateTextLimit)
-}
-
-class CovSdkComboBox : ComboboxWithBrowseButton() {
-	val selectedSdk get() = comboBox.selectedItem as? Sdk
-	val sdkName get() = selectedSdk?.name.orEmpty()
-
-	init {
-		comboBox.setRenderer(object : ColoredListCellRenderer<Sdk?>() {
-			override fun customizeCellRenderer(
-					list: JList<out Sdk?>,
-					value: Sdk?,
-					index: Int,
-					selected: Boolean,
-					hasFocus: Boolean) {
-				value?.name?.let(::append)
-			}
-		})
-		addActionListener {
-			var selectedSdk = selectedSdk
-			val project = ProjectManager.getInstance().defaultProject
-			val editor = ProjectJdksEditor(selectedSdk, project, this@CovSdkComboBox)
-			editor.title = CovBundle.message("cov.modules.sdk.selection.title")
-			editor.show()
-			if (editor.isOK) {
-				selectedSdk = editor.selectedJdk
-				updateSdkList(selectedSdk)
-			}
-		}
-		updateSdkList()
-	}
-
-	private fun updateSdkList(sdkToSelectOuter: Sdk? = null) {
-		ProjectJdkTable.getInstance().getSdksOfType(CovSdkType.instance).run {
-			comboBox.model = DefaultComboBoxModel(toTypedArray())
-			comboBox.selectedItem = sdkToSelectOuter ?: firstOrNull()
-		}
 	}
 }

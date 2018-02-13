@@ -31,7 +31,7 @@ class TryEvaluate {
 			project?.projectSdk?.let {
 				covRoot = it.homePath.orEmpty()
 				covVersion = it.versionString.orEmpty()
-				val data = it.sdkAdditionalData as? CovSdkData ?: return@let
+				val data = it.sdkAdditionalData as? CovSettings ?: return@let
 				textLimit = data.tryEvaluateTextLimit
 				timeLimit = data.tryEvaluateTimeLimit
 			}

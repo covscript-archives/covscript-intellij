@@ -16,7 +16,7 @@ file ::=
  fileHeader*
  statement*
 
-private endOfLine ::= (comment | EOL)+
+private endOfLine ::= EOL+
 number ::= NUM
 break ::= BREAK_KEYWORD
 continue ::= CONTINUE_KEYWORD
@@ -42,6 +42,7 @@ fileHeader ::=
    usingDeclaration
  | importDeclaration
  | packageDeclaration
+ | comment
  | endOfLine
 
 importDeclaration ::= IMPORT_KEYWORD symbol
