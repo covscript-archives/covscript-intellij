@@ -6,7 +6,6 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import org.covscript.lang.CovBundle;
 import org.covscript.lang.CovFileType;
-import org.covscript.lang.module.CovSdkComboBox;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +15,6 @@ import java.nio.file.Paths;
 
 public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguration> {
 	private @NotNull JPanel mainPanel;
-	private @NotNull CovSdkComboBox sdkComboBox;
 	private @NotNull TextFieldWithBrowseButton covExecutiveField;
 	private @NotNull TextFieldWithBrowseButton workingDirField;
 	private @NotNull TextFieldWithBrowseButton targetFileField;
@@ -29,7 +27,6 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 	private @NotNull JTextField progArgsField;
 
 	public CovRunConfigurationEditor(@NotNull CovRunConfiguration configuration) {
-		sdkComboBox.addPropertyChangeListener(changeEvent -> covExecutiveField.setText(configuration.getCovExecutable()));
 		logPath.addChangeListener(actionEvent -> logPathField.setEnabled(logPath.isSelected()));
 		importPath.addChangeListener(actionEvent -> importPathField.setEnabled(importPath.isSelected()));
 		covExecutiveField.addBrowseFolderListener(CovBundle.message("cov.messages.run.select-interpreter"),
@@ -60,7 +57,6 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 		targetFileField.setText(configuration.getTargetFile());
 		workingDirField.setText(configuration.getWorkingDir());
 		progArgsField.setText(configuration.getProgramArgs());
-		sdkComboBox.getComboBox().setSelectedItem(configuration.getSdkUsed());
 	}
 
 	@Override protected void applyEditorTo(@NotNull CovRunConfiguration configuration) throws ConfigurationException {
@@ -89,7 +85,6 @@ public class CovRunConfigurationEditor extends SettingsEditor<CovRunConfiguratio
 		String workingDirectory = workingDirField.getText();
 		if (Files.isDirectory(Paths.get(workingDirectory))) configuration.setWorkingDir(workingDirectory);
 		else reportInvalidPath(workingDirectory);
-		configuration.setSdkUsed(sdkComboBox.getSelectedSdk());
 		configuration.setProgramArgs(progArgsField.getText());
 	}
 

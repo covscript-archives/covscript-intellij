@@ -8,7 +8,6 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.JDOMExternalizer
 import com.intellij.openapi.util.Ref
@@ -16,21 +15,12 @@ import com.intellij.psi.PsiElement
 import icons.CovIcons
 import org.covscript.lang.*
 import org.covscript.lang.module.CovSdkType
+import org.covscript.lang.module.covSettings
 import org.jdom.Element
 import java.nio.file.Paths
 
 class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project) :
 		ModuleBasedConfiguration<RunConfigurationModule>(CovBundle.message("cov.name"), RunConfigurationModule(project), factory) {
-	private val covSdks get() = ProjectJdkTable.getInstance().getSdksOfType(CovSdkType.instance)
-	private var sdkName = ""
-	var sdkUsed = ProjectRootManager.getInstance(project).projectSdk
-		set(value) {
-			value?.let {
-				sdkName = it.name
-				field = it
-				covExecutable = Paths.get(it.homePath, "bin", "cs").toAbsolutePath().toString()
-			}
-		}
 	var logPath = ""
 	var importPath = ""
 	var logPathOption = false
@@ -40,7 +30,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 	var workingDir = ""
 	var targetFile = ""
 	var programArgs = ""
-	var covExecutable = sdkUsed?.run { Paths.get(homePath, "bin", "cs").toAbsolutePath().toString() }.orEmpty()
+	var covExecutable = Paths.get(project.covSettings.settings.covHome, "bin", "cs").toAbsolutePath().toString()
 	override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = CovRunConfigurationEditor(this)
 	override fun getState(executor: Executor, environment: ExecutionEnvironment) = CovCommandLineState(this, environment)
 	override fun getValidModules() = allModules.filter { ProjectRootManager.getInstance(it.project).projectSdk?.sdkType is CovSdkType }
@@ -56,9 +46,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 		JDOMExternalizer.readString(element, "programArgs")?.let { programArgs = it }
 		JDOMExternalizer.readString(element, "targetFile")?.let { targetFile = it }
 		JDOMExternalizer.readString(element, "workingDir")?.let { workingDir = it }
-		JDOMExternalizer.readString(element, "sdkName")?.let { name ->
-			sdkUsed = covSdks.firstOrNull { it.name == name } ?: return@let
-		}
+		JDOMExternalizer.readString(element, "covExecutable")?.let { covExecutable = it }
 		PathMacroManager.getInstance(project).collapsePathsRecursively(element)
 	}
 
@@ -75,7 +63,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 		JDOMExternalizer.write(element, "programArgs", programArgs)
 		JDOMExternalizer.write(element, "targetFile", targetFile)
 		JDOMExternalizer.write(element, "workingDir", workingDir)
-		JDOMExternalizer.write(element, "sdkName", sdkName)
+		JDOMExternalizer.write(element, "covExecutable", covExecutable)
 	}
 }
 
