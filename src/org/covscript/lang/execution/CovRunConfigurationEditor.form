@@ -15,7 +15,7 @@
           </grid>
         </constraints>
         <properties>
-          <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.sdk"/>
+          <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.home"/>
         </properties>
       </component>
       <vspacer id="a2e1c">

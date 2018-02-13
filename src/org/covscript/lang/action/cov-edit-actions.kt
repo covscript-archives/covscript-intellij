@@ -12,8 +12,10 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ui.JBUI
 import icons.CovIcons
-import org.covscript.lang.*
-import org.covscript.lang.module.*
+import org.covscript.lang.CovBundle
+import org.covscript.lang.CovFileType
+import org.covscript.lang.module.covSettings
+import org.covscript.lang.module.executeInRepl
 import java.awt.Dimension
 import javax.swing.JLabel
 import javax.swing.JTextArea
@@ -28,12 +30,11 @@ class TryEvaluate {
 			val builder = StringBuilder()
 			var covRoot = ""
 			var covVersion = ""
-			project?.projectSdk?.let {
-				covRoot = it.homePath.orEmpty()
-				covVersion = it.versionString.orEmpty()
-				val data = it.sdkAdditionalData as? CovSettings ?: return@let
-				textLimit = data.tryEvaluateTextLimit
-				timeLimit = data.tryEvaluateTimeLimit
+			project?.covSettings?.settings?.let {
+				covRoot = it.covHome
+				covVersion = it.version
+				textLimit = it.tryEvaluateTextLimit
+				timeLimit = it.tryEvaluateTimeLimit
 			}
 			val (stdout, stderr) = executeInRepl(covRoot, text, timeLimit)
 			builder.appendln(CovBundle.message("cov.messages.try-eval.version-text", covVersion))
@@ -94,9 +95,10 @@ class TryEvaluate {
 	}
 }
 
-class TryEvaluateCovExpressionAction :
-		AnAction(CovBundle.message("cov.actions.try-eval.name"),
-				CovBundle.message("cov.actions.try-eval.description"), CovIcons.COV_BIG_ICON), DumbAware {
+class TryEvaluateCovExpressionAction : AnAction(
+		CovBundle.message("cov.actions.try-eval.name"),
+		CovBundle.message("cov.actions.try-eval.description"),
+		CovIcons.COV_BIG_ICON), DumbAware {
 	private val core = TryEvaluate()
 	override fun actionPerformed(event: AnActionEvent) {
 		val editor = event.getData(CommonDataKeys.EDITOR) ?: return
@@ -104,7 +106,6 @@ class TryEvaluateCovExpressionAction :
 	}
 
 	override fun update(event: AnActionEvent) {
-		event.presentation.isEnabledAndVisible = event.getData(CommonDataKeys.PROJECT)?.projectSdk != null &&
-				event.getData(CommonDataKeys.VIRTUAL_FILE)?.fileType == CovFileType
+		event.presentation.isEnabledAndVisible = event.getData(CommonDataKeys.VIRTUAL_FILE)?.fileType == CovFileType
 	}
 }

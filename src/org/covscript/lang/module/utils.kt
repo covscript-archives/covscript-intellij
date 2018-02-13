@@ -1,8 +1,6 @@
 package org.covscript.lang.module
 
 import com.google.common.util.concurrent.SimpleTimeLimiter
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import org.covscript.lang.CovBundle
 import org.covscript.lang.forceRun
 import java.io.InputStream
@@ -57,9 +55,8 @@ private fun collectLines(it: InputStream): List<String> {
 	return ret
 }
 
-fun validateCovSDK(pathString: String) = (Files.isExecutable(Paths.get(pathString, "bin", "cs")) or
+fun validateCovHome(settings: CovSettings) = settings.version != CovBundle.message("cov.modules.sdk.unknown-version")
+fun validateCovHome(pathString: String) = (Files.isExecutable(Paths.get(pathString, "bin", "cs")) or
 		Files.isExecutable(Paths.get(pathString, "bin", "cs.exe"))) and
 		(Files.isExecutable(Paths.get(pathString, "bin", "cs_repl")) or
 				Files.isExecutable(Paths.get(pathString, "bin", "cs_repl.exe")))
-
-val Project.projectSdk get() = ProjectRootManager.getInstance(this).projectSdk

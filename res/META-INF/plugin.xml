@@ -103,6 +103,7 @@ Functions provided:<br/>
 		<runConfigurationProducer implementation="org.covscript.lang.execution.CovRunConfigurationProducer"/>
 		<sdkType implementation="org.covscript.lang.module.CovSdkType"/>
 		<breadcrumbsInfoProvider implementation="org.covscript.lang.editing.CovBreadCrumbProvider"/>
+		<directoryProjectGenerator implementation="org.covscript.lang.module.CovProjectGenerator"/>
 		<lang.refactoringSupport
 				language="CovScript"
 				implementationClass="org.covscript.lang.psi.CovRefactoringSupportProvider"/>
@@ -139,6 +140,12 @@ Functions provided:<br/>
 		<completion.contributor
 				language="CovScript"
 				implementationClass="org.covscript.lang.editing.CovCompletionContributor"/>
+		<projectConfigurable
+				groupId="language"
+				instance="org.covscript.lang.module.CovProjectConfigurableImpl"/>
+		<projectService
+				serviceInterface="org.covscript.lang.module.CovProjectSettingsService"
+				serviceImplementation="org.covscript.lang.module.CovProjectSettingsServiceImpl"/>
 		<additionalTextAttributes scheme="Darcula" file="/colorSchemes/CovColors.xml"/>
 		<additionalTextAttributes scheme="Default" file="/colorSchemes/CovColors.xml"/>
 	</extensions>

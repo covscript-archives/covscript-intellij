@@ -9,8 +9,6 @@ import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.*
 import icons.CovIcons
 import org.covscript.lang.*
-import org.covscript.lang.module.CovSdkType
-import org.covscript.lang.module.projectSdk
 import java.time.LocalDate
 
 class NewCovFile : CreateFileAction(
@@ -23,7 +21,6 @@ class NewCovFile : CreateFileAction(
 
 	override fun getErrorTitle(): String = CommonBundle.getErrorTitle()
 	override fun getDefaultExtension() = COV_EXTENSION
-	override fun isAvailable(context: DataContext) = context.getData(CommonDataKeys.PROJECT)?.projectSdk?.sdkType is CovSdkType
 	override fun create(name: String, directory: PsiDirectory): Array<PsiElement> {
 		val fileName = FileUtilRt.getNameWithoutExtension(name)
 		val fixedExtension = when (FileUtilRt.getExtension(name)) {

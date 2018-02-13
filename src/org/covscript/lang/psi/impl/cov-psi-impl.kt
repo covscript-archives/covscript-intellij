@@ -7,6 +7,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.tree.IElementType
+import org.covscript.lang.CovTokenType
 import org.covscript.lang.psi.*
 
 fun CovExpression.primaryExprOrNull() =

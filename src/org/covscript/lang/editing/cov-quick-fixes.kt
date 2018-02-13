@@ -6,7 +6,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.covscript.lang.CovBundle
-import org.covscript.lang.psi.*
+import org.covscript.lang.CovTokenType
+import org.covscript.lang.psi.CovBlockStatement
+import org.covscript.lang.psi.CovCollapsedStatement
 import org.covscript.lang.psi.impl.anythingInside
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
