@@ -13,6 +13,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.JDOMExternalizer
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
+import icons.CovIcons
 import org.covscript.lang.*
 import org.covscript.lang.module.CovSdkType
 import org.jdom.Element
@@ -83,7 +84,7 @@ class CovRunConfigurationFactory(type: CovRunConfigurationType) : ConfigurationF
 }
 
 object CovRunConfigurationType : ConfigurationType {
-	override fun getIcon() = COV_BIG_ICON
+	override fun getIcon() = CovIcons.COV_BIG_ICON
 	override fun getConfigurationTypeDescription() = CovBundle.message("cov.run.config.description")
 	override fun getId() = COV_RUN_CONFIG_ID
 	override fun getDisplayName() = CovBundle.message("cov.name")

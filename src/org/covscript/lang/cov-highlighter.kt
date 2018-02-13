@@ -9,6 +9,7 @@ import com.intellij.openapi.options.colors.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.tree.IElementType
+import icons.CovIcons
 import org.covscript.lang.psi.CovTypes
 import org.intellij.lang.annotations.Language
 
@@ -144,7 +145,7 @@ class CovColorSettingsPage : ColorSettingsPage {
 	}
 
 	override fun getHighlighter() = CovSyntaxHighlighter()
-	override fun getIcon() = COV_ICON
+	override fun getIcon() = CovIcons.COV_ICON
 	override fun getDisplayName() = CovBundle.message("cov.name")
 	override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
 	override fun getAdditionalHighlightingTagToDescriptorMap() = KEYS

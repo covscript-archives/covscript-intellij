@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ui.JBUI
+import icons.CovIcons
 import org.covscript.lang.*
 import org.covscript.lang.module.*
 import java.awt.Dimension
@@ -62,7 +63,7 @@ class TryEvaluate {
 		if (result.length < textLimit)
 			ApplicationManager.getApplication().invokeLater {
 				JBPopupFactory.getInstance()
-						.createHtmlTextBalloonBuilder(result, COV_BIG_ICON, JBColor(color, colorDark), null)
+						.createHtmlTextBalloonBuilder(result, CovIcons.COV_BIG_ICON, JBColor(color, colorDark), null)
 						.setFadeoutTime(8000)
 						.setHideOnAction(true)
 						.createBalloon()
@@ -72,7 +73,7 @@ class TryEvaluate {
 			ApplicationManager.getApplication().invokeLater {
 				JBPopupFactory.getInstance()
 						.createComponentPopupBuilder(JBUI.Panels.simplePanel()
-								.addToTop(JLabel(COV_BIG_ICON))
+								.addToTop(JLabel(CovIcons.COV_BIG_ICON))
 								.addToCenter(ScrollPaneFactory.createScrollPane(JTextArea(result).apply {
 									toolTipText = CovBundle.message("cov.messages.try-eval.overflowed-text", textLimit)
 									lineWrap = true
@@ -95,7 +96,7 @@ class TryEvaluate {
 
 class TryEvaluateCovExpressionAction :
 		AnAction(CovBundle.message("cov.actions.try-eval.name"),
-				CovBundle.message("cov.actions.try-eval.description"), COV_BIG_ICON), DumbAware {
+				CovBundle.message("cov.actions.try-eval.description"), CovIcons.COV_BIG_ICON), DumbAware {
 	private val core = TryEvaluate()
 	override fun actionPerformed(event: AnActionEvent) {
 		val editor = event.getData(CommonDataKeys.EDITOR) ?: return

@@ -21,6 +21,7 @@ import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
 import com.intellij.spellchecker.tokenizer.Tokenizer
 import com.intellij.ui.breadcrumbs.BreadcrumbsProvider
 import com.intellij.util.ProcessingContext
+import icons.CovIcons
 import org.covscript.lang.*
 import org.covscript.lang.psi.*
 
@@ -193,20 +194,20 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 			LocationPresentation {
 		override fun getIcon(open: Boolean) = element.let { o ->
 			when (o) {
-				is CovFile -> COV_ICON
-				is CovFunctionDeclaration -> FUNCTION_ICON
-				is CovStructDeclaration -> STRUCT_ICON
-				is CovVariableDeclaration -> VARIABLE_ICON
-				is CovNamespaceDeclaration -> NAMESPACE_ICON
-				is CovTryCatchStatement -> TRY_CATCH_ICON
-				is CovBlockStatement -> BLOCK_ICON
-				is CovSwitchStatement -> SWITCH_ICON
-				is CovCollapsedStatement -> COLLAPSED_ICON
+				is CovFile -> CovIcons.COV_ICON
+				is CovFunctionDeclaration -> CovIcons.FUNCTION_ICON
+				is CovStructDeclaration -> CovIcons.STRUCT_ICON
+				is CovVariableDeclaration -> CovIcons.VARIABLE_ICON
+				is CovNamespaceDeclaration -> CovIcons.NAMESPACE_ICON
+				is CovTryCatchStatement -> CovIcons.TRY_CATCH_ICON
+				is CovBlockStatement -> CovIcons.BLOCK_ICON
+				is CovSwitchStatement -> CovIcons.SWITCH_ICON
+				is CovCollapsedStatement -> CovIcons.COLLAPSED_ICON
 				is CovIfStatement,
 				is CovForStatement,
 				is CovLoopUntilStatement,
-				is CovWhileStatement -> CONTROL_FLOW_ICON
-				else -> COV_BIG_ICON
+				is CovWhileStatement -> CovIcons.CONTROL_FLOW_ICON
+				else -> CovIcons.COV_BIG_ICON
 			}
 		}
 

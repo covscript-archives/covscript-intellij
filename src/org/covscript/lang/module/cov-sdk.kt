@@ -7,6 +7,7 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.ComboboxWithBrowseButton
+import icons.CovIcons
 import org.covscript.lang.*
 import org.jdom.Element
 import javax.swing.DefaultComboBoxModel
@@ -14,7 +15,7 @@ import javax.swing.JList
 
 class CovSdkType : SdkType(CovBundle.message("cov.name")) {
 	override fun getPresentableName() = CovBundle.message("cov.modules.sdk.name")
-	override fun getIcon() = COV_BIG_ICON
+	override fun getIcon() = CovIcons.COV_BIG_ICON
 	override fun getIconForAddAction() = icon
 	override fun isValidSdkHome(s: String?) = validateCovSDK(s.orEmpty())
 	override fun suggestSdkName(s: String?, p1: String?) = CovBundle.message("cov.modules.sdk.name")

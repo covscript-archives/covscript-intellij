@@ -9,6 +9,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTreeUtil.treeWalkUp
+import org.covscript.lang.CovTokenType
 
 class CovSymbolRef(private val symbol: CovSymbol, private var refTo: PsiElement? = null) :
 		PsiPolyVariantReference {

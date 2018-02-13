@@ -6,9 +6,9 @@
   psiPackage='org.covscript.lang.psi'
   psiImplPackage='org.covscript.lang.psi.impl'
 
-  tokenTypeClass='org.covscript.lang.psi.CovTokenType'
+  tokenTypeClass='org.covscript.lang.CovTokenType'
   elementTypeHolderClass='org.covscript.lang.psi.CovTypes'
-  elementTypeClass='org.covscript.lang.psi.CovElementType'
+  elementTypeClass='org.covscript.lang.CovElementType'
   psiImplUtilClass='org.covscript.lang.psi.impl.CovPsiImplUtils'
 }
 

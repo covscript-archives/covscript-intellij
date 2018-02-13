@@ -9,6 +9,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ProjectRootManager
+import icons.CovIcons
 import org.covscript.lang.*
 import java.io.InputStream
 import java.nio.file.Files
@@ -24,7 +25,7 @@ class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 	lateinit var sdk: Sdk
 	override fun isSuitableSdkType(sdkType: SdkTypeId?) = sdkType is CovSdkType
 	override fun getWeight() = 99
-	override fun getNodeIcon() = COV_BIG_ICON
+	override fun getNodeIcon() = CovIcons.COV_BIG_ICON
 	override fun getModuleType() = CovModuleType.instance
 	override fun getCustomOptionsStep(context: WizardContext, parentDisposable: Disposable): CovSetupSdkWizardStep {
 		parentDisposable.dispose()
@@ -45,7 +46,7 @@ class CovModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 
 class CovModuleType : ModuleType<CovModuleBuilder>(COV_MODULE_ID) {
 	override fun getName() = CovBundle.message("cov.name")
-	override fun getNodeIcon(bool: Boolean) = COV_BIG_ICON
+	override fun getNodeIcon(bool: Boolean) = CovIcons.COV_BIG_ICON
 	override fun createModuleBuilder() = CovModuleBuilder()
 	override fun getDescription() = CovBundle.message("cov.modules.type")
 

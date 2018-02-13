@@ -9,6 +9,7 @@ import com.intellij.openapi.fileTypes.*
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
+import icons.CovIcons
 import org.covscript.lang.psi.impl.processDeclTrivial
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
@@ -19,7 +20,7 @@ object CovLanguage : Language(CovBundle.message("cov.name"), "text/$COV_EXTENSIO
 object CovFileType : LanguageFileType(CovLanguage) {
 	override fun getDefaultExtension() = COV_EXTENSION
 	override fun getName() = CovBundle.message("cov.name")
-	override fun getIcon() = COV_ICON
+	override fun getIcon() = CovIcons.COV_ICON
 	override fun getDescription() = CovBundle.message("cov.name.description")
 }
 
@@ -49,14 +50,14 @@ class CovLiveTemplateProvider : DefaultLiveTemplatesProvider {
 
 object CovPackageFileType : LanguageFileType(CovLanguage) {
 	override fun getDefaultExtension() = COV_PKG_EXTENSION
-	override fun getIcon() = COV_PKG_ICON
+	override fun getIcon() = CovIcons.COV_PKG_ICON
 	override fun getName() = CovBundle.message("cov.package.name")
 	override fun getDescription() = CovBundle.message("cov.package.name.description")
 }
 
 object CovExtensionFileType : FileType {
 	override fun getDefaultExtension() = COV_EXT_EXTENSION
-	override fun getIcon() = COV_EXT_ICON
+	override fun getIcon() = CovIcons.COV_EXT_ICON
 	override fun getCharset(file: VirtualFile, bytes: ByteArray) = null
 	override fun getName() = CovBundle.message("cov.extension.name")
 	override fun getDescription() = CovBundle.message("cov.extension.name.description")
