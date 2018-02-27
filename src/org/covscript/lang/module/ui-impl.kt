@@ -75,8 +75,8 @@ class CovProjectConfigurableImpl(project: Project) : CovProjectConfigurable() {
 	override fun createComponent() = mainPanel
 	override fun getDisplayName() = CovBundle.message("cov.name")
 	override fun isModified() = settings.covHome != covHomeField.text ||
-			settings.tryEvaluateTextLimit != textLimitField.value ||
-			settings.tryEvaluateTimeLimit != timeLimitField.value
+			settings.tryEvaluateTextLimit != (textLimitField.value as Number).toInt() ||
+			settings.tryEvaluateTimeLimit != (timeLimitField.value as Number).toLong()
 
 	@Throws(ConfigurationException::class)
 	override fun apply() {
