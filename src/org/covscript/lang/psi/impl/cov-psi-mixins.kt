@@ -9,7 +9,7 @@ import org.covscript.lang.psi.*
 
 abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = symbol
-	override val startPoint: PsiElement get() = parent.parent.parent
+	override val startPoint: PsiElement get() = parent
 }
 
 abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), PsiNameIdentifierOwner {

@@ -1,7 +1,7 @@
 <idea-plugin>
 	<id>org.covscript</id>
 	<name>CovScript</name>
-	<version>1.7</version>
+	<version>1.7.1</version>
 	<vendor email="ice1000kotlin@foxmail.com" url="http://covscript.org">ice1000</vendor>
 
 	<description><![CDATA[
@@ -24,6 +24,11 @@ Functions provided:<br/>
 ]]></description>
 
 	<change-notes><![CDATA[
+1.7.1<br/>
+<ul>
+  <li>Improved reference resolving and completions</li>
+  <li>Console linkenizing (click file name to jump to that file)</li>
+</ul><br/>
 1.7<br/>
 Now it's capable with PyCharm/CLion/Rider/etc..<br/>
 <ul>
@@ -96,6 +101,7 @@ Now it's capable with PyCharm/CLion/Rider/etc..<br/>
 		<breadcrumbsInfoProvider implementation="org.covscript.lang.editing.CovBreadCrumbProvider"/>
 		<directoryProjectGenerator implementation="org.covscript.lang.module.CovProjectGenerator"/>
 		<errorHandler implementation="de.halirutan.mathematica.errorreporting.cov.GitHubErrorReporter"/>
+		<consoleFilterProvider implementation="org.covscript.lang.execution.CovConsoleFilterProvider"/>
 		<lang.refactoringSupport
 				language="CovScript"
 				implementationClass="org.covscript.lang.psi.CovRefactoringSupportProvider"/>
