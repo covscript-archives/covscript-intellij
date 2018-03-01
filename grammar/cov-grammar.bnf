@@ -174,8 +174,14 @@ private level0 ::=
    assign
  | opAssign
 
-assign ::= expr EQ expr
-opAssign ::= expr assignOperator expr
+assign ::= expr EQ expr {
+	rightAssociative=true
+}
+
+opAssign ::= expr assignOperator expr {
+	rightAssociative=true
+}
+
 private assignOperator ::=
    DIV_ASS
  | PLUS_ASS
@@ -247,10 +253,18 @@ newExpr ::= (NEW_KEYWORD | GCNEW_KEYWORD) expr
 typeidExpr ::= TYPEID_KEYWORD expr
 
 private level15 ::=
-   functionLit
+   applyFunction
+ | functionLit
  | memberAccess
 
-memberAccess ::= expr DOT expr { extends=expr }
+applyFunction ::= expr LEFT_BRACKET (expr (COMMA expr)*)? RIGHT_BRACKET {
+	extends=expr
+}
+
+memberAccess ::= expr DOT expr {
+	extends=expr
+}
+
 functionLit ::=
  LEFT_S_BRACKET RIGHT_S_BRACKET
  LEFT_BRACKET
