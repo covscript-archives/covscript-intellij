@@ -175,7 +175,8 @@ expression ::=
   binaryOperator
   expression
  )? {
-	methods=[primaryExprOrNull leftPrimaryExprOrNull]
+	mixin='org.covscript.lang.psi.impl.CovExpressionMixin'
+	implements=['org.covscript.lang.psi.impl.ICovExpression']
 }
 
 prefixOperator ::=

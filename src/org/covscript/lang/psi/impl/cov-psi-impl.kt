@@ -5,23 +5,8 @@ package org.covscript.lang.psi.impl
 
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
-import org.covscript.lang.psi.*
-
-fun CovExpression.primaryExprOrNull() =
-		if (binaryOperator != null) null else leftPrimaryExprOrNull()
-
-fun CovExpression.leftPrimaryExprOrNull() =
-		suffixedExpression.takeIf {
-			it.prefixOperator == null &&
-					it.expressionList.isEmpty() &&
-					it.suffixedExpressionList.isEmpty()
-		}
-
-fun PsiElement.processDeclarations(
-		processor: PsiScopeProcessor,
-		substitutor: ResolveState,
-		lastParent: PsiElement?,
-		place: PsiElement) = processDeclTrivial(processor, substitutor, lastParent, place)
+import org.covscript.lang.psi.CovCollapsedStatement
+import org.covscript.lang.psi.CovSymbol
 
 fun PsiElement.processDeclTrivial(
 		processor: PsiScopeProcessor,

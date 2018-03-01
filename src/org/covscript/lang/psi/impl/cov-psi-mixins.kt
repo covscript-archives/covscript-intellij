@@ -2,11 +2,9 @@ package org.covscript.lang.psi.impl
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.injected.StringLiteralEscaper
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.psi.tree.IElementType
 import org.covscript.lang.CovTokenType
 import org.covscript.lang.psi.*
 
@@ -59,16 +57,34 @@ abstract class CovCommentMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovC
 	override fun createLiteralTextEscaper() = StringLiteralEscaper.createSimple(this)
 }
 
-interface ICovStatement {
+interface ICovStatement : PsiElement {
 	val allBlockStructure: PsiElement
 }
 
 abstract class CovStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovStatement {
 	override val allBlockStructure: PsiElement
 		get() = if (children.size == 1) children.first() else children[1]
+
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
 			processDeclTrivial(processor, substitutor, lastParent, place)
+}
+
+interface ICovExpression : PsiElement {
+	fun primaryExprOrNull(): CovSuffixedExpression?
+	fun leftPrimaryExprOrNull(): CovSuffixedExpression?
+}
+
+abstract class CovExpressionMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovExpression {
+	override fun primaryExprOrNull() =
+			if (binaryOperator != null) null else leftPrimaryExprOrNull()
+
+	override fun leftPrimaryExprOrNull() =
+			suffixedExpression.takeIf {
+				it.prefixOperator == null &&
+						it.expressionList.isEmpty() &&
+						it.suffixedExpressionList.isEmpty()
+			}
 }
 
 abstract class CovBodyOfSomethingMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovBodyOfSomething {
@@ -92,8 +108,8 @@ abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclara
 abstract class CovTryCatchDeclarationMixin(node: ASTNode) : CovTryCatchStatement, ASTWrapperPsiElement(node) {
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			parameter.processDeclarations(processor, state, lastParent, place) &&
-					super.processDeclarations(processor, state, lastParent, place)
+			parameter.processDeclarations(processor, state, lastParent, place) and
+					processDeclTrivial(processor, state, lastParent, place)
 }
 
 abstract class CovParameterMixin(node: ASTNode) : CovParameter, TrivialDeclaration(node) {
