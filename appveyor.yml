@@ -4,6 +4,7 @@ environment:
 
 build_script:
   - gradlew displayCommitHash
+  - gradlew isCI
   - gradlew buildPlugin
 #
 
