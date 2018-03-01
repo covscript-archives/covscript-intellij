@@ -41,7 +41,7 @@ class CovAnnotator : Annotator {
 				holder.createErrorAnnotation(element, CovBundle.message("cov.lint.continue-outside-loop"))
 			is CovReturnStatement -> if (null == element.parentOfType(CovFunctionDeclaration::class))
 				holder.createErrorAnnotation(element, CovBundle.message("cov.lint.return-outside-function"))
-			is CovThrowStatement -> if (null == element.parentOfType(CovFunctionDeclaration::class, CovTryBody::class))
+			is CovThrowStatement -> if (null == element.parentOfType(CovFunctionDeclaration::class, CovBodyOfSomething::class))
 				holder.createErrorAnnotation(element, CovBundle.message("cov.lint.throw-outside-body"))
 			is CovBlockStatement -> if (element.bodyOfSomething.statementList.size <= 1)
 				holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.unnecessary-block"))
@@ -99,7 +99,7 @@ class CovAnnotator : Annotator {
 			}
 			is CovNamespaceDeclaration -> holder.createInfoAnnotation(element.symbol, null)
 					.textAttributes = CovSyntaxHighlighter.NAMESPACE_DEFINITION
-			is CovFunctionDeclaration -> holder.createInfoAnnotation(element.symbol, null)
+			is CovFunctionDeclaration -> holder.createInfoAnnotation(element.children[1], null)
 					.textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION
 			is CovVariableDeclaration -> holder.createInfoAnnotation(element.symbol, null)
 					.textAttributes = CovSyntaxHighlighter.VARIABLE_DEFINITION

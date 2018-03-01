@@ -141,4 +141,5 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(n
 
 	override fun getReference() = refCache
 	override fun getNameIdentifier() = if (isDeclaration) null else this
+	override fun setName(name: String) = CovTokenType.fromText(name, project).let(::replace)
 }

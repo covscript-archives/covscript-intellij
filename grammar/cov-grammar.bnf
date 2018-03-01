@@ -59,6 +59,7 @@ functionDeclaration ::=
   bodyOfSomething
  END_KEYWORD {
 	mixin='org.covscript.lang.psi.impl.CovFunctionDeclarationMixin'
+	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 }
 
 namespaceDeclaration ::=

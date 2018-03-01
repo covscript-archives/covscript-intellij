@@ -114,7 +114,7 @@ class CovBreadCrumbProvider : BreadcrumbsProvider {
 	}
 
 	override fun getElementInfo(o: PsiElement): String = cutText(when (o) {
-		is CovFunctionDeclaration -> o.symbol.text
+		is CovFunctionDeclaration -> o.children[1].text
 		is CovStructDeclaration -> o.symbol.text
 		is CovNamespaceDeclaration -> o.symbol.text
 		is CovForStatement -> "for ${o.symbol.text}"
@@ -218,7 +218,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 		override fun getPresentableText() = cutText(element.let { o ->
 			when (o) {
 				is CovFile -> "CovScript file"
-				is CovFunctionDeclaration -> "function ${o.symbol.text}"
+				is CovFunctionDeclaration -> "function ${o.children[1].text}"
 				is CovStructDeclaration -> "struct ${o.symbol.text}"
 				is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
 				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.run { "iterate ${expression.text}" } ?: "to"}"
@@ -238,7 +238,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 		override fun getLocationPrefix() = ""
 		override fun getLocationSuffix() = ""
 		override fun getChildrenBase(): List<CovStructureElement> = element.let { o ->
-			@Suppress("UNCHECKED_CAST") when (o) {
+			when (o) {
 				is CovFile -> o.children.mapNotNull { (it as? CovStatement)?.inside }
 				is CovFunctionDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
 				is CovStructDeclaration -> o.functionDeclarationList + o.variableDeclarationList

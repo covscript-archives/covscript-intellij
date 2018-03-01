@@ -20,7 +20,7 @@ FILE
             CovSymbolImpl(SYMBOL)
               PsiElement(SYM)('functionA')
             PsiElement(LEFT_BRACKET)('(')
-            CovParameterImpl(PARAMETER)
+            CovSymbolImpl(SYMBOL)
               PsiElement(SYM)('parameterA')
             PsiElement(RIGHT_BRACKET)(')')
             PsiElement(EOL)('\n')
