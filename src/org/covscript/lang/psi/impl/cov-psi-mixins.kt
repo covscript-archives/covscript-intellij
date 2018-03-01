@@ -13,8 +13,13 @@ interface ICovVariableDeclaration : PsiNameIdentifierOwner {
 }
 
 abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, TrivialDeclaration(node) {
-	override fun getNameIdentifier() = children.first { it is CovSymbol } as CovSymbol
+	private var idCache: CovSymbol? = null
+	override fun getNameIdentifier() = idCache ?: (children.first { it is CovSymbol } as CovSymbol).also { idCache = it }
 	override val startPoint: PsiElement get() = parent
+	override fun subtreeChanged() {
+		idCache = null
+		super.subtreeChanged()
+	}
 }
 
 abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), PsiNameIdentifierOwner {
@@ -111,6 +116,9 @@ interface ICovSymbol : PsiNameIdentifierOwner {
 	val isException: Boolean
 	val isLoopVar: Boolean
 	val isParameter: Boolean
+	val isLocalVar: Boolean
+	val isFunctionName: Boolean
+	val isNamespaceName: Boolean
 	val isDeclaration: Boolean
 }
 
@@ -122,10 +130,16 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(n
 	}
 	final override val isException: Boolean by lazy { parent is CovTryCatchStatement }
 	final override val isLoopVar: Boolean by lazy { parent is CovForStatement }
-	final override val isParameter: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.children[1] != this } }
+	final override val isLocalVar: Boolean by lazy { parent.let { it is CovVariableDeclaration && it.nameIdentifier === this } }
+	final override val isParameter: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.nameIdentifier !== this } }
+	final override val isNamespaceName: Boolean by lazy { parent is CovNamespaceDeclaration }
+	final override val isFunctionName: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.nameIdentifier === this } }
 	final override val isDeclaration: Boolean by lazy {
 		isException or
 				isLoopVar or
+				isLocalVar or
+				isNamespaceName or
+				isFunctionName or
 				isParameter
 	}
 

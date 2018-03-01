@@ -90,14 +90,17 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
 		if (element.hasNoError and isInScope(element)) {
 			if (element !is CovSymbol) return true
-			val type = when {
-				element.isParameter -> "Parameter"
-				element.isException -> "Exception"
-				element.isLoopVar -> "Loop variable"
-				else -> "<Unknown>"
+			val (type, icon) = when {
+				element.isParameter -> "Parameter" to CovIcons.VARIABLE_ICON
+				element.isException -> "Exception" to CovIcons.TRY_CATCH_ICON
+				element.isLocalVar -> "Local variable" to CovIcons.VARIABLE_ICON
+				element.isFunctionName -> "Function" to CovIcons.FUNCTION_ICON
+				element.isNamespaceName -> "Namespace" to CovIcons.NAMESPACE_ICON
+				element.isLoopVar -> "Loop variable" to CovIcons.VARIABLE_ICON
+				else -> "<Unknown>" to CovIcons.COV_BIG_ICON
 			}
 			candidateSet += LookupElementBuilder.create(element.text)
-					.withIcon(CovIcons.COV_BIG_ICON)
+					.withIcon(icon)
 					.withTypeText(type)
 		}
 		return true

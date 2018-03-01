@@ -4,7 +4,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.PsiTreeUtil
 import org.covscript.lang.CovBundle
 import org.covscript.lang.CovSyntaxHighlighter
 import org.covscript.lang.psi.*
@@ -22,23 +22,34 @@ class CovAnnotator : Annotator {
 					} else char == '\\'
 				}
 			}
-			is CovCharLit -> {
-				when (element.text.length) {
-					2 -> holder.createErrorAnnotation(element, CovBundle.message("cov.lint.char-cannot-empty"))
-					3 -> if (element.text[1] == '\\') holder.createErrorAnnotation(element,
-							CovBundle.message("cov.lint.expect-escape"))
-					4 -> if (element.text[1] == '\\') dealWithEscape(element, 2, element.text[2], holder)
-					else holder.createErrorAnnotation(element, CovBundle.message("cov.lint.char-cannot-big"))
-					else -> holder.createErrorAnnotation(element, CovBundle.message("cov.lint.char-cannot-big"))
-				}
+			is CovCharLit -> when (element.text.length) {
+				2 -> holder.createErrorAnnotation(element, CovBundle.message("cov.lint.char-cannot-empty"))
+				3 -> if (element.text[1] == '\\') holder.createErrorAnnotation(element,
+						CovBundle.message("cov.lint.expect-escape"))
+				4 -> if (element.text[1] == '\\') dealWithEscape(element, 2, element.text[2], holder)
+				else holder.createErrorAnnotation(element, CovBundle.message("cov.lint.char-cannot-big"))
+				else -> holder.createErrorAnnotation(element, CovBundle.message("cov.lint.char-cannot-big"))
+						.registerFix(CovReplaceWithTextIntention(element,
+								"\"${element.text.substring(1, element.textLength - 2)}\"",
+								CovBundle.message("cov.lint.char-to-string")))
 			}
-			is CovBreak -> if (null == element.parentOfType(CovLoopUntilStatement::class, CovWhileStatement::class))
+			is CovBreak -> if (null == PsiTreeUtil
+							.getParentOfType(element,
+									CovLoopUntilStatement::class.java,
+									CovWhileStatement::class.java))
 				holder.createErrorAnnotation(element, CovBundle.message("cov.lint.break-outside-loop"))
-			is CovContinue -> if (null == element.parentOfType(CovLoopUntilStatement::class, CovWhileStatement::class))
+			is CovContinue -> if (null == PsiTreeUtil
+							.getParentOfType(element,
+									CovLoopUntilStatement::class.java,
+									CovWhileStatement::class.java))
 				holder.createErrorAnnotation(element, CovBundle.message("cov.lint.continue-outside-loop"))
-			is CovReturnStatement -> if (null == element.parentOfType(CovFunctionDeclaration::class))
+			is CovReturnStatement -> if (null == PsiTreeUtil
+							.getParentOfType(element, CovFunctionDeclaration::class.java))
 				holder.createErrorAnnotation(element, CovBundle.message("cov.lint.return-outside-function"))
-			is CovThrowStatement -> if (null == element.parentOfType(CovFunctionDeclaration::class, CovBodyOfSomething::class))
+			is CovThrowStatement -> if (null == PsiTreeUtil
+							.getParentOfType(element,
+									CovFunctionDeclaration::class.java,
+									CovBodyOfSomething::class.java))
 				holder.createErrorAnnotation(element, CovBundle.message("cov.lint.throw-outside-body"))
 			is CovBlockStatement -> if (element.bodyOfSomething.statementList.size <= 1)
 				holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.unnecessary-block"))

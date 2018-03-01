@@ -22,7 +22,7 @@ fun PsiElement.processDeclTrivial(
 	return true
 }
 
-val CovCollapsedStatement.anythingInside: PsiElement? get() = children[1]
+val CovCollapsedStatement.anythingInside: PsiElement? get() = children.getOrNull(1)
 
 fun collectFrom(startPoint: PsiElement, name: String) = SyntaxTraverser
 		.psiTraverser(startPoint)
