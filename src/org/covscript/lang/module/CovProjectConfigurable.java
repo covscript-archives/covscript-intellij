@@ -2,6 +2,7 @@ package org.covscript.lang.module;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.labels.LinkLabel;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,4 +15,5 @@ public abstract class CovProjectConfigurable implements Configurable {
 	protected @NotNull TextFieldWithBrowseButton covExeField;
 	protected @NotNull JLabel version;
 	protected @NotNull LinkLabel covWebsite;
+	protected @NotNull RawCommandLineEditor importPathField;
 }

@@ -77,6 +77,7 @@ class CovProjectConfigurableImpl(project: Project) : CovProjectConfigurable() {
 	override fun createComponent() = mainPanel
 	override fun getDisplayName() = CovBundle.message("cov.name")
 	override fun isModified() = settings.exePath != covExeField.text ||
+			settings.importPaths != importPathField.text ||
 			settings.tryEvaluateTextLimit != (textLimitField.value as Number).toInt() ||
 			settings.tryEvaluateTimeLimit != (timeLimitField.value as Number).toLong()
 
@@ -90,10 +91,12 @@ class CovProjectConfigurableImpl(project: Project) : CovProjectConfigurable() {
 		PropertiesComponent.getInstance().setValue(COV_SDK_HOME_ID, covExeField.text)
 		settings.exePath = covExeField.text
 		settings.version = version.text
+		settings.importPaths = importPathField.text
 	}
 
 	init {
 		version.text = settings.version
+		importPathField.text = settings.importPaths
 		val factory = DefaultFormatterFactory(NumberFormatter(NumberFormat
 				.getIntegerInstance()
 				.apply { isGroupingUsed = false }))
@@ -109,8 +112,7 @@ class CovProjectConfigurableImpl(project: Project) : CovProjectConfigurable() {
 				val exePath = covExeField.text
 				val (newVersion, newImport) = versionOf(exePath)
 				version.text = newVersion
-				// TODO
-				// ``importPaths`` = newImport
+				importPathField.text = newImport
 			}
 		})
 	}

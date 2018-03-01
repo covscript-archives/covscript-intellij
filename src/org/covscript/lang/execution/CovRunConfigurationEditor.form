@@ -20,6 +20,7 @@
           </grid>
         </constraints>
         <properties>
+          <labelFor value="17186"/>
           <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.exe"/>
         </properties>
       </component>
@@ -38,6 +39,7 @@
           </grid>
         </constraints>
         <properties>
+          <labelFor value="6296d"/>
           <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.working-dir"/>
         </properties>
       </component>
@@ -64,6 +66,7 @@
           </grid>
         </constraints>
         <properties>
+          <labelFor value="a82c3"/>
           <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.script-path"/>
         </properties>
       </component>
@@ -133,6 +136,7 @@
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <labelFor value="412b7"/>
           <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.prog-args"/>
         </properties>
       </component>
