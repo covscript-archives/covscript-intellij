@@ -8,8 +8,6 @@ import com.intellij.psi.PsiFile
 import org.covscript.lang.CovBundle
 import org.covscript.lang.CovTokenType
 import org.covscript.lang.psi.CovBlockStatement
-import org.covscript.lang.psi.CovCollapsedStatement
-import org.covscript.lang.psi.impl.anythingInside
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 
@@ -22,12 +20,6 @@ class CovRemoveElementIntention(private val element: PsiElement, @Nls private va
 		element.delete()
 	}
 }
-
-fun collapsedToOneLine(element: CovCollapsedStatement) =
-		CovReplaceWithTextIntention(
-				element,
-				element.anythingInside?.text?.replace("\n", "") ?: element.text,
-				CovBundle.message("cov.lint.convert-collapsed-block"))
 
 class CovReplaceWithTextIntention(
 		private val element: PsiElement,

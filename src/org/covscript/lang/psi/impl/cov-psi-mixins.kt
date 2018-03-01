@@ -8,8 +8,12 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import org.covscript.lang.CovTokenType
 import org.covscript.lang.psi.*
 
+interface ICovVariableDeclaration : PsiNameIdentifierOwner {
+	override fun getNameIdentifier(): CovSymbol
+}
+
 abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, TrivialDeclaration(node) {
-	override fun getNameIdentifier() = children.first { it is CovSymbol }
+	override fun getNameIdentifier() = children.first { it is CovSymbol } as CovSymbol
 	override val startPoint: PsiElement get() = parent
 }
 
@@ -111,7 +115,11 @@ interface ICovSymbol : PsiNameIdentifierOwner {
 }
 
 abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(node) {
-	private val refCache by lazy { CovSymbolRef(this) }
+	private val refCache by lazy {
+		object : CovSymbolRef() {
+			override fun getElement() = this@CovSymbolMixin
+		}
+	}
 	final override val isException: Boolean by lazy { parent is CovTryCatchStatement }
 	final override val isLoopVar: Boolean by lazy { parent is CovForStatement }
 	final override val isParameter: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.children[1] != this } }

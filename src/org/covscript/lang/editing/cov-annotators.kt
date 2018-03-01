@@ -10,9 +10,6 @@ import org.covscript.lang.CovSyntaxHighlighter
 import org.covscript.lang.psi.*
 import java.math.BigDecimal
 
-const val EMPTY_CHARACTERS = " \t\r\n"
-const val BEGIN_BLOCK_LEN = 6
-
 class CovAnnotator : Annotator {
 	override fun annotate(element: PsiElement, holder: AnnotationHolder) {
 		when (element) {
@@ -25,7 +22,7 @@ class CovAnnotator : Annotator {
 					} else char == '\\'
 				}
 			}
-			is CovCharLiteral -> {
+			is CovCharLit -> {
 				when (element.text.length) {
 					2 -> holder.createErrorAnnotation(element, CovBundle.message("cov.lint.char-cannot-empty"))
 					3 -> if (element.text[1] == '\\') holder.createErrorAnnotation(element,
@@ -46,54 +43,37 @@ class CovAnnotator : Annotator {
 			is CovBlockStatement -> if (element.bodyOfSomething.statementList.size <= 1)
 				holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.unnecessary-block"))
 						.registerFix(CovBlockToStatementIntention(element))
-			is CovWhileStatement -> if (element.expression.text == "true")
+			is CovWhileStatement -> if (element.expr.text == "true")
 				holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.infinite-while"))
 						.registerFix(CovReplaceWithTextIntention(element, "loop\n${element.bodyOfSomething.text}end",
 								CovBundle.message("cov.lint.replace-with-loop")))
-			is CovLoopUntilStatement -> element.expression?.run {
+			is CovLoopUntilStatement -> element.expr?.run {
 				if (text == "false") holder.createWeakWarningAnnotation(element,
 						CovBundle.message("cov.lint.infinite-loop-until"))
 						.registerFix(CovRemoveElementIntention(this, CovBundle.message("cov.lint.remove-until")))
 			}
-			is CovExpression -> {
-				run unwrapBrackets@ {
-					val innerExpr = element.suffixedExpression.bracketExpression?.expression ?: return@unwrapBrackets
-					if (innerExpr.binaryOperator == null && innerExpr.suffixedExpression.bracketExpression != null)
-						holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.too-many-brackets"))
-								.registerFix(CovReplaceWithElementIntention(element, innerExpr,
-										CovBundle.message("cov.lint.remove-outer-brackets")))
-				}
-				if (element.parent is CovExpression) return
-				val left = element.leftPrimaryExprOrNull() ?: return
-				val right = element.expression?.primaryExprOrNull() ?: return
-				val op = element.binaryOperator ?: return
+			is CovBracketExpr -> {
+				val innerExpr = element.expr as? CovBracketExpr ?: return
+				holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.too-many-brackets"))
+						.registerFix(CovReplaceWithElementIntention(element, innerExpr,
+								CovBundle.message("cov.lint.remove-outer-brackets")))
+			}
+			is CovPlusOp -> {
+				val left = element.children.first { it is CovExpr } as CovExpr
+				val right = element.children.last { it is CovExpr } as CovExpr
 				val infoText = CovBundle.message("cov.lint.constant-folding")
 				when {
-					left.string != null && right.string != null -> {
-						if (op.text == "+") holder.createWeakWarningAnnotation(element, infoText)
-								.registerFix(CovReplaceWithTextIntention(element,
-										"${left.text.dropLast(1)}${right.text.drop(1)}",
-										CovBundle.message("cov.lint.replace-with-concatenated")))
-					}
-					left.number != null && right.number != null -> {
+					left is CovString && right is CovString -> holder.createWeakWarningAnnotation(element, infoText)
+							.registerFix(CovReplaceWithTextIntention(element,
+									"${left.text.dropLast(1)}${right.text.drop(1)}",
+									CovBundle.message("cov.lint.replace-with-concatenated")))
+					left is CovNumber && right is CovNumber -> {
 						val leftDec = BigDecimal(left.text)
 						val rightDec = BigDecimal(right.text)
-						holder.createWeakWarningAnnotation(element, infoText).registerFix(CovReplaceWithTextIntention(element,
-								when (op.text) {
-									"+" -> (leftDec + rightDec).toPlainString()
-									"-" -> (leftDec - rightDec).toPlainString()
-									"*" -> (leftDec * rightDec).toPlainString()
-									"/" -> (leftDec / rightDec).toPlainString()
-									"%" -> (leftDec % rightDec).toPlainString()
-									"^" -> (leftDec.pow(right.text.toIntOrNull() ?: return)).toPlainString()
-									">" -> (leftDec > rightDec).toString()
-									">=" -> (leftDec >= rightDec).toString()
-									"<" -> (leftDec < rightDec).toString()
-									"<=" -> (leftDec <= rightDec).toString()
-									"==" -> (leftDec == rightDec).toString()
-									"!=" -> (leftDec != rightDec).toString()
-									else -> return
-								}, CovBundle.message("cov.lint.replace-with-calculated")))
+						holder.createWeakWarningAnnotation(element, infoText)
+								.registerFix(CovReplaceWithTextIntention(element,
+										(leftDec + rightDec).toPlainString(),
+										CovBundle.message("cov.lint.replace-with-calculated")))
 					}
 				}
 			}
@@ -101,7 +81,7 @@ class CovAnnotator : Annotator {
 					.textAttributes = CovSyntaxHighlighter.NAMESPACE_DEFINITION
 			is CovFunctionDeclaration -> holder.createInfoAnnotation(element.children[1], null)
 					.textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION
-			is CovVariableDeclaration -> holder.createInfoAnnotation(element.symbol, null)
+			is CovVariableDeclaration -> holder.createInfoAnnotation(element.nameIdentifier, null)
 					.textAttributes = CovSyntaxHighlighter.VARIABLE_DEFINITION
 			is CovStructDeclaration -> holder.createInfoAnnotation(element.symbol, null)
 					.textAttributes = CovSyntaxHighlighter.STRUCT_DEFINITION
@@ -125,10 +105,4 @@ class CovAnnotator : Annotator {
 								CovBundle.message("cov.lint.remove-collapsed-block")))
 		}
 	}
-}
-
-private fun dealWithEscape(element: PsiElement, index: Int, char: Char, holder: AnnotationHolder) {
-	val range = TextRange(element.textRange.startOffset + index - 1, element.textRange.startOffset + index + 1)
-	if (char !in "abfnrtv0\\\"'") holder.createErrorAnnotation(range, CovBundle.message("cov.lint.illegal-escape"))
-	else holder.createInfoAnnotation(range, null).textAttributes = CovSyntaxHighlighter.STRING_ESCAPE
 }

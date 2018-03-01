@@ -8,7 +8,7 @@ import java.util.regex.Pattern
 class CovConsoleFilter(private val project: Project) : Filter {
 	private companion object PatternHolder {
 		private val ERROR_FILE_LOCATION = Pattern.compile("File \"([^\"]|\"[^,])+\",")
-		private val startOffset = "File \"".length
+		private const val startOffset = "File \"".length
 	}
 
 	private fun default(startPoint: Int, entireLength: Int) = Filter.Result(startPoint, entireLength, null)

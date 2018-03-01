@@ -39,6 +39,7 @@ packageDeclaration ::= PACKAGE_KEYWORD symbol
 
 variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expr {
 	mixin='org.covscript.lang.psi.impl.CovVariableDeclarationMixin'
+	implements=['org.covscript.lang.psi.impl.ICovVariableDeclaration']
 }
 
 functionDeclaration ::=

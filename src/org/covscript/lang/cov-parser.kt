@@ -28,7 +28,7 @@ class CovParserDefinition : ParserDefinition {
 class CovTokenType(debugName: String) : IElementType(debugName, CovLanguage.INSTANCE) {
 	companion object {
 		@JvmField val COMMENTS = TokenSet.create(CovTypes.LINE_COMMENT, CovTypes.COMMENT)
-		@JvmField val STRINGS = TokenSet.create(CovTypes.STR, CovTypes.CHAR, CovTypes.STRING, CovTypes.CHAR_LITERAL)
+		@JvmField val STRINGS = TokenSet.create(CovTypes.STR, CovTypes.CHAR, CovTypes.STRING, CovTypes.CHAR_LIT)
 		@JvmField val CONCATENATABLE_TOKENS = TokenSet.orSet(COMMENTS, STRINGS)
 		fun fromText(name: String, project: Project): PsiElement = PsiFileFactory
 				.getInstance(project)

@@ -101,7 +101,7 @@ private val PsiElement.isBlockStructure
 			this is CovLoopUntilStatement ||
 			this is CovBlockStatement ||
 			this is CovIfStatement ||
-			this is CovArrayLiteral
+			this is CovArrayLit
 
 class CovBreadCrumbProvider : BreadcrumbsProvider {
 	override fun getLanguages() = arrayOf(CovLanguage.INSTANCE)
@@ -118,14 +118,14 @@ class CovBreadCrumbProvider : BreadcrumbsProvider {
 		is CovStructDeclaration -> o.symbol.text
 		is CovNamespaceDeclaration -> o.symbol.text
 		is CovForStatement -> "for ${o.symbol.text}"
-		is CovArrayLiteral -> "array literal"
-		is CovLoopUntilStatement -> "loop ${o.expression}"
-		is CovWhileStatement -> "while ${o.expression}"
+		is CovArrayLit -> "array literal"
+		is CovLoopUntilStatement -> "loop ${o.expr}"
+		is CovWhileStatement -> "while ${o.expr}"
 		is CovTryCatchStatement -> "try catch ${o.symbol}"
 		is CovSwitchStatement -> "switch statement"
 		is CovCollapsedStatement -> "collapsed block"
 		is CovBlockStatement -> "begin block"
-		is CovIfStatement -> "if ${o.expression}"
+		is CovIfStatement -> "if ${o.expr}"
 		else -> "??"
 	}, TEXT_MAX)
 }
@@ -144,7 +144,7 @@ class CovFoldingBuilder : FoldingBuilderEx() {
 			CovTypes.COLLAPSED_STATEMENT -> "@begin…"
 			CovTypes.BLOCK_STATEMENT -> "begin…"
 			CovTypes.IF_STATEMENT -> "if…"
-			CovTypes.ARRAY_LITERAL -> "{…}"
+			CovTypes.ARRAY_LIT -> "{…}"
 			else -> "??"
 		}, TEXT_MAX)
 	}
@@ -183,7 +183,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 					CovLoopUntilStatement::class.java,
 					CovBlockStatement::class.java,
 					CovIfStatement::class.java,
-					CovArrayLiteral::class.java)
+					CovArrayLit::class.java)
 		}
 
 		override fun isAlwaysShowsPlus(o: StructureViewTreeElement) = false
@@ -221,15 +221,15 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovFunctionDeclaration -> "function ${o.children[1].text}"
 				is CovStructDeclaration -> "struct ${o.symbol.text}"
 				is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
-				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.run { "iterate ${expression.text}" } ?: "to"}"
-				is CovLoopUntilStatement -> "loop${o.expression?.run { " until $text" } ?: ""}"
-				is CovWhileStatement -> "while ${o.expression.text}"
+				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.run { "iterate ${expr.text}" } ?: "to"}"
+				is CovLoopUntilStatement -> "loop${o.expr?.run { " until $text" } ?: ""}"
+				is CovWhileStatement -> "while ${o.expr.text}"
 				is CovTryCatchStatement -> "try catch ${o.symbol.text}"
 				is CovSwitchStatement -> "switch statement"
 				is CovCollapsedStatement -> "collapsed block"
 				is CovBlockStatement -> "begin block"
-				is CovVariableDeclaration -> "var ${o.symbol.text}"
-				is CovIfStatement -> "if ${o.expression.text}"
+				is CovVariableDeclaration -> "var ${o.nameIdentifier?.text}"
+				is CovIfStatement -> "if ${o.expr.text}"
 				else -> "??"
 			}
 		}, LONG_TEXT_MAX)
