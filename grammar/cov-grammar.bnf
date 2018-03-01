@@ -6,6 +6,8 @@
   psiPackage='org.covscript.lang.psi'
   psiImplPackage='org.covscript.lang.psi.impl'
 
+  extends('.*Lit|.*Expr|.*Op')=expr
+
   tokenTypeClass='org.covscript.lang.CovTokenType'
   elementTypeHolderClass='org.covscript.lang.psi.CovTypes'
   elementTypeClass='org.covscript.lang.CovElementType'
@@ -16,25 +18,6 @@ file ::=
  fileHeader*
  statement*
 
-private endOfLine ::= EOL+
-number ::= NUM
-break ::= BREAK_KEYWORD
-continue ::= CONTINUE_KEYWORD
-true ::= TRUE_KEYWORD
-false ::= FALSE_KEYWORD
-null ::= NULL_KEYWORD
-comment ::= LINE_COMMENT {
-	mixin='org.covscript.lang.psi.impl.CovCommentMixin'
-	implements=['com.intellij.psi.PsiLanguageInjectionHost' 'com.intellij.psi.PsiComment']
-}
-
-string ::= STR
-charLiteral ::= CHAR
-symbol ::= SYM {
-	mixin='org.covscript.lang.psi.impl.CovSymbolMixin'
-	implements=['org.covscript.lang.psi.impl.ICovSymbol']
-}
-
 fileHeader ::=
    usingDeclaration
  | importDeclaration
@@ -42,11 +25,19 @@ fileHeader ::=
  | comment
  | endOfLine
 
+private endOfLine ::= EOL+
+break ::= BREAK_KEYWORD
+continue ::= CONTINUE_KEYWORD
+comment ::= LINE_COMMENT {
+	mixin='org.covscript.lang.psi.impl.CovCommentMixin'
+	implements=['com.intellij.psi.PsiLanguageInjectionHost' 'com.intellij.psi.PsiComment']
+}
+
 importDeclaration ::= IMPORT_KEYWORD symbol
 usingDeclaration ::= USING_KEYWORD symbol
 packageDeclaration ::= PACKAGE_KEYWORD symbol
 
-variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expression {
+variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expr {
 	mixin='org.covscript.lang.psi.impl.CovVariableDeclarationMixin'
 }
 
@@ -74,8 +65,8 @@ bodyOfSomething ::= (statement endOfLine)* {
 	mixin='org.covscript.lang.psi.impl.CovBodyOfSomethingMixin'
 }
 
-returnStatement ::= RETURN_KEYWORD expression?
-throwStatement ::= THROW_KEYWORD expression
+returnStatement ::= RETURN_KEYWORD expr?
+throwStatement ::= THROW_KEYWORD expr
 
 tryCatchStatement ::=
  TRY_KEYWORD endOfLine
@@ -87,7 +78,7 @@ tryCatchStatement ::=
 }
 
 ifStatement ::=
- IF_KEYWORD expression endOfLine
+ IF_KEYWORD expr endOfLine
   bodyOfSomething
   (
    ELSE_KEYWORD endOfLine
@@ -96,23 +87,23 @@ ifStatement ::=
  END_KEYWORD
 
 switchStatement ::=
- SWITCH_KEYWORD expression endOfLine
+ SWITCH_KEYWORD expr endOfLine
   (
-   (CASE_KEYWORD expression | DEFAULT_KEYWORD) endOfLine
+   (CASE_KEYWORD expr | DEFAULT_KEYWORD) endOfLine
     bodyOfSomething
    END_KEYWORD endOfLine
   )*
  END_KEYWORD
 
 whileStatement ::=
- WHILE_KEYWORD expression endOfLine
+ WHILE_KEYWORD expr endOfLine
   bodyOfSomething
  END_KEYWORD
 
 loopUntilStatement ::=
  LOOP_KEYWORD endOfLine
   bodyOfSomething
- (UNTIL_KEYWORD expression endOfLine)?
+ (UNTIL_KEYWORD expr endOfLine)?
  END_KEYWORD
 
 forStatement ::=
@@ -122,8 +113,8 @@ forStatement ::=
 	mixin='org.covscript.lang.psi.impl.CovForStatementMixin'
 }
 
-forTo ::= EQ expression TO_KEYWORD expression (STEP_KEYWORD expression)?
-forIterate ::= ITERATE_KEYWORD expression
+forTo ::= EQ expr TO_KEYWORD expr (STEP_KEYWORD expr)?
+forIterate ::= ITERATE_KEYWORD expr
 
 blockStatement ::=
  BLOCK_KEYWORD endOfLine
@@ -158,31 +149,48 @@ private primaryStatement ::=
  | namespaceDeclaration
  | break
  | continue
- | expression
+ | expr
 
-private boolean ::= true | false
-newExpression ::= (NEW_KEYWORD | GCNEW_KEYWORD) symbol (DOT symbol)*
-arrayLiteral ::= LEFT_B_BRACKET (expression (COMMA expression)*)? RIGHT_B_BRACKET
-functionLiteral ::= LEFT_S_BRACKET RIGHT_S_BRACKET LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET ARROW expression
-
-expression ::=
- suffixedExpression
- (
-  binaryOperator
-  expression
- )? {
-	mixin='org.covscript.lang.psi.impl.CovExpressionMixin'
-	implements=['org.covscript.lang.psi.impl.ICovExpression']
+expr ::=
+   level12
+ | level14
+ | level15
+ | unaryLevelOp
+ | primaryExpr {
+	mixin='org.covscript.lang.psi.impl.CovExprMixin'
+	implements=['org.covscript.lang.psi.impl.ICovExpr']
 }
 
-prefixOperator ::=
+private level15 ::=
+   functionLit
+ | memberAccess
+
+private level14 ::=
+   newExpr
+ | typeidExpr
+
+newExpr ::= (NEW_KEYWORD | GCNEW_KEYWORD) expr
+typeidExpr ::= TYPEID_KEYWORD expr
+
+memberAccess ::= expr DOT expr { extends=expr }
+functionLit ::=
+ LEFT_S_BRACKET RIGHT_S_BRACKET
+ LEFT_BRACKET
+ (
+  symbol
+  (COMMA symbol)*
+ )?
+ RIGHT_BRACKET ARROW
+  expr
+
+unaryLevelOp ::= unaryOperator expr
+unaryOperator ::=
    INC_OP
  | DEC_OP
  | MINUS_OP
  | PLUS_OP
  | NOT_OP
  | NOT_KEYWORD
- | TYPEID_KEYWORD
  | TIMES_OP
 
 binaryOperator ::=
@@ -212,28 +220,27 @@ binaryOperator ::=
  | GE_OP
  | UN_OP
 
-private primaryExpression ::=
-   newExpression
- | symbol
+private primaryExpr ::=
+   symbol
  | number
  | boolean
  | null
  | string
- | charLiteral
- | arrayLiteral
- | functionLiteral
- | bracketExpression
+ | charLit
+ | arrayLit
+ | bracketExpr
 
-bracketExpression ::= LEFT_BRACKET expression RIGHT_BRACKET
+bracketExpr ::= LEFT_BRACKET expr RIGHT_BRACKET
+boolean ::= TRUE_KEYWORD | FALSE_KEYWORD { extends=expr }
+arrayLit ::= LEFT_B_BRACKET (expr (COMMA expr)*)? RIGHT_B_BRACKET
+number ::= NUM { extends=expr }
+null ::= NULL_KEYWORD { extends=expr }
+string ::= STR { extends=expr }
+charLit ::= CHAR
+symbol ::= SYM {
+	mixin='org.covscript.lang.psi.impl.CovSymbolMixin'
+	implements=['org.covscript.lang.psi.impl.ICovSymbol']
+	extends=expr
+}
 
-suffixedExpression ::=
- prefixOperator?
- primaryExpression
- (
-    (LEFT_S_BRACKET expression RIGHT_S_BRACKET)
-  | (LEFT_BRACKET (expression (COMMA expression)*)? RIGHT_BRACKET)
-  | ((DOT | ARROW) suffixedExpression)
-  | INC_OP
-  | DEC_OP
- )*
 
