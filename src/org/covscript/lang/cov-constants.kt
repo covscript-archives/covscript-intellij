@@ -2,6 +2,7 @@ package org.covscript.lang
 
 import org.jetbrains.annotations.NonNls
 
+@NonNls const val COV_NAME = "CovScript"
 @NonNls const val COV_EXTENSION = "csc"
 @NonNls const val COV_EXT_EXTENSION = "cse"
 @NonNls const val COV_PKG_EXTENSION = "csp"
@@ -10,6 +11,8 @@ import org.jetbrains.annotations.NonNls
 @NonNls const val COV_RUN_CONFIG_ID = "COV_RUN_CONFIG_ID"
 @NonNls const val COV_SDK_HOME_ID = "COV_SDK_HOME_ID"
 @NonNls const val COV_MODULE_ID = "COV_MODULE_TYPE"
+@NonNls const val COV_PLUGIN_ID = "org.covscript"
+
 @NonNls const val POSSIBLE_EXE_LINUX = "/usr/bin/cs"
 @NonNls const val POSSIBLE_EXE_WINDOWS = "C:/Program Files"
 

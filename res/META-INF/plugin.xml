@@ -64,6 +64,12 @@
 		<additionalTextAttributes scheme="Default" file="/colorSchemes/CovColors.xml"/>
 	</extensions>
 
+	<project-components>
+		<component>
+			<implementation-class>org.covscript.lang.module.CovApplicationComponent</implementation-class>
+		</component>
+	</project-components>
+
 	<actions>
 		<action
 				id="Cov.NewCovFile"

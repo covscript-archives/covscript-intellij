@@ -6,3 +6,6 @@ internal inline fun forceRun(lambda: () -> Any) {
 	} catch (e: Throwable) {
 	}
 }
+
+fun Boolean?.orFalse() = true == this
+

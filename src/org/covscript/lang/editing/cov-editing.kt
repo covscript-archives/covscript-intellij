@@ -104,7 +104,7 @@ private val PsiElement.isBlockStructure
 			this is CovArrayLiteral
 
 class CovBreadCrumbProvider : BreadcrumbsProvider {
-	override fun getLanguages() = arrayOf(CovLanguage)
+	override fun getLanguages() = arrayOf(CovLanguage.INSTANCE)
 	override fun acceptElement(o: PsiElement) = o.isBlockStructure
 	override fun getElementTooltip(o: PsiElement) = when (o) {
 		is CovFunctionDeclaration -> "function: <${o.text}>"

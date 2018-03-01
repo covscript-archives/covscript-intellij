@@ -11,7 +11,7 @@ class CovLexerAdapter : FlexAdapter(CovLexer())
 
 class CovParserDefinition : ParserDefinition {
 	private companion object {
-		private val FILE = IFileElementType(Language.findInstance(CovLanguage::class.java))
+		private val FILE = IFileElementType(CovLanguage.INSTANCE)
 	}
 
 	override fun createFile(viewProvider: FileViewProvider) = CovFile(viewProvider)
@@ -25,7 +25,7 @@ class CovParserDefinition : ParserDefinition {
 	override fun getWhitespaceTokens(): TokenSet = TokenSet.WHITE_SPACE
 }
 
-class CovTokenType(debugName: String) : IElementType(debugName, CovLanguage) {
+class CovTokenType(debugName: String) : IElementType(debugName, CovLanguage.INSTANCE) {
 	companion object {
 		@JvmField val COMMENTS = TokenSet.create(CovTypes.LINE_COMMENT, CovTypes.COMMENT)
 		@JvmField val SYMBOLS = TokenSet.create(CovTypes.SYMBOL, CovTypes.PARAMETER)
@@ -33,9 +33,9 @@ class CovTokenType(debugName: String) : IElementType(debugName, CovLanguage) {
 		@JvmField val CONCATENATABLE_TOKENS = TokenSet.orSet(COMMENTS, STRINGS)
 		fun fromText(name: String, project: Project): PsiElement = PsiFileFactory
 				.getInstance(project)
-				.createFileFromText(CovLanguage, name)
+				.createFileFromText(CovLanguage.INSTANCE, name)
 				.firstChild
 	}
 }
 
-class CovElementType(debugName: String) : IElementType(debugName, CovLanguage)
+class CovElementType(debugName: String) : IElementType(debugName, CovLanguage.INSTANCE)
