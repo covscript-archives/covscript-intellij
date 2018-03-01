@@ -2,8 +2,11 @@ package org.covscript.lang.psi.impl
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.tree.injected.StringLiteralEscaper
 import com.intellij.psi.scope.PsiScopeProcessor
+import com.intellij.psi.tree.IElementType
 import org.covscript.lang.CovTokenType
 import org.covscript.lang.psi.*
 
@@ -47,6 +50,38 @@ abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclarati
 		parameterList.forEach { if (!it.processDeclarations(processor, substitutor, lastParent, place)) return false }
 		return super.processDeclarations(processor, substitutor, lastParent, place)
 	}
+}
+
+abstract class CovCommentMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovComment {
+	override fun getTokenType() = node.elementType
+	override fun isValidHost() = true
+	override fun updateText(string: String): CovComment = replace(CovTokenType.fromText(string, project)) as CovComment
+	override fun createLiteralTextEscaper() = StringLiteralEscaper.createSimple(this)
+}
+
+interface ICovStatement {
+	val allBlockStructure: PsiElement
+}
+
+abstract class CovStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovStatement {
+	override val allBlockStructure: PsiElement
+		get() = if (children.size == 1) children.first() else children[1]
+	override fun processDeclarations(
+			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			processDeclTrivial(processor, substitutor, lastParent, place)
+}
+
+abstract class CovBodyOfSomethingMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovBodyOfSomething {
+	override fun processDeclarations(
+			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			processDeclTrivial(processor, substitutor, lastParent, place)
+}
+
+abstract class CovForStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovForStatement {
+	override fun processDeclarations(
+			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			if (!parameter.processDeclarations(processor, substitutor, lastParent, place)) false
+			else processDeclTrivial(processor, substitutor, lastParent, place)
 }
 
 abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclaration, TrivialDeclaration(node) {

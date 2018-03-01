@@ -24,7 +24,7 @@ true ::= TRUE_KEYWORD
 false ::= FALSE_KEYWORD
 null ::= NULL_KEYWORD
 comment ::= LINE_COMMENT {
-	methods=[getTokenType isValidHost updateText createLiteralTextEscaper]
+	mixin='org.covscript.lang.psi.impl.CovCommentMixin'
 	implements=['com.intellij.psi.PsiLanguageInjectionHost' 'com.intellij.psi.PsiComment']
 }
 
@@ -73,7 +73,7 @@ structDeclaration ::=
  END_KEYWORD
 
 bodyOfSomething ::= (statement endOfLine)* {
-	methods=[processDeclarations]
+	mixin='org.covscript.lang.psi.impl.CovBodyOfSomethingMixin'
 }
 
 tryBody ::= bodyOfSomething
@@ -122,7 +122,9 @@ loopUntilStatement ::=
 forStatement ::=
  FOR_KEYWORD parameter (forTo | forIterate) endOfLine
   bodyOfSomething
- END_KEYWORD
+ END_KEYWORD {
+	mixin='org.covscript.lang.psi.impl.CovForStatementMixin'
+}
 
 forTo ::= EQ expression TO_KEYWORD expression (STEP_KEYWORD expression)?
 forIterate ::= ITERATE_KEYWORD expression
@@ -135,7 +137,8 @@ blockStatement ::=
 statement ::=
    primaryStatement
  | collapsedStatement {
-	methods=[getAllBlockStructure processDeclarations]
+  mixin='org.covscript.lang.psi.impl.CovStatementMixin'
+  implements=['org.covscript.lang.psi.impl.ICovStatement']
 }
 
 collapsedStatement ::= COLLAPSER_BEGIN primaryStatement? COLLAPSER_END

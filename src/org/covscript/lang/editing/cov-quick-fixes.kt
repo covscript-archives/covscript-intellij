@@ -27,8 +27,7 @@ fun collapsedToOneLine(element: CovCollapsedStatement) =
 		CovReplaceWithTextIntention(
 				element,
 				element.anythingInside?.text?.replace("\n", "") ?: element.text,
-				CovBundle.message("cov.lint.convert-collapsed-block")
-		)
+				CovBundle.message("cov.lint.convert-collapsed-block"))
 
 class CovReplaceWithTextIntention(
 		private val element: PsiElement,

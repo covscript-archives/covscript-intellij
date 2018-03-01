@@ -3,11 +3,8 @@
 
 package org.covscript.lang.psi.impl
 
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.psi.tree.IElementType
-import org.covscript.lang.CovTokenType
 import org.covscript.lang.psi.*
 
 fun CovExpression.primaryExprOrNull() =
@@ -19,14 +16,6 @@ fun CovExpression.leftPrimaryExprOrNull() =
 					it.expressionList.isEmpty() &&
 					it.suffixedExpressionList.isEmpty()
 		}
-
-fun CovForStatement.processDeclarations(
-		processor: PsiScopeProcessor,
-		substitutor: ResolveState,
-		lastParent: PsiElement?,
-		place: PsiElement) =
-		if (!parameter.processDeclarations(processor, substitutor, lastParent, place)) false
-		else processDeclTrivial(processor, substitutor, lastParent, place)
 
 fun PsiElement.processDeclarations(
 		processor: PsiScopeProcessor,
@@ -47,15 +36,7 @@ fun PsiElement.processDeclTrivial(
 	return true
 }
 
-val CovStatement.allBlockStructure: PsiElement?
-	get() = collapsedStatement ?: functionDeclaration ?: structDeclaration ?: namespaceDeclaration ?: forStatement
-	?: loopUntilStatement ?: whileStatement ?: tryCatchStatement ?: switchStatement ?: blockStatement ?: ifStatement
-	?: variableDeclaration
-
-val CovCollapsedStatement.anythingInside: PsiElement?
-	get() = functionDeclaration ?: structDeclaration ?: namespaceDeclaration ?: forStatement
-	?: loopUntilStatement ?: whileStatement ?: tryCatchStatement ?: switchStatement ?: blockStatement ?: ifStatement
-	?: variableDeclaration
+val CovCollapsedStatement.anythingInside: PsiElement? get() = children[1]
 
 fun collectFrom(startPoint: PsiElement, name: String) = SyntaxTraverser
 		.psiTraverser(startPoint)
@@ -63,17 +44,3 @@ fun collectFrom(startPoint: PsiElement, name: String) = SyntaxTraverser
 		.mapNotNull(PsiElement::getReference)
 		.toList()
 		.toTypedArray()
-
-val CovComment.tokenType: IElementType get() = CovTypes.COMMENT
-val CovComment.isValidHost get() = true
-fun CovComment.updateText(string: String): CovComment = replace(CovTokenType.fromText(string, project)) as CovComment
-fun CovComment.createLiteralTextEscaper() = object : LiteralTextEscaper<CovComment>(this@createLiteralTextEscaper) {
-	private var numOfSemicolon = 1
-	override fun isOneLine() = true
-	override fun getOffsetInHost(offsetInDecoded: Int, rangeInHost: TextRange) = offsetInDecoded + numOfSemicolon
-	override fun decode(rangeInHost: TextRange, builder: StringBuilder): Boolean {
-		numOfSemicolon = myHost.text.indexOfFirst { it != ';' }
-		builder.append(myHost.text, rangeInHost.startOffset + numOfSemicolon, rangeInHost.endOffset)
-		return true
-	}
-}
