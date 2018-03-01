@@ -59,7 +59,7 @@ abstract class ResolveProcessor<ResolveResult>(val place: PsiElement) : PsiScope
 	protected val PsiElement.hasNoError get() = (this as? StubBasedPsiElement<*>)?.stub != null || !PsiTreeUtil.hasErrorElements(this)
 
 	protected fun isInScope(element: PsiElement) = PsiTreeUtil.isAncestor(
-			if (element is CovParameter) element.parent
+			if (element is CovSymbol && element.isParameter) element.parent
 			else element.parent?.parent?.parent, place, false)
 }
 
@@ -87,10 +87,12 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 	override val candidateSet = ArrayList<LookupElementBuilder>(20)
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
 		if (element.hasNoError and isInScope(element)) {
-			val type = when (element) {
-				is CovParameter -> "Parameter"
-				is CovSymbol -> "Variable"
-				else -> return true
+			if (element !is CovSymbol) return true
+			val type = when {
+				element.isParameter -> "Parameter"
+				element.isException -> "Exception"
+				element.isLoopVar -> "Loop variable"
+				else -> "<Unknown>"
 			}
 			candidateSet += LookupElementBuilder.create(element.text)
 					.withIcon(CovIcons.COV_BIG_ICON)
