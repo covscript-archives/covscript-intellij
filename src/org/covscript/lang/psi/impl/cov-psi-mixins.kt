@@ -9,7 +9,7 @@ import org.covscript.lang.CovTokenType
 import org.covscript.lang.psi.*
 
 abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, TrivialDeclaration(node) {
-	override fun getNameIdentifier() = symbol
+	override fun getNameIdentifier() = children.first { it is CovSymbol }
 	override val startPoint: PsiElement get() = parent
 }
 
@@ -74,22 +74,9 @@ abstract class CovStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), Co
 			processDeclTrivial(processor, substitutor, lastParent, place)
 }
 
-interface ICovExpression : PsiElement {
-	fun primaryExprOrNull(): CovSuffixedExpression?
-	fun leftPrimaryExprOrNull(): CovSuffixedExpression?
-}
+interface ICovExpr : PsiElement
 
-abstract class CovExpressionMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovExpression {
-	override fun primaryExprOrNull() =
-			if (binaryOperator != null) null else leftPrimaryExprOrNull()
-
-	override fun leftPrimaryExprOrNull() =
-			suffixedExpression.takeIf {
-				it.prefixOperator == null &&
-						it.expressionList.isEmpty() &&
-						it.suffixedExpressionList.isEmpty()
-			}
-}
+abstract class CovExprMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovExpr
 
 abstract class CovBodyOfSomethingMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovBodyOfSomething {
 	override fun processDeclarations(

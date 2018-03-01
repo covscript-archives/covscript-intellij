@@ -6,7 +6,7 @@
   psiPackage='org.covscript.lang.psi'
   psiImplPackage='org.covscript.lang.psi.impl'
 
-  extends('.*Lit|.*Expr|.*Op')=expr
+  extends('.*Lit|.*Expr|.*Op|.*ssign')=expr
 
   tokenTypeClass='org.covscript.lang.CovTokenType'
   elementTypeHolderClass='org.covscript.lang.psi.CovTypes'
@@ -152,18 +152,91 @@ private primaryStatement ::=
  | expr
 
 expr ::=
-   level12
+   level0
+ | ternaryOp // 2
+ | pairOp // 3
+ | logicOp // 7
+ | notOp // 8
+ | compareLevelOp // 9
+ | level10
+ | level11
+ | level12
+ | unaryExpr // 13
  | level14
  | level15
- | unaryLevelOp
  | primaryExpr {
 	mixin='org.covscript.lang.psi.impl.CovExprMixin'
 	implements=['org.covscript.lang.psi.impl.ICovExpr']
 }
 
-private level15 ::=
-   functionLit
- | memberAccess
+private level0 ::=
+   assign
+ | opAssign
+
+assign ::= expr EQ expr
+opAssign ::= expr assignOperator expr
+private assignOperator ::=
+   DIV_ASS
+ | PLUS_ASS
+ | MINUS_ASS
+ | TIMES_ASS
+ | POW_ASS
+ | REM_ASS
+
+// level 2
+ternaryOp ::= expr QUESTION_OP expr pairOp
+
+// level 3
+pairOp ::= expr COLON_OP expr
+
+// level 7
+logicOp ::= expr logicOperator expr
+private logicOperator ::=
+   AND_KEYWORD
+ | AND_OP
+ | OR_KEYWORD
+ | OR_OP
+
+// level 8
+notOp ::= (NOT_OP | NOT_KEYWORD) expr
+
+// level 9
+compareLevelOp ::= expr compareOperator expr
+private compareOperator ::=
+   LT_OP
+ | GT_OP
+ | GE_OP
+ | LE_OP
+ | EQ_OP
+ | UN_OP
+
+private level10 ::=
+   plusOp
+ | minusOp
+ | negOp
+
+plusOp ::= expr PLUS_OP expr
+minusOp ::= expr MINUS_OP expr
+negOp ::= MINUS_OP expr
+
+private level11 ::=
+   divOp
+ | timesOp
+ | derefOp
+
+divOp ::= expr DIV_OP expr
+timesOp ::= expr TIMES_OP expr
+derefOp ::= TIMES_OP expr
+
+private level12 ::=
+   remOp
+ | powOp
+
+remOp ::= expr REM_OP expr
+powOp ::= expr POW_OP expr
+
+// level 13
+unaryExpr ::= (INC_OP | DEC_OP) expr
 
 private level14 ::=
    newExpr
@@ -171,6 +244,10 @@ private level14 ::=
 
 newExpr ::= (NEW_KEYWORD | GCNEW_KEYWORD) expr
 typeidExpr ::= TYPEID_KEYWORD expr
+
+private level15 ::=
+   functionLit
+ | memberAccess
 
 memberAccess ::= expr DOT expr { extends=expr }
 functionLit ::=
@@ -182,43 +259,6 @@ functionLit ::=
  )?
  RIGHT_BRACKET ARROW
   expr
-
-unaryLevelOp ::= unaryOperator expr
-unaryOperator ::=
-   INC_OP
- | DEC_OP
- | MINUS_OP
- | PLUS_OP
- | NOT_OP
- | NOT_KEYWORD
- | TIMES_OP
-
-binaryOperator ::=
-   EQ
- | DIV_ASS
- | PLUS_ASS
- | MINUS_ASS
- | TIMES_ASS
- | POW_ASS
- | REM_ASS
- | QUESTION_OP
- | PLUS_OP
- | MINUS_OP
- | TIMES_OP
- | DIV_OP
- | REM_OP
- | POW_OP
- | COLON_OP
- | AND_OP
- | AND_KEYWORD
- | OR_OP
- | OR_KEYWORD
- | LT_OP
- | GT_OP
- | EQ_OP
- | LE_OP
- | GE_OP
- | UN_OP
 
 private primaryExpr ::=
    symbol
@@ -242,5 +282,3 @@ symbol ::= SYM {
 	implements=['org.covscript.lang.psi.impl.ICovSymbol']
 	extends=expr
 }
-
-

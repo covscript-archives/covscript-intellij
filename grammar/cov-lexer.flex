@@ -55,11 +55,6 @@ POW_OP=\^
 COLON_OP=:
 AND_OP=&&
 OR_OP=\|\|
-LT_OP=<
-GT_OP=>
-EQ_OP===
-LE_OP=<=
-GE_OP=>=
 UN_OP={NOT_OP}=
 NOT_OP=\!
 
@@ -148,11 +143,11 @@ not { return CovTypes.NOT_KEYWORD; }
 {POW_OP} { return CovTypes.POW_OP; }
 {AND_OP} { return CovTypes.AND_OP; }
 {OR_OP} { return CovTypes.OR_OP; }
-{LT_OP} { return CovTypes.LT_OP; }
-{GT_OP} { return CovTypes.GT_OP; }
-{EQ_OP} { return CovTypes.EQ_OP; }
-{LE_OP} { return CovTypes.LE_OP; }
-{GE_OP} { return CovTypes.GE_OP; }
+'<' { return CovTypes.LT_OP; }
+'>' { return CovTypes.GT_OP; }
+'==' { return CovTypes.EQ_OP; }
+'<=' { return CovTypes.LE_OP; }
+'>=' { return CovTypes.GE_OP; }
 {UN_OP} { return CovTypes.UN_OP; }
 {INC_OP} { return CovTypes.INC_OP; }
 {DEC_OP} { return CovTypes.DEC_OP; }
