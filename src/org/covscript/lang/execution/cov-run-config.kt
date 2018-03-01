@@ -6,23 +6,20 @@ import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.configurations.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.components.PathMacroManager
-import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.JDOMExternalizer
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import icons.CovIcons
 import org.covscript.lang.*
-import org.covscript.lang.module.CovSdkType
 import org.covscript.lang.module.covSettings
 import org.jdom.Element
-import java.nio.file.Paths
 
-class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project) :
-		ModuleBasedConfiguration<RunConfigurationModule>(CovBundle.message("cov.name"), RunConfigurationModule(project), factory) {
+class CovRunConfiguration(
+		project: Project, factory: CovRunConfigurationFactory) :
+		LocatableConfigurationBase(project, factory, CovBundle.message("cov.name")) {
 	var logPath = ""
-	var importPath = ""
+	var importPaths = project.covSettings.settings.importPaths
 	var logPathOption = false
 	var importPathOption = false
 	var compileOnlyOption = false
@@ -30,14 +27,13 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 	var workingDir = ""
 	var targetFile = ""
 	var programArgs = ""
-	var covExecutable = Paths.get(project.covSettings.settings.covHome, "bin", "cs").toAbsolutePath().toString()
-	override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = CovRunConfigurationEditorImpl(this)
+	var covExecutable = project.covSettings.settings.exePath
+	override fun getConfigurationEditor() = CovRunConfigurationEditorImpl(this)
 	override fun getState(executor: Executor, environment: ExecutionEnvironment) = CovCommandLineState(this, environment)
-	override fun getValidModules() = allModules.filter { ProjectRootManager.getInstance(it.project).projectSdk?.sdkType is CovSdkType }
 	override fun readExternal(element: Element) {
 		super.readExternal(element)
 		JDOMExternalizer.readString(element, "logPath")?.let { logPath = it }
-		JDOMExternalizer.readString(element, "importPath")?.let { importPath = it }
+		JDOMExternalizer.readString(element, "importPaths")?.let { importPaths = it }
 		JDOMExternalizer.readBoolean(element, "logPathOption").let { logPathOption = it }
 		JDOMExternalizer.readBoolean(element, "importPathOption").let { importPathOption = it }
 		JDOMExternalizer.readBoolean(element, "compileOnlyOption").let { compileOnlyOption = it }
@@ -54,7 +50,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 		PathMacroManager.getInstance(project).expandPaths(element)
 		super.writeExternal(element)
 		JDOMExternalizer.write(element, "logPath", logPath)
-		JDOMExternalizer.write(element, "importPath", importPath)
+		JDOMExternalizer.write(element, "importPaths", importPaths)
 		JDOMExternalizer.write(element, "logPathOption", logPathOption)
 		JDOMExternalizer.write(element, "importPathOption", importPathOption)
 		JDOMExternalizer.write(element, "compileOnlyOption", compileOnlyOption)
@@ -68,7 +64,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 }
 
 class CovRunConfigurationFactory(type: CovRunConfigurationType) : ConfigurationFactory(type) {
-	override fun createTemplateConfiguration(project: Project) = CovRunConfiguration(this, project)
+	override fun createTemplateConfiguration(project: Project) = CovRunConfiguration(project, this)
 }
 
 object CovRunConfigurationType : ConfigurationType {

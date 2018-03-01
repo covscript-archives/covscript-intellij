@@ -1,10 +1,13 @@
 package org.covscript.lang
 
 import com.intellij.lang.*
+import com.intellij.lexer.FlexAdapter
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.tree.*
 import org.covscript.lang.psi.CovTypes
+
+class CovLexerAdapter : FlexAdapter(CovLexer())
 
 class CovParserDefinition : ParserDefinition {
 	private companion object {

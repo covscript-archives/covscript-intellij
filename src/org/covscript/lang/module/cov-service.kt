@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.xmlb.XmlSerializerUtil
 
 interface CovProjectSettingsService {
-	var settings: CovSettings
+	val settings: CovSettings
 }
 
 val Project.covSettings: CovProjectSettingsService
@@ -19,7 +19,7 @@ val Project.covSettings: CovProjectSettingsService
 			Storage(file = "\$PROJECT_CONFIG_DIR\$/covConfig.xml", scheme = StorageScheme.DIRECTORY_BASED)])
 class CovProjectSettingsServiceImpl :
 		CovProjectSettingsService, PersistentStateComponent<CovSettings> {
-	override var settings = CovSettings()
+	override val settings = CovSettings()
 	override fun getState(): CovSettings? = XmlSerializerUtil.createCopy(settings)
 	override fun loadState(state: CovSettings) {
 		XmlSerializerUtil.copyBean(state, settings)

@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModifiableModelsProvider
-import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.platform.DirectoryProjectGeneratorBase
@@ -27,11 +26,12 @@ class CovProjectGenerator : DirectoryProjectGeneratorBase<CovSettings>(),
 
 	override fun generateProject(project: Project, baseDir: VirtualFile, settings: CovSettings, module: Module) {
 		ApplicationManager.getApplication().runWriteAction {
-			val modifiableModel: ModifiableRootModel = ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(module)
+			val modifiableModel = ModifiableModelsProvider.SERVICE.getInstance().getModuleModifiableModel(module)
 			modifiableModel.inheritSdk()
 			val srcPath = Paths.get(baseDir.path, "src").toAbsolutePath()
 			Files.createDirectories(srcPath)
-			ModifiableModelsProvider.SERVICE.getInstance().commitModuleModifiableModel(modifiableModel)
+			ModifiableModelsProvider.SERVICE.getInstance()
+					.commitModuleModifiableModel(modifiableModel)
 		}
 	}
 }

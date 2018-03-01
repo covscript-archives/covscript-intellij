@@ -31,7 +31,7 @@ class CovCommandLineState(
 		if (configuration.waitB4ExitOption) params += "--wait-before-exit"
 		if (configuration.importPathOption) {
 			params += "--import-path"
-			params += configuration.importPath
+			params += configuration.importPaths
 		}
 		if (configuration.logPathOption) {
 			params += "--log-path"

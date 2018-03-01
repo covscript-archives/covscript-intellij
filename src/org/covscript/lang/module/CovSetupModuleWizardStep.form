@@ -51,7 +51,7 @@
           <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.modules.sdk.path-example"/>
         </properties>
       </component>
-      <component id="2c0d0" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="covHomeField">
+      <component id="2c0d0" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="covExeField">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>

@@ -38,7 +38,7 @@ class CovRunConfigurationEditorImpl(configuration: CovRunConfiguration) :
 		waitBeforeExit.isSelected = configuration.waitB4ExitOption
 		logPathField.text = configuration.logPath
 		logPathField.isEnabled = logPath.isSelected
-		importPathField.text = configuration.importPath
+		importPathField.text = configuration.importPaths
 		importPathField.isEnabled = importPath.isSelected
 		covExecutiveField.text = configuration.covExecutable
 		targetFileField.text = configuration.targetFile
@@ -54,7 +54,7 @@ class CovRunConfigurationEditorImpl(configuration: CovRunConfiguration) :
 		configuration.importPathOption = importPathOp
 		configuration.compileOnlyOption = compileOnly.isSelected
 		configuration.waitB4ExitOption = waitBeforeExit.isSelected
-		if (importPathOp) configuration.importPath = importPathField.text.let {
+		if (importPathOp) configuration.importPaths = importPathField.text.let {
 			it.takeIf { Files.isDirectory(Paths.get(it)) } ?: reportInvalidPath(it)
 		}
 		if (logPathOp) configuration.logPath = logPathField.text.let {

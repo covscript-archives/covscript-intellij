@@ -31,7 +31,7 @@ class TryEvaluate {
 			var covRoot = ""
 			var covVersion = ""
 			project?.covSettings?.settings?.let {
-				covRoot = it.covHome
+				covRoot = it.exePath
 				covVersion = it.version
 				textLimit = it.tryEvaluateTextLimit
 				timeLimit = it.tryEvaluateTimeLimit

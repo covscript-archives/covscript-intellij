@@ -12,5 +12,5 @@ public abstract class CovSetupModuleWizardStep extends ModuleWizardStep {
 	protected @NotNull LinkLabel<Object> covWebsiteLink;
 	protected @NotNull JLabel covPathExample;
 	protected @NotNull JLabel covWebsiteDescription;
-	protected @NotNull TextFieldWithBrowseButton covHomeField;
+	protected @NotNull TextFieldWithBrowseButton covExeField;
 }

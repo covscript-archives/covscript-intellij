@@ -8,10 +8,10 @@ import com.intellij.openapi.module.ModuleTypeManager
 import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.util.PlatformUtils
 import icons.CovIcons
 import org.covscript.lang.*
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -28,14 +28,17 @@ class CovModuleBuilder : ModuleBuilder() {
 	}
 
 	override fun setupRootModel(model: ModifiableRootModel) {
-		if (::settings.isInitialized) model.module.project.covSettings.settings = settings
+		val project = model.module.project
+		if (::settings.isInitialized) (project.covSettings as CovProjectSettingsServiceImpl)
+				.loadState(settings)
 		model.inheritSdk()
 		val srcPath = Paths.get(contentEntryPath, "src").toAbsolutePath()
 		Files.createDirectories(srcPath)
 		//Idea Only
 		if (PlatformUtils.isIntelliJ()) {
-			val sourceRoot = LocalFileSystem
-					.getInstance()
+			val sourceRoot = project
+					.baseDir
+					.fileSystem
 					.refreshAndFindFileByPath(FileUtil.toSystemIndependentName(srcPath.toString()))
 					?: return
 			doAddContentEntry(model)?.addSourceFolder(sourceRoot, false)
@@ -58,11 +61,16 @@ class CovModuleType : ModuleType<CovModuleBuilder>(COV_MODULE_ID) {
 }
 
 class CovSettings(
-		var covHome: String = "",
+		var exePath: String = "",
+		var importPaths: String = "",
 		var version: String = "",
 		var tryEvaluateTimeLimit: Long = 2500L,
 		var tryEvaluateTextLimit: Int = 320) {
 	fun initWithHome() {
-		version = versionOf(covHome)
+		val (newVersion, newImport) = versionOf(exePath)
+		version = newVersion
+		importPaths = newImport
 	}
+
+	val imports get() = importPaths.split(File.pathSeparatorChar)
 }
