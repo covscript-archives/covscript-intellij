@@ -10,7 +10,6 @@ import javax.swing.*;
 public abstract class CovSetupModuleWizardStep extends ModuleWizardStep {
 	protected @NotNull JPanel mainPanel;
 	protected @NotNull LinkLabel<Object> covWebsiteLink;
-	protected @NotNull JLabel covPathExample;
 	protected @NotNull JLabel covWebsiteDescription;
 	protected @NotNull TextFieldWithBrowseButton covExeField;
 }

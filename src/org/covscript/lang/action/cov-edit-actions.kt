@@ -28,15 +28,15 @@ class TryEvaluate {
 	fun tryEval(editor: Editor, text: String, project: Project?) {
 		try {
 			val builder = StringBuilder()
-			var covRoot = ""
+			var covExePath = ""
 			var covVersion = ""
 			project?.covSettings?.settings?.let {
-				covRoot = it.exePath
+				covExePath = it.exePath
 				covVersion = it.version
 				textLimit = it.tryEvaluateTextLimit
 				timeLimit = it.tryEvaluateTimeLimit
 			}
-			val (stdout, stderr) = executeInRepl(covRoot, text, timeLimit)
+			val (stdout, stderr) = executeInRepl(covExePath, text, timeLimit)
 			builder.appendln(CovBundle.message("cov.messages.try-eval.version-text", covVersion))
 			if (stdout.isNotEmpty()) {
 				builder.appendln(CovBundle.message("cov.messages.try-eval.stdout"))

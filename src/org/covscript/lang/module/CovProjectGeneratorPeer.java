@@ -11,6 +11,5 @@ public abstract class CovProjectGeneratorPeer implements ProjectGeneratorPeer<Co
 	protected @NotNull JPanel mainPanel;
 	protected @NotNull LinkLabel<Object> covWebsiteLink;
 	protected @NotNull JLabel covWebsiteDescription;
-	protected @NotNull JLabel covPathExample;
-	protected @NotNull TextFieldWithBrowseButton covHomeField;
+	protected @NotNull TextFieldWithBrowseButton covExeField;
 }

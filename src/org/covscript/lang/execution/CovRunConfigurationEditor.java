@@ -2,6 +2,7 @@ package org.covscript.lang.execution;
 
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.RawCommandLineEditor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -16,6 +17,6 @@ public abstract class CovRunConfigurationEditor extends SettingsEditor<CovRunCon
 	protected @NotNull JCheckBox importPath;
 	protected @NotNull JCheckBox waitBeforeExit;
 	protected @NotNull TextFieldWithBrowseButton logPathField;
-	protected @NotNull TextFieldWithBrowseButton importPathField;
-	protected @NotNull JTextField progArgsField;
+	protected @NotNull RawCommandLineEditor importPathField;
+	protected @NotNull RawCommandLineEditor progArgsField;
 }

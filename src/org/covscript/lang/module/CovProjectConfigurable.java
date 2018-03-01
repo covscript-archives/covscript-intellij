@@ -11,7 +11,7 @@ public abstract class CovProjectConfigurable implements Configurable {
 	protected @NotNull JPanel mainPanel;
 	protected @NotNull JFormattedTextField timeLimitField;
 	protected @NotNull JFormattedTextField textLimitField;
-	protected @NotNull TextFieldWithBrowseButton covHomeField;
+	protected @NotNull TextFieldWithBrowseButton covExeField;
 	protected @NotNull JLabel version;
 	protected @NotNull LinkLabel covWebsite;
 }

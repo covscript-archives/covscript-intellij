@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.TextBrowseFolderListener
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.platform.ProjectGeneratorPeer
-import com.intellij.platform.WebProjectGenerator
 import com.intellij.ui.DocumentAdapter
 import org.covscript.lang.COV_SDK_HOME_ID
 import org.covscript.lang.CovBundle
@@ -28,7 +27,7 @@ class CovSetupModuleWizardStepImpl(private val builder: CovModuleBuilder) : CovS
 
 	@Throws(ConfigurationException::class)
 	override fun validate(): Boolean {
-		if (!validateCovHome(covExeField.text)) {
+		if (!validateCovExe(covExeField.text)) {
 			covWebsiteDescription.isVisible = true
 			throw ConfigurationException(CovBundle.message("cov.project.invalid"))
 		}
@@ -48,8 +47,8 @@ class CovProjectGeneratorPeerImpl(private val settings: CovSettings) : CovProjec
 	init {
 		covWebsiteDescription.isVisible = false
 		covWebsiteLink.setListener({ _, _ -> BrowserLauncher.instance.open(covWebsiteLink.text) }, null)
-		covHomeField.addBrowseFolderListener(TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFolderDescriptor()))
-		covHomeField.text = settings.exePath
+		covExeField.addBrowseFolderListener(TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFolderDescriptor()))
+		covExeField.text = settings.exePath
 	}
 
 	override fun getSettings() = settings
@@ -58,14 +57,16 @@ class CovProjectGeneratorPeerImpl(private val settings: CovSettings) : CovProjec
 	override fun addSettingsListener(listener: ProjectGeneratorPeer.SettingsListener) = Unit
 	/** Deprecated in 2017.3 But We must override it. */
 	@Deprecated("", ReplaceWith("addSettingsListener"))
-	override fun addSettingsStateListener(listener: WebProjectGenerator.SettingsStateListener) = Unit
+	override fun addSettingsStateListener(
+			@Suppress("DEPRECATION")
+			listener: com.intellij.platform.WebProjectGenerator.SettingsStateListener) = Unit
 
 	override fun getComponent() = mainPanel
 	override fun validate(): ValidationInfo? {
-		settings.exePath = covHomeField.text
+		settings.exePath = covExeField.text
 		settings.initWithHome()
-		val validate = validateCovHome(settings)
-		if (validate) PropertiesComponent.getInstance().setValue(COV_SDK_HOME_ID, covHomeField.text)
+		val validate = validateCovExe(settings)
+		if (validate) PropertiesComponent.getInstance().setValue(COV_SDK_HOME_ID, covExeField.text)
 		else covWebsiteDescription.isVisible = true
 		return if (validate) null else ValidationInfo(CovBundle.message("cov.project.invalid"))
 	}
@@ -75,7 +76,7 @@ class CovProjectConfigurableImpl(project: Project) : CovProjectConfigurable() {
 	private var settings = project.covSettings.settings
 	override fun createComponent() = mainPanel
 	override fun getDisplayName() = CovBundle.message("cov.name")
-	override fun isModified() = settings.exePath != covHomeField.text ||
+	override fun isModified() = settings.exePath != covExeField.text ||
 			settings.tryEvaluateTextLimit != (textLimitField.value as Number).toInt() ||
 			settings.tryEvaluateTimeLimit != (timeLimitField.value as Number).toLong()
 
@@ -85,9 +86,9 @@ class CovProjectConfigurableImpl(project: Project) : CovProjectConfigurable() {
 				?: throw ConfigurationException(CovBundle.message("cov.modules.try-eval.invalid"))).toInt()
 		settings.tryEvaluateTimeLimit = (timeLimitField.value as? Number
 				?: throw ConfigurationException(CovBundle.message("cov.modules.try-eval.invalid"))).toLong()
-		if (!validateCovHome(covHomeField.text)) throw ConfigurationException(CovBundle.message("cov.project.invalid"))
-		PropertiesComponent.getInstance().setValue(COV_SDK_HOME_ID, covHomeField.text)
-		settings.exePath = covHomeField.text
+		if (!validateCovExe(covExeField.text)) throw ConfigurationException(CovBundle.message("cov.project.invalid"))
+		PropertiesComponent.getInstance().setValue(COV_SDK_HOME_ID, covExeField.text)
+		settings.exePath = covExeField.text
 		settings.version = version.text
 	}
 
@@ -101,11 +102,11 @@ class CovProjectConfigurableImpl(project: Project) : CovProjectConfigurable() {
 		textLimitField.formatterFactory = factory
 		textLimitField.value = settings.tryEvaluateTextLimit.toLong()
 		covWebsite.setListener({ _, _ -> BrowserLauncher.instance.open(covWebsite.text) }, null)
-		covHomeField.addBrowseFolderListener(TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project))
-		covHomeField.text = settings.exePath
-		covHomeField.textField.document.addDocumentListener(object : DocumentAdapter() {
+		covExeField.addBrowseFolderListener(TextBrowseFolderListener(FileChooserDescriptorFactory.createSingleFolderDescriptor(), project))
+		covExeField.text = settings.exePath
+		covExeField.textField.document.addDocumentListener(object : DocumentAdapter() {
 			override fun textChanged(e: DocumentEvent) {
-				val exePath = covHomeField.text
+				val exePath = covExeField.text
 				val (newVersion, newImport) = versionOf(exePath)
 				version.text = newVersion
 				// TODO

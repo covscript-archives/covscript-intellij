@@ -8,9 +8,8 @@ import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
-import java.util.stream.Collectors
 
-const val GET_VERSION_TIME_PERIOD = 500L
+const val GET_VERSION_TIME_PERIOD = 1500L
 fun versionOf(exePath: String, timeLimit: Long = GET_VERSION_TIME_PERIOD): Pair<String, String> =
 		executeInRepl(exePath,//language=CovScript
 				"""
@@ -39,7 +38,10 @@ val defaultCovExe by lazy {
  * @param timeLimit the time limit. Will wait for this long and kill process after 100 ms
  * @return (stdout, stderr)
  */
-fun executeInRepl(exePath: String, code: String, timeLimit: Long): Pair<List<String>, List<String>> {
+fun executeInRepl(
+		exePath: String,
+		code: String,
+		timeLimit: Long = GET_VERSION_TIME_PERIOD): Pair<List<String>, List<String>> {
 	var processRef: Process? = null
 	var output: List<String> = emptyList()
 	var outputErr: List<String> = emptyList()
@@ -67,15 +69,6 @@ private fun replPathByExe(exePath: String) = exePath.removeSuffix(".exe").let {
 	if (SystemInfo.isWindows) "${it}_repl.exe" else "${it}_repl"
 }
 
-private fun collectLines(it: InputStream): List<String> {
-	val reader = it.bufferedReader()
-	val ret = reader.lines().collect(Collectors.toList())
-	forceRun(reader::close)
-	return ret
-}
-
-fun validateCovHome(settings: CovSettings) = settings.version != CovBundle.message("cov.modules.sdk.unknown-version")
-fun validateCovHome(pathString: String) = (Files.isExecutable(Paths.get(pathString, "bin", "cs")) or
-		Files.isExecutable(Paths.get(pathString, "bin", "cs.exe"))) and
-		(Files.isExecutable(Paths.get(pathString, "bin", "cs_repl")) or
-				Files.isExecutable(Paths.get(pathString, "bin", "cs_repl.exe")))
+private fun collectLines(it: InputStream) = it.bufferedReader().useLines(Sequence<String>::toList)
+fun validateCovExe(settings: CovSettings) = validateCovExe(settings.exePath)
+fun validateCovExe(pathString: String) = Files.isExecutable(Paths.get(pathString))

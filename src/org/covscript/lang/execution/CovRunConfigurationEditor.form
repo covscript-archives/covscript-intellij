@@ -128,14 +128,6 @@
           <enabled value="true"/>
         </properties>
       </component>
-      <component id="ed773" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="importPathField">
-        <constraints>
-          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <enabled value="true"/>
-        </properties>
-      </component>
       <component id="8cecb" class="javax.swing.JLabel">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -144,11 +136,15 @@
           <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.prog-args"/>
         </properties>
       </component>
-      <component id="1c41f" class="javax.swing.JTextField" binding="progArgsField">
+      <component id="412b7" class="com.intellij.ui.RawCommandLineEditor" binding="progArgsField">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="70489" class="com.intellij.ui.RawCommandLineEditor" binding="importPathField">
+        <constraints>
+          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>
