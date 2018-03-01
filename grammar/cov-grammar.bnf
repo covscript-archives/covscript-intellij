@@ -162,7 +162,7 @@ expr ::=
  | level10
  | level11
  | level12
- | unaryExpr // 13
+ | level13
  | level14
  | level15
  | primaryExpr {
@@ -242,8 +242,12 @@ private level12 ::=
 remOp ::= expr REM_SYM expr
 powOp ::= expr POW_SYM expr
 
-// level 13
+private level13 ::=
+   unaryExpr
+ | suffixedExpr
+
 unaryExpr ::= (INC_SYM | DEC_SYM) expr
+suffixedExpr ::= expr (INC_SYM | DEC_SYM)
 
 private level14 ::=
    newExpr
@@ -254,10 +258,15 @@ typeidExpr ::= TYPEID_KEYWORD expr
 
 private level15 ::=
    applyFunction
+ | applyIndex
  | functionLit
  | memberAccess
 
 applyFunction ::= expr LEFT_BRACKET (expr (COMMA expr)*)? RIGHT_BRACKET {
+	extends=expr
+}
+
+applyIndex ::= expr LEFT_S_BRACKET expr RIGHT_S_BRACKET {
 	extends=expr
 }
 
