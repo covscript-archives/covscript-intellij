@@ -94,9 +94,9 @@ class CovProjectConfigurableImpl(project: Project) : CovProjectConfigurable() {
 
 	init {
 		version.text = settings.version
-		val format = NumberFormat.getIntegerInstance()
-		format.isGroupingUsed = false
-		val factory = DefaultFormatterFactory(NumberFormatter(format))
+		val factory = DefaultFormatterFactory(NumberFormatter(NumberFormat
+				.getIntegerInstance()
+				.apply { isGroupingUsed = false }))
 		timeLimitField.formatterFactory = factory
 		timeLimitField.value = settings.tryEvaluateTimeLimit
 		textLimitField.formatterFactory = factory

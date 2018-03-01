@@ -7,14 +7,12 @@ import com.intellij.execution.process.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.ui.ConsoleView
-import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.DumbAware
 import java.nio.charset.Charset
-
 
 class CovCommandLineState(
 		private val configuration: CovRunConfiguration,
@@ -44,10 +42,9 @@ class CovCommandLineState(
 			it.withWorkDirectory(configuration.workingDir)
 		})
 		ProcessTerminatedListener.attach(handler)
-		handler.startNotify()
 		val console = consoleBuilder.console
-		console.print("${handler.commandLine}\n", ConsoleViewContentType.NORMAL_OUTPUT)
 		console.attachToProcess(handler)
+		handler.startNotify()
 		return DefaultExecutionResult(console, handler, PauseOutputAction(console, handler))
 	}
 

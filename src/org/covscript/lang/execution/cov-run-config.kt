@@ -85,8 +85,10 @@ class CovRunConfigurationProducer : RunConfigurationProducer<CovRunConfiguration
 
 	override fun setupConfigurationFromContext(
 			configuration: CovRunConfiguration, context: ConfigurationContext, ref: Ref<PsiElement>?): Boolean {
-		if (context.psiLocation?.containingFile !is CovFile) return false
-		configuration.targetFile = context.location?.virtualFile?.path.orEmpty()
+		val file = context.location?.virtualFile
+		if (file?.fileType != CovFileType) return false
+		configuration.name = file.nameWithoutExtension
+		configuration.targetFile = file.path
 		configuration.workingDir = context.project.basePath.orEmpty()
 		return true
 	}
