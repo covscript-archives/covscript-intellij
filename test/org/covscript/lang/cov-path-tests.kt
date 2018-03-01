@@ -16,17 +16,20 @@ class PathTests {
 
 	@Test
 	fun version() {
+		if (!System.getenv("CI").isNullOrBlank()) return
 		versionOf(defaultCovExe).let(::println)
 	}
 
 	@Test
 	fun codeExecutionTest() {
+		if (!System.getenv("CI").isNullOrBlank()) return
 		//language=CovScript
 		executeInRepl(defaultCovExe, "system.out.println(2333)", 1000L).first.forEach(::println)
 	}
 
 	@Test
 	fun codeExecutionTest2() {
+		if (!System.getenv("CI").isNullOrBlank()) return
 		//language=CovScript
 		val (stdout, stderr) = executeInRepl(POSSIBLE_EXE_LINUX, """
 system.out.println(2333)

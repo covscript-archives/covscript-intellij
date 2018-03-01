@@ -7,6 +7,9 @@ CI|Status
 :---:|:---:
 AppVeyor|[![Build status](https://ci.appveyor.com/api/projects/status/h4v4h8bt74e693ts?svg=true)](https://ci.appveyor.com/project/covscript/covscript-intellij)
 Travis CI|[![Build Status](https://travis-ci.org/covscript/covscript-intellij.svg?branch=master)](https://travis-ci.org/covscript/covscript-intellij)
+CircleCI|[![CircleCI](https://circleci.com/gh/covscript/covscript-intellij.svg?style=svg)](https://circleci.com/gh/covscript/covscript-intellij)
+
+## Screenshots
 
 ![](https://plugins.jetbrains.com/files/10326/screenshot_17807.png)
 ![](https://plugins.jetbrains.com/files/10326/screenshot_17808.png)

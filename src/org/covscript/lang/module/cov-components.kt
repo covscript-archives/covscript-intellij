@@ -10,7 +10,7 @@ import org.covscript.lang.*
 import org.jetbrains.annotations.Nls
 
 class CovApplicationComponent(private val project: Project) : ProjectComponent {
-	var isNightlyNotificationShown = false
+	private var isNightlyNotificationShown = false
 
 	override fun getComponentName() = "CovApplicationComponent"
 	override fun projectOpened() {
