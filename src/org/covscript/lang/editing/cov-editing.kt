@@ -117,11 +117,11 @@ class CovBreadCrumbProvider : BreadcrumbsProvider {
 		is CovFunctionDeclaration -> o.symbol.text
 		is CovStructDeclaration -> o.symbol.text
 		is CovNamespaceDeclaration -> o.symbol.text
-		is CovForStatement -> "for ${o.parameter.text}"
+		is CovForStatement -> "for ${o.symbol.text}"
 		is CovArrayLiteral -> "array literal"
 		is CovLoopUntilStatement -> "loop ${o.expression}"
 		is CovWhileStatement -> "while ${o.expression}"
-		is CovTryCatchStatement -> "try catch ${o.parameter}"
+		is CovTryCatchStatement -> "try catch ${o.symbol}"
 		is CovSwitchStatement -> "switch statement"
 		is CovCollapsedStatement -> "collapsed block"
 		is CovBlockStatement -> "begin block"
@@ -167,7 +167,8 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 	}
 
 	private class CovModel(file: PsiFile, editor: Editor?) :
-			StructureViewModelBase(file, editor, CovStructureElement(file)), StructureViewModel.ElementInfoProvider {
+			StructureViewModelBase(file, editor, CovStructureElement(file)),
+			StructureViewModel.ElementInfoProvider {
 		init {
 			withSuitableClasses(
 					CovBlockStatement::class.java,
@@ -190,7 +191,9 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 		override fun shouldEnterElement(o: Any?) = true
 	}
 
-	private class CovStructureElement(o: PsiElement) : PsiTreeElementBase<PsiElement>(o), SortableTreeElement,
+	private class CovStructureElement(o: PsiElement) :
+			PsiTreeElementBase<PsiElement>(o),
+			SortableTreeElement,
 			LocationPresentation {
 		override fun getIcon(open: Boolean) = element.let { o ->
 			when (o) {
@@ -218,10 +221,10 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovFunctionDeclaration -> "function ${o.symbol.text}"
 				is CovStructDeclaration -> "struct ${o.symbol.text}"
 				is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
-				is CovForStatement -> "for ${o.parameter.text} ${o.forIterate?.run { "iterate ${expression.text}" } ?: "to"}"
+				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.run { "iterate ${expression.text}" } ?: "to"}"
 				is CovLoopUntilStatement -> "loop${o.expression?.run { " until $text" } ?: ""}"
 				is CovWhileStatement -> "while ${o.expression.text}"
-				is CovTryCatchStatement -> "try catch ${o.parameter.text}"
+				is CovTryCatchStatement -> "try catch ${o.symbol.text}"
 				is CovSwitchStatement -> "switch statement"
 				is CovCollapsedStatement -> "collapsed block"
 				is CovBlockStatement -> "begin block"
@@ -236,18 +239,18 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 		override fun getLocationSuffix() = ""
 		override fun getChildrenBase(): List<CovStructureElement> = element.let { o ->
 			@Suppress("UNCHECKED_CAST") when (o) {
-				is CovFile -> o.children.mapNotNull { (it as? CovStatement)?.allBlockStructure }
-				is CovFunctionDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
+				is CovFile -> o.children.mapNotNull { (it as? CovStatement)?.inside }
+				is CovFunctionDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
 				is CovStructDeclaration -> o.functionDeclarationList + o.variableDeclarationList
-				is CovNamespaceDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
-				is CovForStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
-				is CovLoopUntilStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
-				is CovWhileStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
-				is CovTryCatchStatement -> listOf(o.bodyOfSomething, o.tryBody.bodyOfSomething).flatMap { it.statementList.mapNotNull { it?.allBlockStructure } }
-				is CovSwitchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.allBlockStructure } }
-				is CovBlockStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.allBlockStructure }
-				is CovIfStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.allBlockStructure } }
-				is PsiElement -> o.children.mapNotNull { (it as? CovStatement)?.allBlockStructure }
+				is CovNamespaceDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
+				is CovForStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
+				is CovLoopUntilStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
+				is CovWhileStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
+				is CovTryCatchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.inside } }
+				is CovSwitchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.inside } }
+				is CovBlockStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
+				is CovIfStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.inside } }
+				is PsiElement -> o.children.mapNotNull { (it as? CovStatement)?.inside }
 				else -> emptyList()
 			}.map(::CovStructureElement)
 		}

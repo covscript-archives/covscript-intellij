@@ -9,6 +9,13 @@ class CovParserTest : ParsingTestCase("", COV_EXTENSION, CovParserDefinition()) 
 
 	@Test
 	fun testHello() {
+		println(name)
+		doTest(true)
+	}
+
+	@Test
+	fun testNamespaces() {
+		println(name)
 		doTest(true)
 	}
 }

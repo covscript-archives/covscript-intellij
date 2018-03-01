@@ -131,11 +131,8 @@ or { return CovTypes.OR_KEYWORD; }
 not { return CovTypes.NOT_KEYWORD; }
 
 {ARROW} { return CovTypes.ARROW; }
-{QUESTION_OP} { return CovTypes.QUESTION_OP; }
 {COLON_OP} { return CovTypes.COLON_OP; }
 {EQ} { return CovTypes.EQ; }
-{QUESTION_OP} { return CovTypes.QUESTION_OP; }
-{COLON_OP} { return CovTypes.COLON_OP; }
 {DIV_ASS} { return CovTypes.DIV_ASS; }
 {PLUS_ASS} { return CovTypes.PLUS_ASS; }
 {MINUS_ASS} { return CovTypes.MINUS_ASS; }
@@ -149,7 +146,6 @@ not { return CovTypes.NOT_KEYWORD; }
 {DIV_OP} { return CovTypes.DIV_OP; }
 {REM_OP} { return CovTypes.REM_OP; }
 {POW_OP} { return CovTypes.POW_OP; }
-{COLON_OP} { return CovTypes.COLON_OP; }
 {AND_OP} { return CovTypes.AND_OP; }
 {OR_OP} { return CovTypes.OR_OP; }
 {LT_OP} { return CovTypes.LT_OP; }

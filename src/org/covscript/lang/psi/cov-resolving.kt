@@ -87,9 +87,14 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 	override val candidateSet = ArrayList<LookupElementBuilder>(20)
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
 		if (element.hasNoError and isInScope(element)) {
-			val symbol = element.text
-			candidateSet += LookupElementBuilder.create(symbol)
+			val type = when (element) {
+				is CovParameter -> "Parameter"
+				is CovSymbol -> "Variable"
+				else -> return true
+			}
+			candidateSet += LookupElementBuilder.create(element.text)
 					.withIcon(CovIcons.COV_BIG_ICON)
+					.withTypeText(type)
 		}
 		return true
 	}

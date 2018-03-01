@@ -61,7 +61,7 @@ class CovModuleType : ModuleType<CovModuleBuilder>(COV_MODULE_ID) {
 }
 
 class CovSettings(
-		var exePath: String = "",
+		var exePath: String = defaultCovExe,
 		var importPaths: String = "",
 		var version: String = "",
 		var tryEvaluateTimeLimit: Long = 2500L,

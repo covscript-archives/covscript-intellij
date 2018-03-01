@@ -38,14 +38,18 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 }
 
 abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclaration, TrivialDeclaration(node) {
-	override fun getNameIdentifier() = symbol
+	override fun getNameIdentifier() = children.first { it is CovSymbol }
 	override val startPoint: PsiElement get() = parent.parent
 	override fun processDeclarations(
 			processor: PsiScopeProcessor,
 			substitutor: ResolveState,
 			lastParent: PsiElement?,
 			place: PsiElement): Boolean {
-		parameterList.forEach { if (!it.processDeclarations(processor, substitutor, lastParent, place)) return false }
+		symbolList.forEach {
+			if (it != children[1] &&
+					!it.processDeclarations(processor, substitutor, lastParent, place))
+				return false
+		}
 		return super.processDeclarations(processor, substitutor, lastParent, place)
 	}
 }
@@ -58,11 +62,11 @@ abstract class CovCommentMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovC
 }
 
 interface ICovStatement : PsiElement {
-	val allBlockStructure: PsiElement
+	val inside: PsiElement
 }
 
 abstract class CovStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovStatement {
-	override val allBlockStructure: PsiElement
+	override val inside: PsiElement
 		get() = if (children.size == 1) children.first() else children[1]
 
 	override fun processDeclarations(
@@ -96,7 +100,7 @@ abstract class CovBodyOfSomethingMixin(node: ASTNode) : ASTWrapperPsiElement(nod
 abstract class CovForStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovForStatement {
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			if (!parameter.processDeclarations(processor, substitutor, lastParent, place)) false
+			if (!symbol.processDeclarations(processor, substitutor, lastParent, place)) false
 			else processDeclTrivial(processor, substitutor, lastParent, place)
 }
 
@@ -108,7 +112,7 @@ abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclara
 abstract class CovTryCatchDeclarationMixin(node: ASTNode) : CovTryCatchStatement, ASTWrapperPsiElement(node) {
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			parameter.processDeclarations(processor, state, lastParent, place) and
+			symbol.processDeclarations(processor, state, lastParent, place) and
 					processDeclTrivial(processor, state, lastParent, place)
 }
 
@@ -117,8 +121,24 @@ abstract class CovParameterMixin(node: ASTNode) : CovParameter, TrivialDeclarati
 	override val startPoint: PsiElement get() = parent
 }
 
+interface ICovSymbol : PsiNameIdentifierOwner {
+	val isException: Boolean
+	val isLoopVar: Boolean
+	val isParameter: Boolean
+	val isDeclaration: Boolean
+}
+
 abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(node) {
 	private val refCache by lazy { CovSymbolRef(this) }
-	private val isUsage get() = parent is CovSuffixedExpression
-	override fun getReference() = if (isUsage) refCache else null
+	final override val isException: Boolean by lazy { parent is CovTryCatchStatement }
+	final override val isLoopVar: Boolean by lazy { parent is CovForStatement }
+	final override val isParameter: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.children[1] != this } }
+	final override val isDeclaration: Boolean by lazy {
+		isException or
+				isLoopVar or
+				isParameter
+	}
+
+	override fun getReference() = refCache
+	override fun getNameIdentifier() = if (isDeclaration) null else this
 }

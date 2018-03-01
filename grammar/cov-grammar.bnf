@@ -32,6 +32,7 @@ string ::= STR
 charLiteral ::= CHAR
 symbol ::= SYM {
 	mixin='org.covscript.lang.psi.impl.CovSymbolMixin'
+	implements=['org.covscript.lang.psi.impl.ICovSymbol']
 }
 
 parameter ::= SYM {
@@ -54,7 +55,7 @@ variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expression {
 }
 
 functionDeclaration ::=
- FUNCTION_KEYWORD symbol LEFT_BRACKET (parameter (COMMA parameter)*)? RIGHT_BRACKET endOfLine
+ FUNCTION_KEYWORD symbol LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET endOfLine
   bodyOfSomething
  END_KEYWORD {
 	mixin='org.covscript.lang.psi.impl.CovFunctionDeclarationMixin'
@@ -76,15 +77,14 @@ bodyOfSomething ::= (statement endOfLine)* {
 	mixin='org.covscript.lang.psi.impl.CovBodyOfSomethingMixin'
 }
 
-tryBody ::= bodyOfSomething
 returnStatement ::= RETURN_KEYWORD expression?
 
 throwStatement ::= THROW_KEYWORD expression
 
 tryCatchStatement ::=
  TRY_KEYWORD endOfLine
-  tryBody
- CATCH_KEYWORD parameter endOfLine
+  bodyOfSomething
+ CATCH_KEYWORD symbol endOfLine
   bodyOfSomething
  END_KEYWORD {
 	mixin='org.covscript.lang.psi.impl.CovTryCatchDeclarationMixin'
@@ -120,7 +120,7 @@ loopUntilStatement ::=
  END_KEYWORD
 
 forStatement ::=
- FOR_KEYWORD parameter (forTo | forIterate) endOfLine
+ FOR_KEYWORD symbol (forTo | forIterate) endOfLine
   bodyOfSomething
  END_KEYWORD {
 	mixin='org.covscript.lang.psi.impl.CovForStatementMixin'

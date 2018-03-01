@@ -14,9 +14,7 @@ val Project.covSettings: CovProjectSettingsService
 
 @State(
 		name = "CovProjectSettings",
-		storages = [
-			Storage(file = "\$PROJECT_FILE\$"),
-			Storage(file = "\$PROJECT_CONFIG_DIR\$/covConfig.xml", scheme = StorageScheme.DIRECTORY_BASED)])
+		storages = [Storage(file = "covscriptConfig.xml", scheme = StorageScheme.DIRECTORY_BASED)])
 class CovProjectSettingsServiceImpl :
 		CovProjectSettingsService, PersistentStateComponent<CovSettings> {
 	override val settings = CovSettings()
