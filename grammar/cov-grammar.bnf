@@ -35,10 +35,6 @@ symbol ::= SYM {
 	implements=['org.covscript.lang.psi.impl.ICovSymbol']
 }
 
-parameter ::= SYM {
-	mixin='org.covscript.lang.psi.impl.CovParameterMixin'
-}
-
 fileHeader ::=
    usingDeclaration
  | importDeclaration
@@ -79,7 +75,6 @@ bodyOfSomething ::= (statement endOfLine)* {
 }
 
 returnStatement ::= RETURN_KEYWORD expression?
-
 throwStatement ::= THROW_KEYWORD expression
 
 tryCatchStatement ::=
@@ -168,7 +163,7 @@ private primaryStatement ::=
 private boolean ::= true | false
 newExpression ::= (NEW_KEYWORD | GCNEW_KEYWORD) symbol (DOT symbol)*
 arrayLiteral ::= LEFT_B_BRACKET (expression (COMMA expression)*)? RIGHT_B_BRACKET
-functionLiteral ::= LEFT_S_BRACKET RIGHT_S_BRACKET LEFT_BRACKET (parameter (COMMA parameter)*)? RIGHT_BRACKET ARROW expression
+functionLiteral ::= LEFT_S_BRACKET RIGHT_S_BRACKET LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET ARROW expression
 
 expression ::=
  suffixedExpression

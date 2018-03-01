@@ -116,11 +116,6 @@ abstract class CovTryCatchDeclarationMixin(node: ASTNode) : CovTryCatchStatement
 					processDeclTrivial(processor, state, lastParent, place)
 }
 
-abstract class CovParameterMixin(node: ASTNode) : CovParameter, TrivialDeclaration(node) {
-	override fun getNameIdentifier() = this
-	override val startPoint: PsiElement get() = parent
-}
-
 interface ICovSymbol : PsiNameIdentifierOwner {
 	val isException: Boolean
 	val isLoopVar: Boolean
