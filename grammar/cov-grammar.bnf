@@ -185,59 +185,59 @@ private assignOperator ::=
  | REM_ASS
 
 // level 2
-ternaryOp ::= expr QUESTION_OP expr pairOp
+ternaryOp ::= expr QUESTION_SYM expr pairOp
 
 // level 3
-pairOp ::= expr COLON_OP expr
+pairOp ::= expr COLON_SYM expr
 
 // level 7
 logicOp ::= expr logicOperator expr
 private logicOperator ::=
    AND_KEYWORD
- | AND_OP
+ | AND_SYM
  | OR_KEYWORD
- | OR_OP
+ | OR_SYM
 
 // level 8
-notOp ::= (NOT_OP | NOT_KEYWORD) expr
+notOp ::= (NOT_SYM | NOT_KEYWORD) expr
 
 // level 9
 compareLevelOp ::= expr compareOperator expr
 private compareOperator ::=
-   LT_OP
- | GT_OP
- | GE_OP
- | LE_OP
- | EQ_OP
- | UN_OP
+   LT_SYM
+ | GT_SYM
+ | GE_SYM
+ | LE_SYM
+ | EQ_SYM
+ | UN_SYM
 
 private level10 ::=
    plusOp
  | minusOp
  | negOp
 
-plusOp ::= expr PLUS_OP expr
-minusOp ::= expr MINUS_OP expr
-negOp ::= MINUS_OP expr
+plusOp ::= expr PLUS_SYM expr
+minusOp ::= expr MINUS_SYM expr
+negOp ::= MINUS_SYM expr
 
 private level11 ::=
    divOp
  | timesOp
  | derefOp
 
-divOp ::= expr DIV_OP expr
-timesOp ::= expr TIMES_OP expr
-derefOp ::= TIMES_OP expr
+divOp ::= expr DIV_SYM expr
+timesOp ::= expr TIMES_SYM expr
+derefOp ::= TIMES_SYM expr
 
 private level12 ::=
    remOp
  | powOp
 
-remOp ::= expr REM_OP expr
-powOp ::= expr POW_OP expr
+remOp ::= expr REM_SYM expr
+powOp ::= expr POW_SYM expr
 
 // level 13
-unaryExpr ::= (INC_OP | DEC_OP) expr
+unaryExpr ::= (INC_SYM | DEC_SYM) expr
 
 private level14 ::=
    newExpr

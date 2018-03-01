@@ -34,24 +34,6 @@ NUM=[0-9]+(\.[0-9]+)?
 COLLAPSER_BEGIN=@begin
 COLLAPSER_END=@end
 
-EQ==
-DIV_ASS={DIV_OP}{EQ}
-PLUS_ASS={PLUS_OP}{EQ}
-MINUS_ASS={MINUS_OP}{EQ}
-TIMES_ASS={TIMES_OP}{EQ}
-POW_ASS={POW_OP}{EQ}
-REM_ASS={REM_OP}{EQ}
-PLUS_OP=\+
-INC_OP={PLUS_OP}{PLUS_OP}
-MINUS_OP=\-
-DEC_OP={MINUS_OP}{MINUS_OP}
-TIMES_OP=\*
-DIV_OP=\/
-REM_OP=%
-POW_OP=\^
-UN_OP={NOT_OP}{EQ}
-NOT_OP=\!
-
 WHITE_SPACE=[ \t\r]
 OTHERWISE=[^]
 
@@ -110,32 +92,32 @@ or { return CovTypes.OR_KEYWORD; }
 not { return CovTypes.NOT_KEYWORD; }
 
 -\> { return CovTypes.ARROW; }
-\: { return CovTypes.COLON_OP; }
-{EQ} { return CovTypes.EQ; }
-{DIV_ASS} { return CovTypes.DIV_ASS; }
-{PLUS_ASS} { return CovTypes.PLUS_ASS; }
-{MINUS_ASS} { return CovTypes.MINUS_ASS; }
-{TIMES_ASS} { return CovTypes.TIMES_ASS; }
-{POW_ASS} { return CovTypes.POW_ASS; }
-{REM_ASS} { return CovTypes.REM_ASS; }
-\? { return CovTypes.QUESTION_OP; }
-{PLUS_OP} { return CovTypes.PLUS_OP; }
-{MINUS_OP} { return CovTypes.MINUS_OP; }
-{TIMES_OP} { return CovTypes.TIMES_OP; }
-{DIV_OP} { return CovTypes.DIV_OP; }
-{REM_OP} { return CovTypes.REM_OP; }
-{POW_OP} { return CovTypes.POW_OP; }
-&& { return CovTypes.AND_OP; }
-\|\| { return CovTypes.OR_OP; }
-\< { return CovTypes.LT_OP; }
-\> { return CovTypes.GT_OP; }
-== { return CovTypes.EQ_OP; }
-\<= { return CovTypes.LE_OP; }
-\>= { return CovTypes.GE_OP; }
-{UN_OP} { return CovTypes.UN_OP; }
-{INC_OP} { return CovTypes.INC_OP; }
-{DEC_OP} { return CovTypes.DEC_OP; }
-{NOT_OP} { return CovTypes.NOT_OP; }
+\: { return CovTypes.COLON_SYM; }
+= { return CovTypes.EQ; }
+\/= { return CovTypes.DIV_ASS; }
+\+= { return CovTypes.PLUS_ASS; }
+-= { return CovTypes.MINUS_ASS; }
+\*= { return CovTypes.TIMES_ASS; }
+\^= { return CovTypes.POW_ASS; }
+%= { return CovTypes.REM_ASS; }
+\? { return CovTypes.QUESTION_SYM; }
+\+ { return CovTypes.PLUS_SYM; }
+- { return CovTypes.MINUS_SYM; }
+\* { return CovTypes.TIMES_SYM; }
+\/ { return CovTypes.DIV_SYM; }
+% { return CovTypes.REM_SYM; }
+\^ { return CovTypes.POW_SYM; }
+&& { return CovTypes.AND_SYM; }
+\|\| { return CovTypes.OR_SYM; }
+\< { return CovTypes.LT_SYM; }
+\> { return CovTypes.GT_SYM; }
+== { return CovTypes.EQ_SYM; }
+\<= { return CovTypes.LE_SYM; }
+\>= { return CovTypes.GE_SYM; }
+\!= { return CovTypes.UN_SYM; }
+\+\+ { return CovTypes.INC_SYM; }
+-- { return CovTypes.DEC_SYM; }
+\! { return CovTypes.NOT_SYM; }
 
 , { return CovTypes.COMMA; }
 \. { return CovTypes.DOT; }

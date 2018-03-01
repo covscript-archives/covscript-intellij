@@ -228,7 +228,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovSwitchStatement -> "switch statement"
 				is CovCollapsedStatement -> "collapsed block"
 				is CovBlockStatement -> "begin block"
-				is CovVariableDeclaration -> "var ${o.nameIdentifier?.text}"
+				is CovVariableDeclaration -> "var ${o.nameIdentifier.text}"
 				is CovIfStatement -> "if ${o.expr.text}"
 				else -> "??"
 			}
