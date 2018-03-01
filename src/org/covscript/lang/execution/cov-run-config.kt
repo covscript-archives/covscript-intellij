@@ -31,7 +31,7 @@ class CovRunConfiguration(factory: CovRunConfigurationFactory, project: Project)
 	var targetFile = ""
 	var programArgs = ""
 	var covExecutable = Paths.get(project.covSettings.settings.covHome, "bin", "cs").toAbsolutePath().toString()
-	override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = CovRunConfigurationEditor(this)
+	override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> = CovRunConfigurationEditorImpl(this)
 	override fun getState(executor: Executor, environment: ExecutionEnvironment) = CovCommandLineState(this, environment)
 	override fun getValidModules() = allModules.filter { ProjectRootManager.getInstance(it.project).projectSdk?.sdkType is CovSdkType }
 	override fun readExternal(element: Element) {

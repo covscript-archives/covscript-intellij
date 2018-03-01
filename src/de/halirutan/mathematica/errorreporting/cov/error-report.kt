@@ -147,7 +147,9 @@ private fun decrypt(file: URL): String {
 	cipher.init(Cipher.DECRYPT_MODE,
 			SecretKeySpec(key.toByteArray(charset("UTF-8")), "AES"),
 			IvParameterSpec(initVector.toByteArray(charset("UTF-8"))))
-	return String(cipher.doFinal(Base64.decodeBase64(ObjectInputStream(file.openStream()).readObject() as String)))
+	return String(cipher.doFinal(Base64.decodeBase64(file.openStream().use {
+		ObjectInputStream(it).use(ObjectInputStream::readObject) as String
+	})))
 }
 
 fun main(args: Array<String>) {

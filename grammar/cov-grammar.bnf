@@ -122,9 +122,7 @@ loopUntilStatement ::=
 forStatement ::=
  FOR_KEYWORD parameter (forTo | forIterate) endOfLine
   bodyOfSomething
- END_KEYWORD {
-	methods=[processDeclarations]
-}
+ END_KEYWORD
 
 forTo ::= EQ expression TO_KEYWORD expression (STEP_KEYWORD expression)?
 forIterate ::= ITERATE_KEYWORD expression

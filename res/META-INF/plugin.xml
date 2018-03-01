@@ -1,7 +1,7 @@
 <idea-plugin>
 	<id>org.covscript</id>
 	<name>CovScript</name>
-	<version>1.7.1</version>
+	<version>1.7.2</version>
 	<vendor email="ice1000kotlin@foxmail.com" url="http://covscript.org">ice1000</vendor>
 
 	<description><![CDATA[
@@ -24,6 +24,11 @@ Functions provided:<br/>
 ]]></description>
 
 	<change-notes><![CDATA[
+1.7.2<br/>
+<ul>
+  <li>Improved error reporter</li>
+</ul><br/>
+1.7<br/>
 1.7.1<br/>
 <ul>
   <li>Improved reference resolving and completions</li>
