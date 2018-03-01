@@ -33,8 +33,9 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 	override fun getName(): String = nameIdentifier.text
 	abstract override fun getNameIdentifier(): PsiElement
 	abstract val startPoint: PsiElement
-	override fun getReferences(): Array<PsiReference> = refCache ?: collectFrom(startPoint, nameIdentifier.text)
-			.also { refCache = it }
+	override fun getReferences(): Array<PsiReference> = refCache
+			?: collectFrom(startPoint, nameIdentifier.text, nameIdentifier)
+					.also { refCache = it }
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
@@ -116,8 +117,10 @@ interface ICovSymbol : PsiNameIdentifierOwner {
 	val isException: Boolean
 	val isLoopVar: Boolean
 	val isParameter: Boolean
-	val isLocalVar: Boolean
+	val isVar: Boolean
+	val isConstVar: Boolean
 	val isFunctionName: Boolean
+	val isStructName: Boolean
 	val isNamespaceName: Boolean
 	val isDeclaration: Boolean
 }
@@ -130,16 +133,20 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(n
 	}
 	final override val isException: Boolean by lazy { parent is CovTryCatchStatement }
 	final override val isLoopVar: Boolean by lazy { parent is CovForStatement }
-	final override val isLocalVar: Boolean by lazy { parent.let { it is CovVariableDeclaration && it.nameIdentifier === this } }
+	final override val isVar: Boolean by lazy { parent.let { it is CovVariableDeclaration && it.nameIdentifier === this } }
+	final override val isConstVar: Boolean by lazy { isVar && prevSibling.prevSibling?.run { node.elementType == CovTypes.CONST_KEYWORD } == true }
 	final override val isParameter: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.nameIdentifier !== this } }
 	final override val isNamespaceName: Boolean by lazy { parent is CovNamespaceDeclaration }
+	final override val isStructName: Boolean by lazy { parent is CovStructDeclaration }
 	final override val isFunctionName: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.nameIdentifier === this } }
 	final override val isDeclaration: Boolean by lazy {
 		isException or
 				isLoopVar or
-				isLocalVar or
+				isVar or
+				isConstVar or
 				isNamespaceName or
 				isFunctionName or
+				isStructName or
 				isParameter
 	}
 

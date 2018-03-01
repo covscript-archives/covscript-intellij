@@ -24,9 +24,9 @@ fun PsiElement.processDeclTrivial(
 
 val CovCollapsedStatement.anythingInside: PsiElement? get() = children.getOrNull(1)
 
-fun collectFrom(startPoint: PsiElement, name: String) = SyntaxTraverser
+fun collectFrom(startPoint: PsiElement, name: String, self: PsiElement? = null) = SyntaxTraverser
 		.psiTraverser(startPoint)
-		.filter { it is CovSymbol && it.text == name }
+		.filter { it is CovSymbol && it !== self && it.text == name }
 		.mapNotNull(PsiElement::getReference)
 		.toList()
 		.toTypedArray()

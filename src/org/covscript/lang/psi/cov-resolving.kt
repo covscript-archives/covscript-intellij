@@ -93,10 +93,12 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 			val (type, icon) = when {
 				element.isParameter -> "Parameter" to CovIcons.VARIABLE_ICON
 				element.isException -> "Exception" to CovIcons.TRY_CATCH_ICON
-				element.isLocalVar -> "Local variable" to CovIcons.VARIABLE_ICON
+				element.isVar -> "Variable" to CovIcons.VARIABLE_ICON
+				element.isConstVar -> "Constant" to CovIcons.VARIABLE_ICON
 				element.isFunctionName -> "Function" to CovIcons.FUNCTION_ICON
 				element.isNamespaceName -> "Namespace" to CovIcons.NAMESPACE_ICON
-				element.isLoopVar -> "Loop variable" to CovIcons.VARIABLE_ICON
+				element.isLoopVar -> "Loop var" to CovIcons.VARIABLE_ICON
+				element.isStructName -> "Struct" to CovIcons.STRUCT_ICON
 				else -> "<Unknown>" to CovIcons.COV_BIG_ICON
 			}
 			candidateSet += LookupElementBuilder.create(element.text)
