@@ -22,7 +22,7 @@ abstract class CovSymbolRef(private var refTo: PsiElement? = null) :
 	override fun hashCode() = element.hashCode()
 	override fun getCanonicalText(): String = element.text
 	override fun handleElementRename(newName: String) = CovTokenType.fromText(newName, element.project).also { element.replace(it) }
-	override fun getVariants(): Array<out Any> {
+	override fun getVariants(): Array<LookupElementBuilder> {
 		val variantsProcessor = CompletionProcessor(this, true)
 		val file = element.containingFile ?: return emptyArray()
 		treeWalkUp(variantsProcessor, element, file)
@@ -46,15 +46,12 @@ abstract class CovSymbolRef(private var refTo: PsiElement? = null) :
 			val processor = SymbolResolveProcessor(ref, incompleteCode)
 			val file = ref.element.containingFile ?: return emptyArray()
 			treeWalkUp(processor, ref.element, file)
-			PsiTreeUtil
-					.getParentOfType(ref.element, CovStatement::class.java)
-					?.processDeclarations(processor, ResolveState.initial(), ref.element, processor.place)
 			return processor.candidateSet.toTypedArray()
 		}
 	}
 }
 
-abstract class ResolveProcessor<ResolveResult>(val place: PsiElement) : PsiScopeProcessor {
+abstract class ResolveProcessor<ResolveResult>(private val place: PsiElement) : PsiScopeProcessor {
 	abstract val candidateSet: ArrayList<ResolveResult>
 	override fun handleEvent(event: PsiScopeProcessor.Event, o: Any?) = Unit
 	override fun <AnyNullable> getHint(hintKey: Key<AnyNullable>): AnyNullable? where AnyNullable : Any? = null

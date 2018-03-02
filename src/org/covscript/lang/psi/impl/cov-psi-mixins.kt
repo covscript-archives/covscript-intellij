@@ -51,13 +51,9 @@ abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclarati
 	override fun getNameIdentifier() = children.first { it is CovSymbol }
 	override val startPoint: PsiElement get() = parent.parent
 	override fun processDeclarations(
-			processor: PsiScopeProcessor,
-			substitutor: ResolveState,
-			lastParent: PsiElement?,
-			place: PsiElement): Boolean {
+			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement): Boolean {
 		symbolList.forEach {
-			if (it != children[1] &&
-					!it.processDeclarations(processor, substitutor, lastParent, place))
+			if (it.isParameter && !it.processDeclarations(processor, substitutor, lastParent, place))
 				return false
 		}
 		return super.processDeclarations(processor, substitutor, lastParent, place)
@@ -126,7 +122,7 @@ interface ICovSymbol : PsiNameIdentifierOwner {
 }
 
 abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(node) {
-	private val refCache by lazy {
+	private val referenceImpl by lazy {
 		object : CovSymbolRef() {
 			override fun getElement() = this@CovSymbolMixin
 		}
@@ -150,7 +146,11 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(n
 				isParameter
 	}
 
-	override fun getReference() = refCache
+	override fun processDeclarations(
+			processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			processor.execute(this, state)
+
+	override fun getReference() = referenceImpl
 	override fun getNameIdentifier() = this
 	override fun setName(name: String) = CovTokenType.fromText(name, project).also { replace(it) }
 }
