@@ -1,0 +1,7 @@
+#
+# Created by ${USER} on ${YEAR}-${MONTH}-${DAY}
+# Built with CovScript ${COV_VERSION}
+#
+
+namespace ${NAME}
+end

@@ -9,6 +9,7 @@
 	<depends>com.intellij.modules.lang</depends>
 
 	<extensions defaultExtensionNs="com.intellij">
+		<internalFileTemplate name="CovScript Namespace"/>
 		<fileTypeFactory implementation="org.covscript.lang.CovFileTypeFactory"/>
 		<liveTemplateContext implementation="org.covscript.lang.CovContext"/>
 		<defaultLiveTemplatesProvider implementation="org.covscript.lang.CovLiveTemplateProvider"/>
