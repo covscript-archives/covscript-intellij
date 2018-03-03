@@ -31,17 +31,18 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 
 	override fun getName(): String = nameIdentifier.text
 	abstract override fun getNameIdentifier(): PsiElement
-	open val startPoint: PsiElement?
-		get() = PsiTreeUtil.getParentOfType(this, CovStatement::class.java, true)?.parent
+	open val startPoint: PsiElement
+		get() = PsiTreeUtil.getParentOfType(this, CovStatement::class.java, true)?.parent ?: parent
 
 	override fun getReferences(): Array<PsiReference> = refCache
-			?: startPoint?.let { collectFrom(it, nameIdentifier.text, nameIdentifier) }
-					?.also { refCache = it }
+			?: collectFrom(startPoint, nameIdentifier.text, nameIdentifier)
+					.also { refCache = it }
 			?: emptyArray()
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			processDeclTrivial(processor, substitutor, lastParent, place) and processor.execute(nameIdentifier, substitutor)
+			processor.execute(nameIdentifier, substitutor) and
+					processDeclTrivial(processor, substitutor, lastParent, place)
 
 	override fun subtreeChanged() {
 		refCache = null
@@ -50,7 +51,8 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 }
 
 abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclaration, TrivialDeclaration(node) {
-	override fun getNameIdentifier() = children.first { it is CovSymbol }
+	private var nameCache: PsiElement? = null
+	override fun getNameIdentifier() = nameCache ?: children.first { it is CovSymbol }.also { nameCache = it }
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement): Boolean {
 		symbolList.forEach {
@@ -58,6 +60,11 @@ abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclarati
 				return false
 		}
 		return super.processDeclarations(processor, substitutor, lastParent, place)
+	}
+
+	override fun subtreeChanged() {
+		nameCache = null
+		super.subtreeChanged()
 	}
 }
 
