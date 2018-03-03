@@ -57,9 +57,13 @@ abstract class ResolveProcessor<ResolveResult>(private val place: PsiElement) : 
 	override fun <AnyNullable> getHint(hintKey: Key<AnyNullable>): AnyNullable? where AnyNullable : Any? = null
 	protected val PsiElement.hasNoError get() = (this as? StubBasedPsiElement<*>)?.stub != null || !PsiTreeUtil.hasErrorElements(this)
 
-	protected fun isInScope(element: PsiElement) = PsiTreeUtil.isAncestor(
-			if (element is CovSymbol && element.isParameter) element.parent
-			else element.parent?.parent?.parent, place, false)
+	protected fun isInScope(element: PsiElement) = if (element is CovSymbol) when {
+		element.isParameter -> PsiTreeUtil.isAncestor(
+				PsiTreeUtil.getParentOfType(element, CovFunctionDeclaration::class.java), place, true)
+		element.isDeclaration -> PsiTreeUtil.isAncestor(
+				PsiTreeUtil.getParentOfType(element, CovStatement::class.java)?.parent, place, false)
+		else -> false
+	} else false
 }
 
 class SymbolResolveProcessor(private val name: String, place: PsiElement, val incompleteCode: Boolean) :

@@ -1,2 +1,2 @@
-rootProject.name = "fuck"
+rootProject.name = "covscript-intellij"
 

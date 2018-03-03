@@ -76,6 +76,7 @@ tasks.withType<PatchPluginXmlTask> {
 	changeNotes(file("res/META-INF/change-notes.html").readText())
 	pluginDescription(file("res/META-INF/description.html").readText())
 	version(pluginVersion)
+	pluginId(packageName)
 }
 
 val SourceSet.kotlin
