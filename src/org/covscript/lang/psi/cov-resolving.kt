@@ -30,12 +30,12 @@ class CovSymbolRef(
 		return variantsProcessor.candidateSet.toTypedArray()
 	}
 
-	override fun isReferenceTo(o: PsiElement?) = o == refTo ||
+	override fun isReferenceTo(o: PsiElement?) = o === refTo ||
 			(o as? PsiNameIdentifierOwner)?.nameIdentifier?.text == element.text
 
 	override fun resolve() = refTo ?: multiResolve(false).firstOrNull()?.element.also { refTo = it }
 	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
-		if (element.isDeclaration or element.project.isDisposed) return emptyArray()
+		if (element.isDeclaration or !element.isValid or element.project.isDisposed) return emptyArray()
 		val file = element.containingFile ?: return emptyArray()
 		return ResolveCache
 				.getInstance(element.project)
@@ -59,8 +59,7 @@ abstract class ResolveProcessor<ResolveResult>(private val place: PsiElement) : 
 	protected val PsiElement.hasNoError get() = (this as? StubBasedPsiElement<*>)?.stub != null || !PsiTreeUtil.hasErrorElements(this)
 
 	protected fun isInScope(element: PsiElement) = if (element is CovSymbol) when {
-		element.isParameter -> PsiTreeUtil.isAncestor(
-				PsiTreeUtil.getParentOfType(element, CovFunctionDeclaration::class.java), place, true)
+		element.isParameter -> PsiTreeUtil.isAncestor(element.parent, place, true)
 		element.isDeclaration -> PsiTreeUtil.isAncestor(
 				PsiTreeUtil.getParentOfType(element, CovStatement::class.java)?.parent, place, false)
 		else -> false

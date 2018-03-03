@@ -61,9 +61,10 @@ class CovCommenter : Commenter {
 }
 
 class CovSpellCheckingStrategy : SpellcheckingStrategy() {
-	override fun getTokenizer(element: PsiElement): Tokenizer<*> = when (element) {
-		is CovComment, is CovSymbol -> super.getTokenizer(element)
-		is CovString -> super.getTokenizer(element).takeIf { it != EMPTY_TOKENIZER } ?: TEXT_TOKENIZER
+	override fun getTokenizer(element: PsiElement): Tokenizer<*> = when {
+		element is CovComment -> super.getTokenizer(element)
+		element is CovSymbol && element.isDeclaration -> super.getTokenizer(element)
+		element is CovString -> super.getTokenizer(element).takeIf { it != EMPTY_TOKENIZER } ?: TEXT_TOKENIZER
 		else -> EMPTY_TOKENIZER
 	}
 }

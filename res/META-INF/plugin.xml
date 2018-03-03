@@ -20,6 +20,9 @@
 		<directoryProjectGenerator implementation="org.covscript.lang.module.CovProjectGenerator"/>
 		<errorHandler implementation="de.halirutan.mathematica.errorreporting.cov.GitHubErrorReporter"/>
 		<consoleFilterProvider implementation="org.covscript.lang.execution.CovConsoleFilterProvider"/>
+		<lang.findUsagesProvider
+				language="CovScript"
+				implementationClass="org.covscript.lang.psi.CovFindUsageProvider"/>
 		<lang.refactoringSupport
 				language="CovScript"
 				implementationClass="org.covscript.lang.psi.CovRefactoringSupportProvider"/>
