@@ -26,9 +26,8 @@ val CovCollapsedStatement.anythingInside: PsiElement? get() = children.getOrNull
 
 fun collectFrom(startPoint: PsiElement, name: String, self: PsiElement? = null) = SyntaxTraverser
 		.psiTraverser(startPoint)
-		.filter { it is CovSymbol && it !== self && it.text == name }
+		.filter { it is CovSymbol && !it.isDeclaration && it !== self && it.text == name }
 		.mapNotNull(PsiElement::getReference)
-		.toList()
 		.toTypedArray()
 
 fun treeWalkUp(

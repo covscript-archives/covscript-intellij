@@ -10,12 +10,12 @@ import org.covscript.lang.CovTokenType
 import org.covscript.lang.psi.*
 
 interface ICovVariableDeclaration : PsiNameIdentifierOwner {
-	override fun getNameIdentifier(): CovSymbol
+	override fun getNameIdentifier(): PsiElement
 }
 
 abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, TrivialDeclaration(node) {
-	private var idCache: CovSymbol? = null
-	override fun getNameIdentifier() = idCache ?: (children.first { it is CovSymbol } as CovSymbol).also { idCache = it }
+	private var idCache: PsiElement? = null
+	override fun getNameIdentifier() = idCache ?: children.first { it is CovSymbol }.also { idCache = it }
 	override fun subtreeChanged() {
 		idCache = null
 		super.subtreeChanged()
@@ -34,10 +34,11 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 	open val startPoint: PsiElement
 		get() = PsiTreeUtil.getParentOfType(this, CovStatement::class.java, true)?.parent ?: parent
 
-	override fun getReferences(): Array<PsiReference> = refCache
+	override fun getReferences(): Array<PsiReference> = (refCache
 			?: collectFrom(startPoint, nameIdentifier.text, nameIdentifier)
 					.also { refCache = it }
-			?: emptyArray()
+			?: emptyArray())
+			.also { println(it.size) }
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
