@@ -12,6 +12,7 @@ import com.intellij.navigation.LocationPresentation
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.patterns.*
 import com.intellij.pom.PomTargetPsiElement
 import com.intellij.psi.*
@@ -84,6 +85,16 @@ class CovNamesValidator : NamesValidator, RenameInputValidator {
 			name.all { it.isLetterOrDigit() || it == '_' } and
 			!name.first().isDigit() and
 			!isKeyword(name, project)
+}
+
+object CovFileNameValidator : InputValidatorEx {
+	override fun canClose(inputString: String?) = checkInput(inputString)
+	override fun getErrorText(inputString: String?) = CovBundle.message("cov.actions.new-file.invalid", inputString.orEmpty())
+	override fun checkInput(inputString: String?) = inputString?.run {
+		all { it.isLetterOrDigit() || it == '_' } and
+				!first().isDigit() and
+				(this !in COV_KEYWORDS)
+	}.orFalse()
 }
 
 const val TEXT_MAX = 16
