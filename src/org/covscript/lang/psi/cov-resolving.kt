@@ -35,19 +35,19 @@ class CovSymbolRef(
 
 	override fun resolve() = refTo ?: multiResolve(false).firstOrNull()?.element.also { refTo = it }
 	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
-		if (element.isDeclaration) return emptyArray()
-		if (element.project.isDisposed) return emptyArray()
+		if (element.isDeclaration or element.project.isDisposed) return emptyArray()
+		val file = element.containingFile ?: return emptyArray()
 		return ResolveCache
 				.getInstance(element.project)
-				.resolveWithCaching(this, Resolver, true, incompleteCode)
+				.resolveWithCaching(this, resolver, true, incompleteCode, file)
 	}
 
-	private companion object Resolver : ResolveCache.PolyVariantResolver<CovSymbolRef> {
-		override fun resolve(ref: CovSymbolRef, incompleteCode: Boolean): Array<out ResolveResult> {
+	private companion object ResolverHolder {
+		private val resolver = ResolveCache.PolyVariantResolver<CovSymbolRef> { ref, incompleteCode ->
 			val processor = SymbolResolveProcessor(ref, incompleteCode)
-			val file = ref.element.containingFile ?: return emptyArray()
+			val file = ref.element.containingFile ?: return@PolyVariantResolver emptyArray()
 			treeWalkUp(processor, ref.element, file)
-			return processor.candidateSet.toTypedArray()
+			processor.candidateSet.toTypedArray()
 		}
 	}
 }
@@ -76,7 +76,7 @@ class SymbolResolveProcessor(private val name: String, place: PsiElement, val in
 	override fun execute(element: PsiElement, resolveState: ResolveState) = when {
 		candidateSet.isNotEmpty() -> false
 		element is CovSymbol -> {
-			val accessible = accessible(element)
+			val accessible = accessible(element) and element.isDeclaration
 			if (accessible) candidateSet += PsiElementResolveResult(element, element.hasNoError)
 			!accessible
 		}
@@ -91,7 +91,7 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 	override val candidateSet = ArrayList<LookupElementBuilder>(30)
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
 		if (element.hasNoError and isInScope(element)) {
-			if (element !is CovSymbol) return true
+			if (element !is CovSymbol || !element.isDeclaration) return true
 			val (type, icon) = when {
 				element.isParameter -> "Parameter" to CovIcons.VARIABLE_ICON
 				element.isException -> "Exception" to CovIcons.TRY_CATCH_ICON

@@ -34,11 +34,10 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 	open val startPoint: PsiElement
 		get() = PsiTreeUtil.getParentOfType(this, CovStatement::class.java, true)?.parent ?: parent
 
-	override fun getReferences(): Array<PsiReference> = (refCache
+	override fun getReferences(): Array<PsiReference> = refCache
 			?: collectFrom(startPoint, nameIdentifier.text, nameIdentifier)
 					.also { refCache = it }
-			?: emptyArray())
-			.also { println(it.size) }
+			?: emptyArray()
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
