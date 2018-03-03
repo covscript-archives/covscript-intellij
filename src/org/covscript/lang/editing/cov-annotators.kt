@@ -22,17 +22,25 @@ class CovAnnotator : Annotator {
 			is CovBlockStatement -> blockStatement(element, holder)
 			is CovWhileStatement -> whileStatement(element, holder)
 			is CovLoopUntilStatement -> loopUntilStatement(element, holder)
-			is CovBracketExpr -> brackedExpr(element, holder)
+			is CovBracketExpr -> bracketedExpr(element, holder)
 			is CovPlusOp -> plusOp(element, holder)
 			is CovNamespaceDeclaration -> holder.createInfoAnnotation(element.symbol, null)
 					.textAttributes = CovSyntaxHighlighter.NAMESPACE_DEFINITION
-			is CovFunctionDeclaration -> holder.createInfoAnnotation(element.children[1], null)
-					.textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION
+			is CovFunctionDeclaration -> functionDeclaration(element, holder)
 			is CovVariableDeclaration -> holder.createInfoAnnotation(element.nameIdentifier, null)
 					.textAttributes = CovSyntaxHighlighter.VARIABLE_DEFINITION
 			is CovStructDeclaration -> holder.createInfoAnnotation(element.symbol, null)
 					.textAttributes = CovSyntaxHighlighter.STRUCT_DEFINITION
 			is CovCollapsedStatement -> collapsedStatement(element, holder)
+		}
+	}
+
+	private fun functionDeclaration(
+			element: CovFunctionDeclaration,
+			holder: AnnotationHolder) {
+		element.nameIdentifier?.let {
+			holder.createInfoAnnotation(it, null)
+					.textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION
 		}
 	}
 
@@ -114,7 +122,7 @@ class CovAnnotator : Annotator {
 		}
 	}
 
-	private fun brackedExpr(
+	private fun bracketedExpr(
 			element: CovBracketExpr,
 			holder: AnnotationHolder) {
 		val innerExpr = element.expr as? CovBracketExpr ?: return
