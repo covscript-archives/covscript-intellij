@@ -12,16 +12,17 @@ import icons.CovIcons
 import org.covscript.lang.CovTokenType
 import org.covscript.lang.psi.impl.treeWalkUp
 
-abstract class CovSymbolRef(private var refTo: PsiElement? = null) :
-		PsiPolyVariantReference {
-	abstract override fun getElement(): CovSymbol
+class CovSymbolRef(
+		private val symbol: CovSymbol,
+		private var refTo: PsiElement? = null) : PsiPolyVariantReference {
+	override fun getElement() = symbol
 	override fun getRangeInElement() = TextRange(0, element.textLength)
 	override fun bindToElement(ref: PsiElement) = element.also { refTo = ref }
 	override fun isSoft() = true
 	override fun equals(other: Any?) = (other as? CovSymbolRef)?.element == element
 	override fun hashCode() = element.hashCode()
 	override fun getCanonicalText(): String = element.text
-	override fun handleElementRename(newName: String) = CovTokenType.fromText(newName, element.project).also { element.replace(it) }
+	override fun handleElementRename(newName: String) = CovTokenType.fromText(newName, element.project).let(element::replace)
 	override fun getVariants(): Array<LookupElementBuilder> {
 		val variantsProcessor = CompletionProcessor(this, true)
 		val file = element.containingFile ?: return emptyArray()
@@ -87,7 +88,7 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 		ResolveProcessor<LookupElementBuilder>(place) {
 	constructor(ref: CovSymbolRef, incompleteCode: Boolean) : this(ref.element, incompleteCode)
 
-	override val candidateSet = ArrayList<LookupElementBuilder>(20)
+	override val candidateSet = ArrayList<LookupElementBuilder>(30)
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
 		if (element.hasNoError and isInScope(element)) {
 			if (element !is CovSymbol) return true

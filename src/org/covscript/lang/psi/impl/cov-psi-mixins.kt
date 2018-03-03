@@ -5,6 +5,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.injected.StringLiteralEscaper
 import com.intellij.psi.scope.PsiScopeProcessor
+import com.intellij.psi.util.PsiTreeUtil
 import org.covscript.lang.CovTokenType
 import org.covscript.lang.psi.*
 
@@ -15,7 +16,6 @@ interface ICovVariableDeclaration : PsiNameIdentifierOwner {
 abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, TrivialDeclaration(node) {
 	private var idCache: CovSymbol? = null
 	override fun getNameIdentifier() = idCache ?: (children.first { it is CovSymbol } as CovSymbol).also { idCache = it }
-	override val startPoint: PsiElement get() = parent
 	override fun subtreeChanged() {
 		idCache = null
 		super.subtreeChanged()
@@ -24,18 +24,20 @@ abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclarati
 
 abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), PsiNameIdentifierOwner {
 	private var refCache: Array<PsiReference>? = null
-	override fun setName(newName: String) = CovTokenType.fromText(newName, project).let(nameIdentifier::replace)
-			.also {
-				if (it is TrivialDeclaration)
-					it.refCache = references.mapNotNull { it.handleElementRename(newName).reference }.toTypedArray()
-			}
+	override fun setName(newName: String) = also {
+		nameIdentifier.let { CovTokenType.fromText(newName, project).let(it::replace) }
+		references.mapNotNull { it.handleElementRename(newName).reference }.toTypedArray()
+	}
 
 	override fun getName(): String = nameIdentifier.text
 	abstract override fun getNameIdentifier(): PsiElement
-	abstract val startPoint: PsiElement
+	open val startPoint: PsiElement?
+		get() = PsiTreeUtil.getParentOfType(this, CovStatement::class.java, true)?.parent
+
 	override fun getReferences(): Array<PsiReference> = refCache
-			?: collectFrom(startPoint, nameIdentifier.text, nameIdentifier)
-					.also { refCache = it }
+			?: startPoint?.let { collectFrom(it, nameIdentifier.text, nameIdentifier) }
+					?.also { refCache = it }
+			?: emptyArray()
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
@@ -49,7 +51,6 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 
 abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclaration, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = children.first { it is CovSymbol }
-	override val startPoint: PsiElement get() = parent.parent
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement): Boolean {
 		symbolList.forEach {
@@ -99,7 +100,6 @@ abstract class CovForStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node),
 
 abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclaration, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = symbol
-	override val startPoint: PsiElement get() = parent.parent
 }
 
 abstract class CovTryCatchDeclarationMixin(node: ASTNode) : CovTryCatchStatement, ASTWrapperPsiElement(node) {
@@ -122,11 +122,7 @@ interface ICovSymbol : PsiNameIdentifierOwner {
 }
 
 abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(node) {
-	private val referenceImpl by lazy {
-		object : CovSymbolRef() {
-			override fun getElement() = this@CovSymbolMixin
-		}
-	}
+	private var referenceImpl: CovSymbolRef? = null
 	final override val isException: Boolean by lazy { parent is CovTryCatchStatement }
 	final override val isLoopVar: Boolean by lazy { parent is CovForStatement }
 	final override val isVar: Boolean by lazy { parent.let { it is CovVariableDeclaration && it.nameIdentifier === this } }
@@ -150,7 +146,11 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(n
 			processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
 			processor.execute(this, state)
 
-	override fun getReference() = referenceImpl
+	override fun getReference() = referenceImpl ?: CovSymbolRef(this).also { referenceImpl = it }
 	override fun getNameIdentifier() = this
 	override fun setName(name: String) = CovTokenType.fromText(name, project).also { replace(it) }
+	override fun subtreeChanged() {
+		referenceImpl = null
+		super.subtreeChanged()
+	}
 }
