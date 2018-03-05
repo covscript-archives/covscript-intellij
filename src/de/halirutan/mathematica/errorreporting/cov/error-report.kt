@@ -169,7 +169,7 @@ class GitHubErrorReporter : ErrorReportSubmitter() {
 	override fun getReportActionText() = ErrorReportBundle.message("report.error.to.plugin.vendor")
 	override fun submit(
 			events: Array<IdeaLoggingEvent>, info: String?, parent: Component, consumer: Consumer<SubmittedReportInfo>) =
-			doSubmit(events[0], parent, consumer, GitHubErrorBean(events[0].throwable, IdeaLogger.ourLastActionId), info)
+			doSubmit(events[0], parent, consumer, GitHubErrorBean(events.first().throwable, IdeaLogger.ourLastActionId), info)
 
 	private fun doSubmit(
 			event: IdeaLoggingEvent,
@@ -223,7 +223,7 @@ class GitHubErrorReporter : ErrorReportSubmitter() {
  *
  * @author patrick (17.06.17).
  */
-class GitHubErrorBean(throwable: Throwable, lastAction: String) : ErrorBean(throwable, lastAction) {
+class GitHubErrorBean(throwable: Throwable, lastAction: String?) : ErrorBean(throwable, lastAction) {
 	val exceptionHash = Arrays.hashCode(throwable.stackTrace).toString()
 }
 
