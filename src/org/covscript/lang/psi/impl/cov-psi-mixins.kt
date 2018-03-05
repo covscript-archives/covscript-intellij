@@ -77,12 +77,24 @@ abstract class CovCommentMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovC
 }
 
 interface ICovStatement : PsiElement {
-	val inside: PsiElement
+	val inside: PsiElement?
 }
 
 abstract class CovStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovStatement {
-	override val inside: PsiElement
-		get() = if (children.size == 1) children.first() else children[1]
+	override val inside: PsiElement?
+		get() = children.firstOrNull()?.takeIf {
+			it is CovFunctionDeclaration ||
+					it is CovNamespaceDeclaration ||
+					it is CovVariableDeclaration ||
+					it is CovForStatement ||
+					it is CovStructDeclaration ||
+					it is CovLoopUntilStatement ||
+					it is CovIfStatement ||
+					it is CovWhileStatement ||
+					it is CovSwitchStatement ||
+					it is CovBlockStatement ||
+					it is CovTryCatchStatement
+		}
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
