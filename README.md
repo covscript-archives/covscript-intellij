@@ -16,7 +16,7 @@ To install a stable build, visit https://plugins.jetbrains.com/plugin/10326-covs
 
 ## Contributing
 
-Contact [@ice1000](https://github.com/ice1000) by emails or GitHub issues are all OK.  
+Contact [@ice1000](https://github.com/ice1000) by any means you want.  
 This repo is currently maintained by only one developer.
 
 ## Screenshots

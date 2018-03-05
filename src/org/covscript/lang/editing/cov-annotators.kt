@@ -24,6 +24,7 @@ class CovAnnotator : Annotator {
 			is CovLoopUntilStatement -> loopUntilStatement(element, holder)
 			is CovBracketExpr -> bracketedExpr(element, holder)
 			is CovPlusOp -> plusOp(element, holder)
+			is CovMinusOp -> minusOp(element, holder)
 			is CovNamespaceDeclaration -> holder.createInfoAnnotation(element.symbol, null)
 					.textAttributes = CovSyntaxHighlighter.NAMESPACE_DEFINITION
 			is CovFunctionDeclaration -> functionDeclaration(element, holder)
@@ -59,6 +60,22 @@ class CovAnnotator : Annotator {
 				holder.createWeakWarningAnnotation(element, infoText)
 						.registerFix(CovReplaceWithTextIntention(element,
 								(leftDec + rightDec).toPlainString(),
+								CovBundle.message("cov.lint.replace-with-calculated")))
+			}
+		}
+	}
+
+	private fun minusOp(element: CovMinusOp, holder: AnnotationHolder) {
+		val left = element.children.first { it is CovExpr } as CovExpr
+		val right = element.children.last { it is CovExpr } as CovExpr
+		val infoText = CovBundle.message("cov.lint.constant-folding")
+		when {
+			left is CovNumber && right is CovNumber -> {
+				val leftDec = BigDecimal(left.text)
+				val rightDec = BigDecimal(right.text)
+				holder.createWeakWarningAnnotation(element, infoText)
+						.registerFix(CovReplaceWithTextIntention(element,
+								(leftDec - rightDec).toPlainString(),
 								CovBundle.message("cov.lint.replace-with-calculated")))
 			}
 		}
