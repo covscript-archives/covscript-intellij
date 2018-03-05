@@ -1,5 +1,6 @@
 package org.covscript.lang.editing
 
+import com.intellij.ide.IconProvider
 import com.intellij.ide.structureView.*
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
 import com.intellij.ide.util.treeView.smartTree.SortableTreeElement
@@ -25,7 +26,22 @@ import com.intellij.util.ProcessingContext
 import icons.CovIcons
 import org.covscript.lang.*
 import org.covscript.lang.psi.*
+import javax.swing.Icon
 
+class CovIconProvider : IconProvider() {
+	override fun getIcon(element: PsiElement, flags: Int): Icon? {
+		val file = element as? CovFile ?: return null
+		val statements = file.children.filterIsInstance<CovStatement>()
+		val validChildren = statements.mapNotNull { it.inside }
+		if (validChildren.size != 1) return CovIcons.COV_ICON
+		return when (validChildren.first()) {
+			is CovNamespaceDeclaration -> CovIcons.NAMESPACE_ICON
+			is CovStructDeclaration -> CovIcons.STRUCT_ICON
+			is CovFunctionDeclaration -> CovIcons.FUNCTION_ICON
+			else -> CovIcons.COV_ICON
+		}
+	}
+}
 
 class CovBraceMatcher : PairedBraceMatcher {
 	companion object {
@@ -229,10 +245,10 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 		override fun getAlphaSortKey() = presentableText
 		override fun getPresentableText() = cutText(element.let { o ->
 			when (o) {
-				is CovFile -> "CovScript file"
-				is CovFunctionDeclaration -> "function ${o.children[1].text}"
-				is CovStructDeclaration -> "struct ${o.symbol.text}"
-				is CovNamespaceDeclaration -> "namespace ${o.symbol.text}"
+				is CovFile -> o.name
+				is CovFunctionDeclaration -> "${o.nameIdentifier?.text}()"
+				is CovStructDeclaration -> o.symbol.text
+				is CovNamespaceDeclaration -> o.symbol.text
 				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.run { "iterate ${expr.text}" } ?: "to"}"
 				is CovLoopUntilStatement -> "loop${o.expr?.run { " until $text" } ?: ""}"
 				is CovWhileStatement -> "while ${o.expr.text}"
@@ -240,7 +256,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovSwitchStatement -> "switch statement"
 				is CovCollapsedStatement -> "collapsed block"
 				is CovBlockStatement -> "begin block"
-				is CovVariableDeclaration -> "var ${o.nameIdentifier.text}"
+				is CovVariableDeclaration -> o.nameIdentifier.text
 				is CovIfStatement -> "if ${o.expr.text}"
 				else -> "??"
 			}
