@@ -127,12 +127,13 @@ val commitHash by lazy {
 
 val isCI = !System.getenv("CI").isNullOrBlank()
 
-val pluginVersion = "1.8"
+val pluginComingVersion = "1.8.1"
+val pluginVersion = if (isCI) "$pluginComingVersion-$commitHash" else pluginComingVersion
 val packageName = "org.covscript"
 val kotlinVersion: String by extra
 
 group = packageName
-version = if (isCI) "$pluginVersion-$commitHash" else pluginVersion
+version = pluginVersion
 
 repositories {
 	mavenCentral()
