@@ -22,8 +22,6 @@ fun PsiElement.processDeclTrivial(
 	return true
 }
 
-val CovCollapsedStatement.anythingInside: PsiElement? get() = children.getOrNull(1)
-
 fun collectFrom(startPoint: PsiElement, name: String, self: PsiElement? = null) = SyntaxTraverser
 		.psiTraverser(startPoint)
 		.filter { it is CovSymbol && !it.isDeclaration && it !== self && it.text == name }

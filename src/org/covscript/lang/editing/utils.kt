@@ -6,7 +6,6 @@ import com.intellij.psi.PsiElement
 import org.covscript.lang.CovBundle
 import org.covscript.lang.CovSyntaxHighlighter
 import org.covscript.lang.psi.CovCollapsedStatement
-import org.covscript.lang.psi.impl.anythingInside
 
 
 const val EMPTY_CHARACTERS = " \t\r\n"
@@ -21,5 +20,5 @@ fun dealWithEscape(element: PsiElement, index: Int, char: Char, holder: Annotati
 fun collapsedToOneLine(element: CovCollapsedStatement) =
 		CovReplaceWithTextIntention(
 				element,
-				element.anythingInside?.text?.replace("\n", "") ?: element.text,
+				element.children.firstOrNull()?.text?.replace("\n", "") ?: element.text,
 				CovBundle.message("cov.lint.convert-collapsed-block"))

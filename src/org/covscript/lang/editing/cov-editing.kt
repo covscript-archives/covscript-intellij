@@ -249,19 +249,19 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 		override fun getLocationString() = ""
 		override fun getLocationPrefix() = ""
 		override fun getLocationSuffix() = ""
-		override fun getChildrenBase(): List<CovStructureElement> = element.let { o ->
+		override fun getChildrenBase() = element.let { o ->
 			when (o) {
 				is CovFile -> o.children.mapNotNull { (it as? CovStatement)?.inside }
-				is CovFunctionDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
-				is CovStructDeclaration -> o.functionDeclarationList + o.variableDeclarationList
-				is CovNamespaceDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
-				is CovForStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
-				is CovLoopUntilStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
-				is CovWhileStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
-				is CovTryCatchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.inside } }
-				is CovSwitchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.inside } }
+				is CovFunctionDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it.inside }
+				is CovStructDeclaration -> o.children.filter { it is CovFunctionDeclaration || it is CovVariableDeclaration }
+				is CovNamespaceDeclaration -> o.bodyOfSomething.statementList.map { it.inside }
+				is CovForStatement -> o.bodyOfSomething.statementList.map { it.inside }
+				is CovLoopUntilStatement -> o.bodyOfSomething.statementList.map { it.inside }
+				is CovWhileStatement -> o.bodyOfSomething.statementList.map { it.inside }
+				is CovTryCatchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.map { it.inside } }
+				is CovSwitchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.map { it.inside } }
 				is CovBlockStatement -> o.bodyOfSomething.statementList.mapNotNull { it?.inside }
-				is CovIfStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it?.inside } }
+				is CovIfStatement -> o.bodyOfSomethingList.flatMap { it.statementList.map { it.inside } }
 				is PsiElement -> o.children.mapNotNull { (it as? CovStatement)?.inside }
 				else -> emptyList()
 			}.map(::CovStructureElement)
