@@ -21,15 +21,10 @@ public interface CovIcons {
 	@NotNull Icon CONTROL_FLOW_ICON = IconLoader.getIcon("/icons/control_flow.png");
 	@NotNull Icon JOJO_ICON = IconLoader.getIcon("/icons/jojo.png");
 
-	@NotNull
-	Icon STRUCT_ICON = IconLoader.getIcon("/icons/static.png");
-	@NotNull
-	Icon COLLAPSED_ICON = IconLoader.getIcon("/icons/annotationtype.png");
-	@NotNull
-	Icon VARIABLE_ICON = IconLoader.getIcon("/icons/variable.png");
-	@NotNull
-	Icon TRY_CATCH_ICON = IconLoader.getIcon("/icons/exceptionClass.png");
+	@NotNull Icon STRUCT_ICON = IconLoader.getIcon("/icons/static.png");
+	@NotNull Icon COLLAPSED_ICON = IconLoader.getIcon("/icons/annotationtype.png");
+	@NotNull Icon VARIABLE_ICON = IconLoader.getIcon("/icons/variable.png");
+	@NotNull Icon TRY_CATCH_ICON = IconLoader.getIcon("/icons/exceptionClass.png");
 	@NotNull Icon SWITCH_ICON = IconLoader.getIcon("/nodes/deploy.png");
-	@NotNull
-	Icon BLOCK_ICON = IconLoader.getIcon("/icons/anonymousClass.png");
+	@NotNull Icon BLOCK_ICON = IconLoader.getIcon("/icons/anonymousClass.png");
 }
