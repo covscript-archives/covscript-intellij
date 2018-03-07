@@ -1,7 +1,5 @@
 <idea-plugin>
 	<name>CovScript</name>
-	<version>1.8</version>
-	<id>org.covscript</id>
 	<vendor email="ice1000kotlin@foxmail.com" url="http://covscript.org">ice1000</vendor>
 
 	<idea-version since-build="145.0"/>

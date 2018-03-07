@@ -46,8 +46,12 @@ class NewCovFile : CreateFileFromTemplateAction(
 		val className = FileUtilRt.getNameWithoutExtension(name)
 		val project = dir.project
 		val properties = createProperties(project, className)
-		CreateFromTemplateDialog(project, dir, template,
-				AttributesDefaults(className).withFixedName(true), properties)
+		CreateFromTemplateDialog(
+				project,
+				dir,
+				template,
+				AttributesDefaults(className).withFixedName(true),
+				properties)
 				.create()
 				.containingFile
 	} catch (e: Exception) {
