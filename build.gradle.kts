@@ -27,7 +27,7 @@ val commitHash by lazy {
 
 val isCI = !System.getenv("CI").isNullOrBlank()
 
-val pluginComingVersion = "1.8.1"
+val pluginComingVersion = "1.8.2"
 val pluginVersion = if (isCI) "$pluginComingVersion-$commitHash" else pluginComingVersion
 val packageName = "org.covscript"
 val kotlinVersion: String by extra
@@ -54,19 +54,22 @@ buildscript {
 }
 
 plugins {
+	idea
+	java
 	id("org.jetbrains.intellij") version "0.2.18"
+	kotlin("jvm") version "1.2.30"
+}
+
+idea {
+	module {
+		// https://github.com/gradle/kotlin-dsl/issues/537/
+		excludeDirs.add(file("pinpoint-piggy"))
+	}
 }
 
 allprojects {
 	apply {
-		listOf(
-			"kotlin",
-			"java",
-			"org.jetbrains.grammarkit",
-			"org.jetbrains.intellij"
-		).forEach {
-			plugin(it)
-		}
+		plugin("org.jetbrains.grammarkit")
 	}
 
 	intellij {
@@ -110,13 +113,13 @@ val SourceSet.kotlin
 		.kotlin
 
 java.sourceSets {
-	getByName("main").run {
+	"main" {
 		java.srcDirs("src", "gen")
 		kotlin.srcDirs("src", "gen")
 		resources.srcDirs("res")
 	}
 
-	getByName("test").run {
+	"test" {
 		java.srcDirs("test")
 		kotlin.srcDirs("test")
 		resources.srcDirs("testData")
