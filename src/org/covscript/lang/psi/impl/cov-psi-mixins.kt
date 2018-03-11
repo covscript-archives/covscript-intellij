@@ -60,15 +60,15 @@ interface ICovFunctionDeclaration : PsiNameIdentifierOwner {
 
 abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclaration, TrivialDeclaration(node) {
 	private var nameCache: PsiElement? = null
-	override fun getNameIdentifier() = nameCache ?: children.first { it is CovSymbol }.also { nameCache = it }
+	override fun getNameIdentifier() = nameCache
+			?: children.firstOrNull { it is CovSymbol }.also { nameCache = it }
+			?: this
+
 	override fun processDeclarations(
-			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement): Boolean {
-		symbolList.forEach {
-			if (it.isParameter and !processor.execute(it, substitutor))
-				return false
-		}
-		return super.processDeclarations(processor, substitutor, lastParent, place)
-	}
+			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			symbolList.asReversed().all {
+				it.processDeclarations(processor, substitutor, lastParent, place)
+			} and processDeclTrivial(processor, substitutor, lastParent, place)
 
 	override fun subtreeChanged() {
 		nameCache = null

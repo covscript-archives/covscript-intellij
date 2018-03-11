@@ -12,12 +12,11 @@ import icons.CovIcons
 import org.covscript.lang.CovTokenType
 import org.covscript.lang.psi.impl.treeWalkUp
 
-class CovSymbolRef(
-		private val symbol: CovSymbol,
-		private var refTo: PsiElement? = null) : PsiPolyVariantReference {
+class CovSymbolRef constructor(private val symbol: CovSymbol) : PsiPolyVariantReference {
+	private var refTo: PsiNameIdentifierOwner? = null
 	override fun getElement() = symbol
 	override fun getRangeInElement() = TextRange(0, element.textLength)
-	override fun bindToElement(ref: PsiElement) = element.also { refTo = ref }
+	override fun bindToElement(ref: PsiElement) = ref.also { refTo = it as? PsiNameIdentifierOwner }
 	override fun isSoft() = true
 	override fun equals(other: Any?) = (other as? CovSymbolRef)?.element == element
 	override fun hashCode() = element.hashCode()
@@ -25,7 +24,7 @@ class CovSymbolRef(
 	override fun handleElementRename(newName: String) = CovTokenType
 			.fromText(newName, element.project)
 			.let(element::replace)
-			.also { (refTo as? PsiNameIdentifierOwner)?.setName(newName) }
+			.also { refTo?.setName(newName) }
 
 	override fun getVariants(): Array<LookupElementBuilder> {
 		val variantsProcessor = CompletionProcessor(this, true)
@@ -34,9 +33,11 @@ class CovSymbolRef(
 		return variantsProcessor.candidateSet.toTypedArray()
 	}
 
-	override fun isReferenceTo(o: PsiElement?) = o === refTo
+	override fun isReferenceTo(o: PsiElement?) = o === refTo || o === resolve()
+	override fun resolve() = refTo
+			?: multiResolve(false)
+					.firstOrNull()?.element.also { refTo = it as? PsiNameIdentifierOwner }
 
-	override fun resolve() = refTo ?: multiResolve(false).firstOrNull()?.element.also { refTo = it }
 	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
 		if (element.isDeclaration or !element.isValid or element.project.isDisposed) return emptyArray()
 		val file = element.containingFile ?: return emptyArray()
