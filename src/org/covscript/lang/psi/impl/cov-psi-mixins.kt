@@ -51,7 +51,7 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 	}
 }
 
-interface ICovFunctionDeclaration : CovFunctionDeclaration, PsiNameIdentifierOwner {
+interface ICovFunctionDeclaration : PsiNameIdentifierOwner {
 	override fun getNameIdentifier(): PsiElement
 }
 
@@ -126,6 +126,14 @@ abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclara
 	override fun getNameIdentifier() = symbol
 }
 
+interface ICovStructDeclaration : PsiNameIdentifierOwner {
+	override fun getNameIdentifier(): PsiElement
+}
+
+abstract class CovStructDeclarationMixin(node: ASTNode) : CovStructDeclaration, TrivialDeclaration(node) {
+	override fun getNameIdentifier() = exprList.first()
+}
+
 abstract class CovTryCatchDeclarationMixin(node: ASTNode) : CovTryCatchStatement, ASTWrapperPsiElement(node) {
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
@@ -153,7 +161,7 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(n
 	final override val isConstVar: Boolean by lazy { isVar && prevSibling.prevSibling?.run { node.elementType == CovTypes.CONST_KEYWORD } == true }
 	final override val isParameter: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.nameIdentifier !== this } }
 	final override val isNamespaceName: Boolean by lazy { parent is CovNamespaceDeclaration }
-	final override val isStructName: Boolean get() = parent is CovStructDeclaration
+	final override val isStructName: Boolean by lazy { parent.let { it is CovStructDeclaration && it.nameIdentifier === this } }
 	final override val isFunctionName: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.nameIdentifier === this } }
 	final override val isDeclaration: Boolean by lazy {
 		isException or

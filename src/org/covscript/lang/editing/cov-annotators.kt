@@ -30,7 +30,7 @@ class CovAnnotator : Annotator {
 			is CovFunctionDeclaration -> functionDeclaration(element, holder)
 			is CovVariableDeclaration -> holder.createInfoAnnotation(element.nameIdentifier, null)
 					.textAttributes = CovSyntaxHighlighter.VARIABLE_DEFINITION
-			is CovStructDeclaration -> holder.createInfoAnnotation(element.symbol, null)
+			is CovStructDeclaration -> holder.createInfoAnnotation(element.nameIdentifier, null)
 					.textAttributes = CovSyntaxHighlighter.STRUCT_DEFINITION
 			is CovCollapsedStatement -> collapsedStatement(element, holder)
 		}
@@ -39,10 +39,9 @@ class CovAnnotator : Annotator {
 	private fun functionDeclaration(
 			element: CovFunctionDeclaration,
 			holder: AnnotationHolder) {
-		element.nameIdentifier?.let {
-			holder.createInfoAnnotation(it, null)
-					.textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION
-		}
+		holder
+				.createInfoAnnotation(element.nameIdentifier, null)
+				.textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION
 	}
 
 	private fun plusOp(element: CovPlusOp, holder: AnnotationHolder) {

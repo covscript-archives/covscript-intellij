@@ -61,7 +61,10 @@ namespaceDeclaration ::=
 structDeclaration ::=
  STRUCT_KEYWORD symbol (EXTENDS_KEYWORD expr) endOfLine
   ((variableDeclaration | functionDeclaration) endOfLine)*
- END_KEYWORD
+ END_KEYWORD {
+	implements=['org.covscript.lang.psi.impl.ICovStructDeclaration']
+	mixin='org.covscript.lang.psi.impl.CovStructDeclarationMixin'
+}
 
 bodyOfSomething ::= (statement endOfLine)* {
 	mixin='org.covscript.lang.psi.impl.CovBodyOfSomethingMixin'
