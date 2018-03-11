@@ -76,6 +76,17 @@
 	</project-components>
 
 	<actions>
+		<group
+				id="Cov.Tools"
+				icon="CovIcons.COV_BIG_ICON"
+				text="CovScript"
+				description="CovScript related tools"
+				popup="true">
+			<action
+					id="Cov.Tools.StartPkg"
+					class="org.covscript.lang.action.StartCovPkgAction"/>
+			<add-to-group group-id="ToolsMenu" anchor="last"/>
+		</group>
 		<action
 				id="Cov.NewCovFile"
 				class="org.covscript.lang.action.NewCovFile"
