@@ -43,11 +43,12 @@ variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expr {
 }
 
 functionDeclaration ::=
- FUNCTION_KEYWORD symbol LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET endOfLine
+ FUNCTION_KEYWORD symbol LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET
+   OVERRIDE_KEYWORD? endOfLine
   bodyOfSomething
  END_KEYWORD {
 	mixin='org.covscript.lang.psi.impl.CovFunctionDeclarationMixin'
-	implements=['com.intellij.psi.PsiNameIdentifierOwner']
+	implements=['org.covscript.lang.psi.impl.ICovFunctionDeclaration']
 }
 
 namespaceDeclaration ::=
@@ -58,7 +59,7 @@ namespaceDeclaration ::=
 }
 
 structDeclaration ::=
- STRUCT_KEYWORD symbol endOfLine
+ STRUCT_KEYWORD symbol (EXTENDS_KEYWORD expr) endOfLine
   ((variableDeclaration | functionDeclaration) endOfLine)*
  END_KEYWORD
 

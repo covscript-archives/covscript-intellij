@@ -90,6 +90,8 @@ default { return CovTypes.DEFAULT_KEYWORD; }
 and { return CovTypes.AND_KEYWORD; }
 or { return CovTypes.OR_KEYWORD; }
 not { return CovTypes.NOT_KEYWORD; }
+extends { return CovTypes.EXTENDS_KEYWORD; }
+override { return CovTypes.OVERRIDE_KEYWORD; }
 
 -\> { return CovTypes.ARROW; }
 \: { return CovTypes.COLON_SYM; }

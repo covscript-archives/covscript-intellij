@@ -51,6 +51,10 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 	}
 }
 
+interface ICovFunctionDeclaration : CovFunctionDeclaration, PsiNameIdentifierOwner {
+	override fun getNameIdentifier(): PsiElement
+}
+
 abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclaration, TrivialDeclaration(node) {
 	private var nameCache: PsiElement? = null
 	override fun getNameIdentifier() = nameCache ?: children.first { it is CovSymbol }.also { nameCache = it }

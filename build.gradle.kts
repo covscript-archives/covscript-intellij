@@ -16,9 +16,9 @@ val commitHash by lazy {
 	val output: String
 	val process: Process = Runtime.getRuntime().exec("git rev-parse --short HEAD")
 	process.waitFor(2000L, TimeUnit.MILLISECONDS)
-	output = process.inputStream.`fuck kotlin! it doesn't support "use" here` {
-		bufferedReader().`fuck kotlin! it doesn't support "use" here` {
-			readText()
+	output = process.inputStream.use {
+		it.bufferedReader().use {
+			it.readText()
 		}
 	}
 	process.destroy()
@@ -108,9 +108,9 @@ tasks.withType<PatchPluginXmlTask> {
 
 val SourceSet.kotlin
 	get() = (this as HasConvention)
-		.convention
-		.getPlugin(KotlinSourceSet::class.java)
-		.kotlin
+			.convention
+			.getPlugin(KotlinSourceSet::class.java)
+			.kotlin
 
 java.sourceSets {
 	"main" {
@@ -126,18 +126,10 @@ java.sourceSets {
 	}
 }
 
-@Suppress("FunctionName", "ConvertTryFinallyToUseCall")
-inline fun <reified Closable : Closeable, reified Unit : Any>
-	Closable.`fuck kotlin! it doesn't support "use" here`(block: Closable.() -> Unit): Unit = try {
-	block()
-} finally {
-	close()
-}
-
 // TODO workaround for KT-23077
 inline fun <reified TheTask : BaseTask>
-	Project.genTask(name: String, noinline configuration: TheTask.() -> Unit) =
-	task(name, TheTask::class, configuration)
+		Project.genTask(name: String, noinline configuration: TheTask.() -> Unit) =
+		task(name, TheTask::class, configuration)
 
 repositories {
 	mavenCentral()
