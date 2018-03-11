@@ -38,7 +38,7 @@ class CovIconProvider : IconProvider() {
 			is CovNamespaceDeclaration -> CovIcons.NAMESPACE_ICON
 			is CovStructDeclaration -> CovIcons.STRUCT_ICON
 			is CovFunctionDeclaration -> CovIcons.FUNCTION_ICON
-			else -> CovIcons.COV_ICON
+			else -> null
 		}
 	}
 }

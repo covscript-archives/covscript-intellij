@@ -6,7 +6,6 @@ package org.covscript.lang.psi.impl
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
-import org.covscript.lang.psi.CovCollapsedStatement
 import org.covscript.lang.psi.CovSymbol
 
 fun PsiElement.processDeclTrivial(
@@ -26,6 +25,7 @@ fun collectFrom(startPoint: PsiElement, name: String, self: PsiElement? = null) 
 		.psiTraverser(startPoint)
 		.filter { it is CovSymbol && !it.isDeclaration && it !== self && it.text == name }
 		.mapNotNull(PsiElement::getReference)
+		.let { if (self != null) it.filter { it.isReferenceTo(self) } else it }
 		.toTypedArray()
 
 fun treeWalkUp(

@@ -91,6 +91,8 @@ tasks.withType<KotlinCompile> {
 	dependsOn("genLexer")
 	kotlinOptions {
 		jvmTarget = "1.8"
+		languageVersion = "1.2"
+		apiVersion = "1.2"
 	}
 }
 
@@ -137,7 +139,13 @@ repositories {
 
 dependencies {
 	compileOnly(kotlin("stdlib", kotlinVersion))
+	compile(kotlin("stdlib-jdk8", kotlinVersion).toString()) {
+		exclude(module = "kotlin-runtime")
+		exclude(module = "kotlin-reflect")
+		exclude(module = "kotlin-stdlib")
+	}
 	compile(files(Paths.get("lib", "org.eclipse.egit.github.core-2.1.5.jar")))
+	testCompile(kotlin("test-junit", kotlinVersion))
 	testCompile("junit", "junit", "4.12")
 }
 

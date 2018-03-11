@@ -19,6 +19,8 @@ class CovFindUsageProvider : FindUsagesProvider {
 		when {
 			it.isParameter -> "Parameter"
 			it.isFunctionName -> "Function"
+			it.isConstVar -> "Const var"
+			it.isException -> "Exception"
 			else -> ""
 		}
 	} ?: ""

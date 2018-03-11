@@ -22,7 +22,11 @@ class CovSymbolRef(
 	override fun equals(other: Any?) = (other as? CovSymbolRef)?.element == element
 	override fun hashCode() = element.hashCode()
 	override fun getCanonicalText(): String = element.text
-	override fun handleElementRename(newName: String) = CovTokenType.fromText(newName, element.project).let(element::replace)
+	override fun handleElementRename(newName: String) = CovTokenType
+			.fromText(newName, element.project)
+			.let(element::replace)
+			.also { (refTo as? PsiNameIdentifierOwner)?.setName(newName) }
+
 	override fun getVariants(): Array<LookupElementBuilder> {
 		val variantsProcessor = CompletionProcessor(this, true)
 		val file = element.containingFile ?: return emptyArray()
@@ -30,8 +34,7 @@ class CovSymbolRef(
 		return variantsProcessor.candidateSet.toTypedArray()
 	}
 
-	override fun isReferenceTo(o: PsiElement?) = o === refTo ||
-			(o as? PsiNameIdentifierOwner)?.nameIdentifier?.text == element.text
+	override fun isReferenceTo(o: PsiElement?) = o === refTo
 
 	override fun resolve() = refTo ?: multiResolve(false).firstOrNull()?.element.also { refTo = it }
 	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
@@ -71,7 +74,7 @@ class SymbolResolveProcessor(private val name: String, place: PsiElement, val in
 	constructor(ref: CovSymbolRef, incompleteCode: Boolean) : this(ref.canonicalText, ref.element, incompleteCode)
 
 	override val candidateSet = ArrayList<PsiElementResolveResult>(3)
-	fun accessible(element: PsiElement) = name == element.text && isInScope(element)
+	fun accessible(element: PsiElement) = element.hasNoError && name == element.text && isInScope(element)
 	override fun execute(element: PsiElement, resolveState: ResolveState) = when {
 		candidateSet.isNotEmpty() -> false
 		element is CovSymbol -> {
@@ -89,23 +92,22 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 
 	override val candidateSet = ArrayList<LookupElementBuilder>(30)
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
-		if (element.hasNoError and isInScope(element)) {
-			if (element !is CovSymbol || !element.isDeclaration) return true
-			val (type, icon) = when {
-				element.isParameter -> "Parameter" to CovIcons.VARIABLE_ICON
-				element.isException -> "Exception" to CovIcons.TRY_CATCH_ICON
-				element.isVar -> "Variable" to CovIcons.VARIABLE_ICON
-				element.isConstVar -> "Constant" to CovIcons.VARIABLE_ICON
-				element.isFunctionName -> "Function" to CovIcons.FUNCTION_ICON
-				element.isNamespaceName -> "Namespace" to CovIcons.NAMESPACE_ICON
-				element.isLoopVar -> "Loop var" to CovIcons.VARIABLE_ICON
-				element.isStructName -> "Struct" to CovIcons.STRUCT_ICON
-				else -> "<Unknown>" to CovIcons.COV_BIG_ICON
-			}
-			candidateSet += LookupElementBuilder.create(element.text)
-					.withIcon(icon)
-					.withTypeText(type)
+		if (!(element.hasNoError and isInScope(element))) return true
+		if (element !is CovSymbol || !element.isDeclaration) return true
+		val (type, icon) = when {
+			element.isParameter -> "Parameter" to CovIcons.VARIABLE_ICON
+			element.isException -> "Exception" to CovIcons.TRY_CATCH_ICON
+			element.isVar -> "Variable" to CovIcons.VARIABLE_ICON
+			element.isConstVar -> "Constant" to CovIcons.VARIABLE_ICON
+			element.isFunctionName -> "Function" to CovIcons.FUNCTION_ICON
+			element.isNamespaceName -> "Namespace" to CovIcons.NAMESPACE_ICON
+			element.isLoopVar -> "Loop var" to CovIcons.VARIABLE_ICON
+			element.isStructName -> "Struct" to CovIcons.STRUCT_ICON
+			else -> "<Unknown>" to CovIcons.COV_BIG_ICON
 		}
+		candidateSet += LookupElementBuilder.create(element.text)
+				.withIcon(icon)
+				.withTypeText(type)
 		return true
 	}
 }

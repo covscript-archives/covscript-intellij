@@ -70,7 +70,9 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 				CovTypes.DEFAULT_KEYWORD,
 				CovTypes.NOT_KEYWORD,
 				CovTypes.AND_KEYWORD,
-				CovTypes.OR_KEYWORD
+				CovTypes.OR_KEYWORD,
+				CovTypes.OVERRIDE_KEYWORD,
+				CovTypes.EXTENDS_KEYWORD
 		)
 
 		@JvmField val OPERATOR_LIST = listOf(

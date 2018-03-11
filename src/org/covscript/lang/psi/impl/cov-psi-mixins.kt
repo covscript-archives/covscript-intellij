@@ -15,7 +15,10 @@ interface ICovVariableDeclaration : PsiNameIdentifierOwner {
 
 abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, TrivialDeclaration(node) {
 	private var idCache: PsiElement? = null
-	override fun getNameIdentifier() = idCache ?: children.first { it is CovSymbol }.also { idCache = it }
+	override fun getNameIdentifier() = idCache
+			?: children.firstOrNull { it is CovSymbol }.also { idCache = it }
+			?: this
+
 	override fun subtreeChanged() {
 		idCache = null
 		super.subtreeChanged()
@@ -34,7 +37,7 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 	open val startPoint: PsiElement
 		get() = PsiTreeUtil.getParentOfType(this, CovStatement::class.java, true)?.parent ?: parent
 
-	override fun getReferences(): Array<PsiReference> = refCache
+	override fun getReferences() = refCache
 			?: nameIdentifier
 					.let { collectFrom(startPoint, it.text, it) }
 					.also { refCache = it }
@@ -42,7 +45,7 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			processor.execute(nameIdentifier, substitutor) and
+			nameIdentifier.processDeclarations(processor, substitutor, lastParent, place) and
 					processDeclTrivial(processor, substitutor, lastParent, place)
 
 	override fun subtreeChanged() {
@@ -118,8 +121,8 @@ abstract class CovBodyOfSomethingMixin(node: ASTNode) : ASTWrapperPsiElement(nod
 abstract class CovForStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovForStatement {
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			if (!symbol.processDeclarations(processor, substitutor, lastParent, place)) false
-			else processDeclTrivial(processor, substitutor, lastParent, place)
+			symbol.processDeclarations(processor, substitutor, lastParent, place) and
+					processDeclTrivial(processor, substitutor, lastParent, place)
 }
 
 abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclaration, TrivialDeclaration(node) {
