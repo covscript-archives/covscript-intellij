@@ -142,8 +142,8 @@ class CovBreadCrumbProvider : BreadcrumbsProvider {
 	}
 
 	override fun getElementInfo(o: PsiElement): String = cutText(when (o) {
-		is CovFunctionDeclaration -> o.nameIdentifier.text
-		is CovStructDeclaration -> o.nameIdentifier.text
+		is CovFunctionDeclaration -> o.nameIdentifier?.text.orEmpty()
+		is CovStructDeclaration -> o.nameIdentifier?.text.orEmpty()
 		is CovNamespaceDeclaration -> o.symbol.text
 		is CovForStatement -> "for ${o.symbol.text}"
 		is CovArrayLit -> "array literal"
@@ -246,8 +246,8 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 		override fun getPresentableText() = cutText(element.let { o ->
 			when (o) {
 				is CovFile -> o.name
-				is CovFunctionDeclaration -> "${o.nameIdentifier.text}()"
-				is CovStructDeclaration -> o.nameIdentifier.text
+				is CovFunctionDeclaration -> "${o.nameIdentifier?.text}()"
+				is CovStructDeclaration -> o.nameIdentifier?.text.orEmpty()
 				is CovNamespaceDeclaration -> o.symbol.text
 				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.run { "iterate ${expr.text}" } ?: "to"}"
 				is CovLoopUntilStatement -> "loop${o.expr?.run { " until $text" } ?: ""}"
@@ -256,7 +256,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovSwitchStatement -> "switch statement"
 				is CovCollapsedStatement -> "collapsed block"
 				is CovBlockStatement -> "begin block"
-				is CovVariableDeclaration -> o.nameIdentifier.text
+				is CovVariableDeclaration -> o.nameIdentifier?.text.orEmpty()
 				is CovIfStatement -> "if ${o.expr.text}"
 				else -> "??"
 			}

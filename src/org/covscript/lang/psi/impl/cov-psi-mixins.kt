@@ -6,18 +6,25 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.injected.StringLiteralEscaper
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.IncorrectOperationException
 import org.covscript.lang.CovTokenType
+import org.covscript.lang.orFalse
 import org.covscript.lang.psi.*
 
-interface ICovVariableDeclaration : PsiNameIdentifierOwner {
-	override fun getNameIdentifier(): PsiElement
+interface ICovImportDeclaration : PsiNameIdentifierOwner
+
+abstract class CovImportDeclarationMixin(node: ASTNode) : CovImportDeclaration, ASTWrapperPsiElement(node) {
+	override fun getNameIdentifier() = symbol
+	@Throws(IncorrectOperationException::class)
+	override fun setName(name: String) = throw IncorrectOperationException("Cannot rename import statement")
 }
+
+interface ICovVariableDeclaration : PsiNameIdentifierOwner
 
 abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, TrivialDeclaration(node) {
 	private var idCache: PsiElement? = null
 	override fun getNameIdentifier() = idCache
 			?: children.firstOrNull { it is CovSymbol }.also { idCache = it }
-			?: this
 
 	override fun subtreeChanged() {
 		idCache = null
@@ -32,20 +39,19 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 		references.forEach { it.handleElementRename(newName) }
 	}
 
-	override fun getName(): String = nameIdentifier.text
-	abstract override fun getNameIdentifier(): PsiElement
+	override fun getName() = nameIdentifier?.text
 	open val startPoint: PsiElement
 		get() = PsiTreeUtil.getParentOfType(this, CovStatement::class.java, true)?.parent ?: parent
 
 	override fun getReferences() = refCache
 			?: nameIdentifier
-					.let { collectFrom(startPoint, it.text, it) }
-					.also { refCache = it }
+					?.let { collectFrom(startPoint, it.text, it) }
+					?.also { refCache = it }
 			?: emptyArray()
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			nameIdentifier.processDeclarations(processor, substitutor, lastParent, place) and
+			nameIdentifier?.processDeclarations(processor, substitutor, lastParent, place).orFalse() and
 					processDeclTrivial(processor, substitutor, lastParent, place)
 
 	override fun subtreeChanged() {
@@ -54,15 +60,12 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 	}
 }
 
-interface ICovFunctionDeclaration : PsiNameIdentifierOwner {
-	override fun getNameIdentifier(): PsiElement
-}
+interface ICovFunctionDeclaration : PsiNameIdentifierOwner
 
 abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclaration, TrivialDeclaration(node) {
 	private var nameCache: PsiElement? = null
 	override fun getNameIdentifier() = nameCache
 			?: children.firstOrNull { it is CovSymbol }.also { nameCache = it }
-			?: this
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
@@ -130,11 +133,11 @@ abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclara
 }
 
 interface ICovStructDeclaration : PsiNameIdentifierOwner {
-	override fun getNameIdentifier(): PsiElement
+	override fun getNameIdentifier(): CovExpr?
 }
 
 abstract class CovStructDeclarationMixin(node: ASTNode) : CovStructDeclaration, TrivialDeclaration(node) {
-	override fun getNameIdentifier() = exprList.first()
+	override fun getNameIdentifier() = exprList.firstOrNull()
 }
 
 abstract class CovTryCatchDeclarationMixin(node: ASTNode) : CovTryCatchStatement, ASTWrapperPsiElement(node) {
@@ -144,7 +147,7 @@ abstract class CovTryCatchDeclarationMixin(node: ASTNode) : CovTryCatchStatement
 					processDeclTrivial(processor, state, lastParent, place)
 }
 
-interface ICovSymbol : PsiNameIdentifierOwner {
+interface ICovSymbol : PsiNameIdentifierOwner, CovExpr {
 	val isException: Boolean
 	val isLoopVar: Boolean
 	val isParameter: Boolean
@@ -154,9 +157,11 @@ interface ICovSymbol : PsiNameIdentifierOwner {
 	val isStructName: Boolean
 	val isNamespaceName: Boolean
 	val isDeclaration: Boolean
+	val isImportedName: Boolean
+	val isUsingedName: Boolean
 }
 
-abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(node) {
+abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, CovExprMixin(node) {
 	private var referenceImpl: CovSymbolRef? = null
 	final override val isException: Boolean get() = parent is CovTryCatchStatement
 	final override val isLoopVar: Boolean get() = parent is CovForStatement
@@ -166,6 +171,8 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, ASTWrapperPsiElement(n
 	final override val isNamespaceName: Boolean by lazy { parent is CovNamespaceDeclaration }
 	final override val isStructName: Boolean by lazy { parent.let { it is CovStructDeclaration && it.nameIdentifier === this } }
 	final override val isFunctionName: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.nameIdentifier === this } }
+	final override val isImportedName: Boolean by lazy { parent.let { it is CovImportDeclaration && it.nameIdentifier === this } }
+	final override val isUsingedName: Boolean by lazy { parent.let { it is CovUsingDeclaration && it.nameIdentifier === this } }
 	final override val isDeclaration: Boolean by lazy {
 		isException or
 				isLoopVar or

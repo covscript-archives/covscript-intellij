@@ -28,20 +28,33 @@ class CovAnnotator : Annotator {
 			is CovNamespaceDeclaration -> holder.createInfoAnnotation(element.symbol, null)
 					.textAttributes = CovSyntaxHighlighter.NAMESPACE_DEFINITION
 			is CovFunctionDeclaration -> functionDeclaration(element, holder)
-			is CovVariableDeclaration -> holder.createInfoAnnotation(element.nameIdentifier, null)
-					.textAttributes = CovSyntaxHighlighter.VARIABLE_DEFINITION
-			is CovStructDeclaration -> holder.createInfoAnnotation(element.nameIdentifier, null)
-					.textAttributes = CovSyntaxHighlighter.STRUCT_DEFINITION
+			is CovVariableDeclaration -> variableDeclaration(element, holder)
+			is CovStructDeclaration -> structDeclaration(element, holder)
 			is CovCollapsedStatement -> collapsedStatement(element, holder)
+		}
+	}
+
+	private fun variableDeclaration(element: CovVariableDeclaration, holder: AnnotationHolder) {
+		element.nameIdentifier?.let {
+			holder.createInfoAnnotation(it, null)
+					.textAttributes = CovSyntaxHighlighter.VARIABLE_DEFINITION
+		}
+	}
+
+	private fun structDeclaration(element: CovStructDeclaration, holder: AnnotationHolder) {
+		element.nameIdentifier?.let {
+			holder.createInfoAnnotation(it, null)
+					.textAttributes = CovSyntaxHighlighter.STRUCT_DEFINITION
 		}
 	}
 
 	private fun functionDeclaration(
 			element: CovFunctionDeclaration,
 			holder: AnnotationHolder) {
-		holder
-				.createInfoAnnotation(element.nameIdentifier, null)
-				.textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION
+		element.nameIdentifier?.let {
+			holder.createInfoAnnotation(it, null)
+					.textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION
+		}
 	}
 
 	private fun plusOp(element: CovPlusOp, holder: AnnotationHolder) {

@@ -11,7 +11,6 @@
   tokenTypeClass='org.covscript.lang.CovTokenType'
   elementTypeHolderClass='org.covscript.lang.psi.CovTypes'
   elementTypeClass='org.covscript.lang.CovElementType'
-  psiImplUtilClass='org.covscript.lang.psi.impl.CovPsiImplUtils'
 }
 
 file ::=
@@ -33,11 +32,17 @@ comment ::= LINE_COMMENT {
 	implements=['com.intellij.psi.PsiLanguageInjectionHost' 'com.intellij.psi.PsiComment']
 }
 
-importDeclaration ::= IMPORT_KEYWORD symbol
-usingDeclaration ::= USING_KEYWORD symbol
+importDeclaration ::= IMPORT_KEYWORD symbol {
+	pin=1
+	implements=['org.covscript.lang.psi.impl.ICovImportDeclaration']
+	mixin='org.covscript.lang.psi.impl.CovImportDeclarationMixin'
+}
+
+usingDeclaration ::= USING_KEYWORD symbol (DOT symbol)*
 packageDeclaration ::= PACKAGE_KEYWORD symbol
 
 variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expr {
+	pin=2
 	mixin='org.covscript.lang.psi.impl.CovVariableDeclarationMixin'
 	implements=['org.covscript.lang.psi.impl.ICovVariableDeclaration']
 }
@@ -47,6 +52,7 @@ functionDeclaration ::=
    OVERRIDE_KEYWORD? endOfLine
   bodyOfSomething
  END_KEYWORD {
+	pin=1
 	mixin='org.covscript.lang.psi.impl.CovFunctionDeclarationMixin'
 	implements=['org.covscript.lang.psi.impl.ICovFunctionDeclaration']
 }
@@ -55,6 +61,7 @@ namespaceDeclaration ::=
  NAMESPACE_KEYWORD symbol endOfLine
   bodyOfSomething
  END_KEYWORD {
+	pin=1
 	mixin='org.covscript.lang.psi.impl.CovNamespaceDeclarationMixin'
 }
 
@@ -62,6 +69,7 @@ structDeclaration ::=
  STRUCT_KEYWORD symbol (EXTENDS_KEYWORD expr) endOfLine
   ((variableDeclaration | functionDeclaration) endOfLine)*
  END_KEYWORD {
+	pin=1
 	implements=['org.covscript.lang.psi.impl.ICovStructDeclaration']
 	mixin='org.covscript.lang.psi.impl.CovStructDeclarationMixin'
 }

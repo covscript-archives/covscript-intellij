@@ -30,4 +30,10 @@ class CovParserTest : ParsingTestCase("", COV_EXTENSION, CovParserDefinition()) 
 		println(name)
 		doTest(true)
 	}
+
+	@Test
+	fun testUsing() {
+		println(name)
+		doTest(true)
+	}
 }
