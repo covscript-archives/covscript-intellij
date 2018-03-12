@@ -16,13 +16,17 @@ interface ICovImportDeclaration : PsiNameIdentifierOwner
 abstract class CovImportDeclarationMixin(node: ASTNode) : CovImportDeclaration, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = symbol
 	@Throws(IncorrectOperationException::class)
-	override fun setName(newName: String) = throw IncorrectOperationException("Cannot rename import statement")
+	override fun setName(newName: String): TrivialDeclaration =
+			throw IncorrectOperationException("Cannot rename import statement")
 }
 
 interface ICovUsingDeclaration : PsiNameIdentifierOwner
 
-abstract class CovUsingDeclarationMixin(node: ASTNode) : CovUsingDeclaration, TrivialDeclaration(node) {
+abstract class CovUsingDeclarationMixin(node: ASTNode) : CovUsingDeclaration, ASTWrapperPsiElement(node) {
 	override fun getNameIdentifier() = symbolList.lastOrNull()
+	@Throws(IncorrectOperationException::class)
+	override fun setName(newName: String) =
+			throw IncorrectOperationException("Cannot rename import statement")
 }
 
 interface ICovVariableDeclaration : PsiNameIdentifierOwner
@@ -185,6 +189,8 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, CovExprMixin(node) {
 				isVar or
 				isConstVar or
 				isNamespaceName or
+				isUsingedName or
+				isImportedName or
 				isFunctionName or
 				isStructName or
 				isParameter

@@ -25,12 +25,18 @@ class CovAnnotator : Annotator {
 			is CovBracketExpr -> bracketedExpr(element, holder)
 			is CovPlusOp -> plusOp(element, holder)
 			is CovMinusOp -> minusOp(element, holder)
-			is CovNamespaceDeclaration -> holder.createInfoAnnotation(element.symbol, null)
-					.textAttributes = CovSyntaxHighlighter.NAMESPACE_DEFINITION
+			is CovNamespaceDeclaration -> namespaceDeclaration(element, holder)
 			is CovFunctionDeclaration -> functionDeclaration(element, holder)
 			is CovVariableDeclaration -> variableDeclaration(element, holder)
 			is CovStructDeclaration -> structDeclaration(element, holder)
 			is CovCollapsedStatement -> collapsedStatement(element, holder)
+		}
+	}
+
+	private fun namespaceDeclaration(element: CovNamespaceDeclaration, holder: AnnotationHolder) {
+		element.symbol?.let {
+			holder.createInfoAnnotation(it, null)
+					.textAttributes = CovSyntaxHighlighter.NAMESPACE_DEFINITION
 		}
 	}
 

@@ -142,9 +142,7 @@ class CovBreadCrumbProvider : BreadcrumbsProvider {
 	}
 
 	override fun getElementInfo(o: PsiElement): String = cutText(when (o) {
-		is CovFunctionDeclaration -> o.nameIdentifier?.text.orEmpty()
-		is CovStructDeclaration -> o.nameIdentifier?.text.orEmpty()
-		is CovNamespaceDeclaration -> o.symbol.text
+		is PsiNameIdentifierOwner -> o.nameIdentifier?.text.orEmpty()
 		is CovForStatement -> "for ${o.symbol.text}"
 		is CovArrayLit -> "array literal"
 		is CovLoopUntilStatement -> "loop ${o.expr}"
@@ -247,8 +245,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 			when (o) {
 				is CovFile -> o.name
 				is CovFunctionDeclaration -> "${o.nameIdentifier?.text}()"
-				is CovStructDeclaration -> o.nameIdentifier?.text.orEmpty()
-				is CovNamespaceDeclaration -> o.symbol.text
+				is PsiNameIdentifierOwner -> o.nameIdentifier?.text.orEmpty()
 				is CovForStatement -> "for ${o.symbol.text} ${o.forIterate?.run { "iterate ${expr.text}" } ?: "to"}"
 				is CovLoopUntilStatement -> "loop${o.expr?.run { " until $text" } ?: ""}"
 				is CovWhileStatement -> "while ${o.expr.text}"
@@ -256,7 +253,6 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovSwitchStatement -> "switch statement"
 				is CovCollapsedStatement -> "collapsed block"
 				is CovBlockStatement -> "begin block"
-				is CovVariableDeclaration -> o.nameIdentifier?.text.orEmpty()
 				is CovIfStatement -> "if ${o.expr.text}"
 				else -> "??"
 			}
@@ -268,9 +264,9 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 		override fun getChildrenBase() = element.let { o ->
 			when (o) {
 				is CovFile -> o.children.mapNotNull { (it as? CovStatement)?.inside }
-				is CovFunctionDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it.inside }
+				is CovFunctionDeclaration -> o.bodyOfSomething?.statementList.orEmpty().mapNotNull { it.inside }
 				is CovStructDeclaration -> o.children.filter { it is CovFunctionDeclaration || it is CovVariableDeclaration }
-				is CovNamespaceDeclaration -> o.bodyOfSomething.statementList.mapNotNull { it.inside }
+				is CovNamespaceDeclaration -> o.bodyOfSomething?.statementList.orEmpty().mapNotNull { it.inside }
 				is CovForStatement -> o.bodyOfSomething.statementList.mapNotNull { it.inside }
 				is CovLoopUntilStatement -> o.bodyOfSomething.statementList.mapNotNull { it.inside }
 				is CovWhileStatement -> o.bodyOfSomething.statementList.mapNotNull { it.inside }
