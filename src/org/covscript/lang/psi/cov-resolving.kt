@@ -63,7 +63,9 @@ abstract class ResolveProcessor<ResolveResult>(private val place: PsiElement) : 
 	protected val PsiElement.hasNoError get() = (this as? StubBasedPsiElement<*>)?.stub != null || !PsiTreeUtil.hasErrorElements(this)
 
 	protected fun isInScope(element: PsiElement) = if (element is CovSymbol) when {
-		element.isParameter -> PsiTreeUtil.isAncestor(element.parent, place, true)
+		element.isParameter or
+				element.isException or
+				element.isLoopVar -> PsiTreeUtil.isAncestor(element.parent, place, true)
 		element.isDeclaration -> PsiTreeUtil.isAncestor(
 				PsiTreeUtil.getParentOfType(element, CovStatement::class.java)?.parent, place, false)
 		else -> false

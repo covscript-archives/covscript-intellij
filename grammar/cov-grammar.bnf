@@ -71,7 +71,7 @@ namespaceDeclaration ::=
 }
 
 structDeclaration ::=
- STRUCT_KEYWORD symbol (EXTENDS_KEYWORD expr) endOfLine
+ STRUCT_KEYWORD symbol (EXTENDS_KEYWORD expr)? endOfLine
   ((variableDeclaration | functionDeclaration) endOfLine)*
  END_KEYWORD {
 	pin=1
@@ -92,6 +92,8 @@ tryCatchStatement ::=
  CATCH_KEYWORD symbol endOfLine
   bodyOfSomething
  END_KEYWORD {
+	pin=1
+	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 	mixin='org.covscript.lang.psi.impl.CovTryCatchDeclarationMixin'
 }
 
@@ -102,7 +104,7 @@ ifStatement ::=
    ELSE_KEYWORD endOfLine
     bodyOfSomething
   )?
- END_KEYWORD
+ END_KEYWORD { pin=1 }
 
 switchStatement ::=
  SWITCH_KEYWORD expr endOfLine
@@ -111,23 +113,25 @@ switchStatement ::=
     bodyOfSomething
    END_KEYWORD endOfLine
   )*
- END_KEYWORD
+ END_KEYWORD { pin=1 }
 
 whileStatement ::=
  WHILE_KEYWORD expr endOfLine
   bodyOfSomething
- END_KEYWORD
+ END_KEYWORD { pin=1 }
 
 loopUntilStatement ::=
  LOOP_KEYWORD endOfLine
   bodyOfSomething
  (UNTIL_KEYWORD expr endOfLine)?
- END_KEYWORD
+ END_KEYWORD { pin=1 }
 
 forStatement ::=
  FOR_KEYWORD symbol (forTo | forIterate) endOfLine
   bodyOfSomething
  END_KEYWORD {
+	pin=1
+	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 	mixin='org.covscript.lang.psi.impl.CovForStatementMixin'
 }
 
@@ -137,7 +141,7 @@ forIterate ::= ITERATE_KEYWORD expr
 blockStatement ::=
  BLOCK_KEYWORD endOfLine
   bodyOfSomething
- END_KEYWORD
+ END_KEYWORD { pin=1 }
 
 statement ::=
    primaryStatement

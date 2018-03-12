@@ -51,6 +51,10 @@ class CovBlockToStatementIntention(
 	override fun isAvailable(project: Project, editor: Editor?, psiFile: PsiFile?) = true
 	override fun getFamilyName() = CovBundle.message("cov.name")
 	override operator fun invoke(project: Project, editor: Editor?, psiFile: PsiFile?) {
-		element.bodyOfSomething.statementList.firstOrNull()?.let(element::replace) ?: element.delete()
+		element.bodyOfSomething
+				?.statementList
+				?.firstOrNull()
+				?.let(element::replace)
+				?: element.delete()
 	}
 }

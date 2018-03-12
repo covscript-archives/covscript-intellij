@@ -133,7 +133,7 @@ class CovAnnotator : Annotator {
 	private fun blockStatement(
 			element: CovBlockStatement,
 			holder: AnnotationHolder) {
-		if (element.bodyOfSomething.statementList.size <= 1)
+		if (element.bodyOfSomething?.statementList.orEmpty().size <= 1)
 			holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.unnecessary-block"))
 					.registerFix(CovBlockToStatementIntention(element))
 	}
@@ -141,9 +141,9 @@ class CovAnnotator : Annotator {
 	private fun whileStatement(
 			element: CovWhileStatement,
 			holder: AnnotationHolder) {
-		if (element.expr.text == "true")
+		if (element.expr?.text == "true")
 			holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.infinite-while"))
-					.registerFix(CovReplaceWithTextIntention(element, "loop\n${element.bodyOfSomething.text}end",
+					.registerFix(CovReplaceWithTextIntention(element, "loop\n${element.bodyOfSomething?.text}end",
 							CovBundle.message("cov.lint.replace-with-loop")))
 	}
 

@@ -23,7 +23,7 @@ abstract class CovImportDeclarationMixin(node: ASTNode) : CovImportDeclaration, 
 
 interface ICovUsingDeclaration : PsiNameIdentifierOwner
 
-abstract class CovUsingDeclarationMixin(node: ASTNode) : CovUsingDeclaration, ASTWrapperPsiElement(node) {
+abstract class CovUsingDeclarationMixin(node: ASTNode) : CovUsingDeclaration, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = symbolList.lastOrNull()
 	// workaround for KT-23219
 	@Throws(IncorrectOperationException::class)
@@ -133,11 +133,8 @@ abstract class CovBodyOfSomethingMixin(node: ASTNode) : ASTWrapperPsiElement(nod
 			processDeclTrivial(processor, substitutor, lastParent, place)
 }
 
-abstract class CovForStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovForStatement {
-	override fun processDeclarations(
-			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			symbol.processDeclarations(processor, substitutor, lastParent, place) and
-					processDeclTrivial(processor, substitutor, lastParent, place)
+abstract class CovForStatementMixin(node: ASTNode) : TrivialDeclaration(node), CovForStatement {
+	override fun getNameIdentifier() = symbol
 }
 
 abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclaration, TrivialDeclaration(node) {
@@ -152,11 +149,8 @@ abstract class CovStructDeclarationMixin(node: ASTNode) : CovStructDeclaration, 
 	override fun getNameIdentifier() = exprList.firstOrNull()
 }
 
-abstract class CovTryCatchDeclarationMixin(node: ASTNode) : CovTryCatchStatement, ASTWrapperPsiElement(node) {
-	override fun processDeclarations(
-			processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			symbol.processDeclarations(processor, state, lastParent, place) and
-					processDeclTrivial(processor, state, lastParent, place)
+abstract class CovTryCatchDeclarationMixin(node: ASTNode) : CovTryCatchStatement, TrivialDeclaration(node) {
+	override fun getNameIdentifier() = symbol
 }
 
 interface ICovSymbol : PsiNameIdentifierOwner, CovExpr {
@@ -175,8 +169,8 @@ interface ICovSymbol : PsiNameIdentifierOwner, CovExpr {
 
 abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, CovExprMixin(node) {
 	private var referenceImpl: CovSymbolRef? = null
-	final override val isException: Boolean get() = parent is CovTryCatchStatement
-	final override val isLoopVar: Boolean get() = parent is CovForStatement
+	final override val isException: Boolean by lazy { parent.let { it is CovTryCatchStatement && it.nameIdentifier === this } }
+	final override val isLoopVar: Boolean by lazy { parent.let { it is CovForStatement && it.nameIdentifier === this } }
 	final override val isVar: Boolean by lazy { parent.let { it is CovVariableDeclaration && it.nameIdentifier === this } }
 	final override val isConstVar: Boolean by lazy { isVar && prevSibling.prevSibling?.run { node.elementType == CovTypes.CONST_KEYWORD } == true }
 	final override val isParameter: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.nameIdentifier !== this } }
