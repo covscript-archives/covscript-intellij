@@ -38,8 +38,13 @@ importDeclaration ::= IMPORT_KEYWORD symbol {
 	mixin='org.covscript.lang.psi.impl.CovImportDeclarationMixin'
 }
 
-usingDeclaration ::= USING_KEYWORD symbol (DOT symbol)*
-packageDeclaration ::= PACKAGE_KEYWORD symbol
+usingDeclaration ::= USING_KEYWORD symbol (DOT symbol)* {
+	pin=1
+	implements=['org.covscript.lang.psi.impl.ICovUsingDeclaration']
+	mixin='org.covscript.lang.psi.impl.CovUsingDeclarationMixin'
+}
+
+packageDeclaration ::= PACKAGE_KEYWORD symbol { pin=1 }
 
 variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expr {
 	pin=2

@@ -13,10 +13,16 @@ import org.covscript.lang.psi.*
 
 interface ICovImportDeclaration : PsiNameIdentifierOwner
 
-abstract class CovImportDeclarationMixin(node: ASTNode) : CovImportDeclaration, ASTWrapperPsiElement(node) {
+abstract class CovImportDeclarationMixin(node: ASTNode) : CovImportDeclaration, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = symbol
 	@Throws(IncorrectOperationException::class)
-	override fun setName(name: String) = throw IncorrectOperationException("Cannot rename import statement")
+	override fun setName(newName: String) = throw IncorrectOperationException("Cannot rename import statement")
+}
+
+interface ICovUsingDeclaration : PsiNameIdentifierOwner
+
+abstract class CovUsingDeclarationMixin(node: ASTNode) : CovUsingDeclaration, TrivialDeclaration(node) {
+	override fun getNameIdentifier() = symbolList.lastOrNull()
 }
 
 interface ICovVariableDeclaration : PsiNameIdentifierOwner
