@@ -15,6 +15,7 @@ interface ICovImportDeclaration : PsiNameIdentifierOwner
 
 abstract class CovImportDeclarationMixin(node: ASTNode) : CovImportDeclaration, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = symbol
+	// workaround for KT-23219
 	@Throws(IncorrectOperationException::class)
 	override fun setName(newName: String): TrivialDeclaration =
 			throw IncorrectOperationException("Cannot rename import statement")
@@ -24,8 +25,9 @@ interface ICovUsingDeclaration : PsiNameIdentifierOwner
 
 abstract class CovUsingDeclarationMixin(node: ASTNode) : CovUsingDeclaration, ASTWrapperPsiElement(node) {
 	override fun getNameIdentifier() = symbolList.lastOrNull()
+	// workaround for KT-23219
 	@Throws(IncorrectOperationException::class)
-	override fun setName(newName: String) =
+	override fun setName(newName: String): TrivialDeclaration =
 			throw IncorrectOperationException("Cannot rename import statement")
 }
 
