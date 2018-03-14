@@ -4,8 +4,6 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns.psiElement
-import com.intellij.patterns.StandardPatterns
-import com.intellij.patterns.StandardPatterns.*
 import com.intellij.psi.PsiElement
 import com.intellij.util.ProcessingContext
 import icons.CovIcons
@@ -22,6 +20,33 @@ class CovCompletionContributor : CompletionContributor() {
 			LookupElementBuilder.create(it)
 					.withIcon(CovIcons.COV_BIG_ICON)
 					.withTypeText(CovBundle.message("cov.completion.keyword"))
+		}
+		private val builtinCompletion = listOf(
+				"to_string",
+				"to_integer",
+				"hash_map",
+				"type",
+				"clone",
+				"move",
+				"swap",
+				"context",
+				"char",
+				"number",
+				"boolean",
+				"pointer",
+				"string",
+				"list",
+				"array",
+				"pair",
+				"exception",
+				"iostream",
+				"system",
+				"runtime",
+				"math"
+		).map {
+			LookupElementBuilder.create(it)
+					.withIcon(CovIcons.COV_BIG_ICON)
+					.withTypeText(CovBundle.message("cov.completion.builtin"))
 		}
 		private val loopCompletion = listOf(
 				"break",
@@ -41,22 +66,23 @@ class CovCompletionContributor : CompletionContributor() {
 		private val fileContentCompletion = listOf(
 				"if ",
 				"for ",
-				"loop ",
+				"loop\n",
 				"while ",
-				"block",
+				"block\n",
 				"function ",
 				"namespace ",
 				"struct ",
-				"@begin ",
+				"@begin\n",
 				"switch ",
 				"var ",
-				"throw ",
-				"try ",
+				"throw runtime.exception",
+				"try\n",
 				"end"
 		).map {
 			LookupElementBuilder.create(it)
 					.withIcon(CovIcons.COV_BIG_ICON)
 					.withTypeText(CovBundle.message("cov.completion.keyword"))
+					.withPresentableText(if (' ' in it) it.substringBefore(' ') else it.trimEnd('\n'))
 		}
 	}
 
@@ -89,6 +115,9 @@ class CovCompletionContributor : CompletionContributor() {
 						.inside(psiElement(CovTypes.BODY_OF_SOMETHING))
 						.andOr(psiElement().inside(CovFunctionDeclaration::class.java)),
 				CovProvider(functionCompletion))
+		extend(CompletionType.BASIC,
+				psiElement(CovTypes.SYM),
+				CovProvider(builtinCompletion))
 		extend(CompletionType.BASIC,
 				psiElement(CovTypes.SYM).afterLeaf("\n"),
 				CovProvider(fileContentCompletion))

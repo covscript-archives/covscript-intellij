@@ -75,9 +75,13 @@ allprojects {
 	intellij {
 		updateSinceUntilBuild = false
 		instrumentCode = true
-		if (System.getProperty("user.name") == "ice1000")
-			localPath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/173.4548.28"
-		else version = "2017.3"
+		when (System.getProperty("user.name")) {
+			"ice1000" -> {
+				localPath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/173.4548.28"
+				alternativeIdePath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/PyCharm-C/ch-0/173.4674.37"
+			}
+			else -> version = "2017.3"
+		}
 	}
 }
 

@@ -26,6 +26,12 @@ class CovParserTest : ParsingTestCase("", COV_EXTENSION, CovParserDefinition()) 
 	}
 
 	@Test
+	fun testExceptions() {
+		println(name)
+		doTest(true)
+	}
+
+	@Test
 	fun testStructs() {
 		println(name)
 		doTest(true)

@@ -5,14 +5,14 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.covscript.lang.CovBundle
-import org.covscript.lang.CovSyntaxHighlighter
+import org.covscript.lang.*
 import org.covscript.lang.psi.*
 import java.math.BigDecimal
 
 class CovAnnotator : Annotator {
 	override fun annotate(element: PsiElement, holder: AnnotationHolder) {
 		when (element) {
+			is CovSymbol -> symbol(element, holder)
 			is CovString -> string(element, holder)
 			is CovCharLit -> charLit(element, holder)
 			is CovBreak -> jump(element, holder)
@@ -30,6 +30,18 @@ class CovAnnotator : Annotator {
 			is CovVariableDeclaration -> variableDeclaration(element, holder)
 			is CovStructDeclaration -> structDeclaration(element, holder)
 			is CovCollapsedStatement -> collapsedStatement(element, holder)
+		}
+	}
+
+	private fun symbol(element: CovSymbol, holder: AnnotationHolder) {
+		val declaration = element.reference?.resolve() as? CovSymbol
+		if (declaration?.isException.orFalse()) {
+			val dad = element.parent
+			if (dad is CovApplyFunction) {
+				val callee = PsiTreeUtil.findChildOfType(dad, CovExpr::class.java)
+				if (callee?.text == "to_string")
+					holder.createErrorAnnotation(dad, CovBundle.message("cov.lint.exception.to-str"))
+			}
 		}
 	}
 
@@ -54,9 +66,7 @@ class CovAnnotator : Annotator {
 		}
 	}
 
-	private fun functionDeclaration(
-			element: CovFunctionDeclaration,
-			holder: AnnotationHolder) {
+	private fun functionDeclaration(element: CovFunctionDeclaration, holder: AnnotationHolder) {
 		element.nameIdentifier?.let {
 			holder.createInfoAnnotation(it, null)
 					.textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION
@@ -99,9 +109,7 @@ class CovAnnotator : Annotator {
 		}
 	}
 
-	private fun collapsedStatement(
-			element: CovCollapsedStatement,
-			holder: AnnotationHolder) {
+	private fun collapsedStatement(element: CovCollapsedStatement, holder: AnnotationHolder) {
 		if (element.children.any { it.javaClass.simpleName.startsWith("Cov") }) {
 			holder.createInfoAnnotation(element, CovBundle.message("cov.lint.collapsed-block")).run {
 				textAttributes = CovSyntaxHighlighter.BEGIN_END_BLOCK
@@ -121,35 +129,27 @@ class CovAnnotator : Annotator {
 						CovBundle.message("cov.lint.remove-collapsed-block")))
 	}
 
-	private fun throwStatement(
-			element: PsiElement,
-			holder: AnnotationHolder) {
+	private fun throwStatement(element: PsiElement, holder: AnnotationHolder) {
 		if (null == PsiTreeUtil.getParentOfType(element,
 						CovFunctionDeclaration::class.java,
 						CovBodyOfSomething::class.java))
 			holder.createErrorAnnotation(element, CovBundle.message("cov.lint.throw-outside-body"))
 	}
 
-	private fun blockStatement(
-			element: CovBlockStatement,
-			holder: AnnotationHolder) {
+	private fun blockStatement(element: CovBlockStatement, holder: AnnotationHolder) {
 		if (element.bodyOfSomething?.statementList.orEmpty().size <= 1)
 			holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.unnecessary-block"))
 					.registerFix(CovBlockToStatementIntention(element))
 	}
 
-	private fun whileStatement(
-			element: CovWhileStatement,
-			holder: AnnotationHolder) {
+	private fun whileStatement(element: CovWhileStatement, holder: AnnotationHolder) {
 		if (element.expr?.text == "true")
 			holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.infinite-while"))
 					.registerFix(CovReplaceWithTextIntention(element, "loop\n${element.bodyOfSomething?.text}end",
 							CovBundle.message("cov.lint.replace-with-loop")))
 	}
 
-	private fun loopUntilStatement(
-			element: CovLoopUntilStatement,
-			holder: AnnotationHolder) {
+	private fun loopUntilStatement(element: CovLoopUntilStatement, holder: AnnotationHolder) {
 		element.expr?.run {
 			if (text == "false") holder.createWeakWarningAnnotation(element,
 					CovBundle.message("cov.lint.infinite-loop-until"))
@@ -157,9 +157,7 @@ class CovAnnotator : Annotator {
 		}
 	}
 
-	private fun bracketedExpr(
-			element: CovBracketExpr,
-			holder: AnnotationHolder) {
+	private fun bracketedExpr(element: CovBracketExpr, holder: AnnotationHolder) {
 		val innerExpr = element.expr as? CovBracketExpr ?: return
 		holder.createWeakWarningAnnotation(element, CovBundle.message("cov.lint.too-many-brackets"))
 				.registerFix(CovReplaceWithElementIntention(element, innerExpr,
