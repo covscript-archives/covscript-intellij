@@ -10,6 +10,8 @@ import org.covscript.lang.psi.*
 import java.math.BigDecimal
 
 class CovAnnotator : Annotator {
+	companion object ConstantHolder
+
 	override fun annotate(element: PsiElement, holder: AnnotationHolder) {
 		when (element) {
 			is CovSymbol -> symbol(element, holder)
@@ -39,10 +41,15 @@ class CovAnnotator : Annotator {
 			val dad = element.parent
 			if (dad is CovApplyFunction) {
 				val callee = PsiTreeUtil.findChildOfType(dad, CovExpr::class.java)
-				if (callee?.text == "to_string") holder
-						.createErrorAnnotation(dad, CovBundle.message("cov.lint.exception.to-str"))
-						.registerFix(CovReplaceWithTextIntention(dad, "${element.text}.what()",
-								CovBundle.message("cov.lint.exception.to-str.replace", element.text)))
+				val annotation = when (callee?.text) {
+					"to_string" -> holder.createErrorAnnotation(
+							dad, CovBundle.message("cov.lint.exception.convert", "E000D"))
+					"to_integer" -> holder.createErrorAnnotation(
+							dad, CovBundle.message("cov.lint.exception.convert", "E000M"))
+					else -> null
+				}
+				annotation?.registerFix(CovReplaceWithTextIntention(dad, "${element.text}.what()",
+						CovBundle.message("cov.lint.exception.to-str.replace", element.text)))
 			}
 		}
 	}
