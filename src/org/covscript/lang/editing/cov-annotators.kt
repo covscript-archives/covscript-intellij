@@ -39,8 +39,10 @@ class CovAnnotator : Annotator {
 			val dad = element.parent
 			if (dad is CovApplyFunction) {
 				val callee = PsiTreeUtil.findChildOfType(dad, CovExpr::class.java)
-				if (callee?.text == "to_string")
-					holder.createErrorAnnotation(dad, CovBundle.message("cov.lint.exception.to-str"))
+				if (callee?.text == "to_string") holder
+						.createErrorAnnotation(dad, CovBundle.message("cov.lint.exception.to-str"))
+						.registerFix(CovReplaceWithTextIntention(dad, "${element.text}.what()",
+								CovBundle.message("cov.lint.exception.to-str.replace", element.text)))
 			}
 		}
 	}
