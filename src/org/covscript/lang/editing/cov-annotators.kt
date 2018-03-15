@@ -27,6 +27,8 @@ class CovAnnotator : Annotator {
 			is CovBracketExpr -> bracketedExpr(element, holder)
 			is CovPlusOp -> plusOp(element, holder)
 			is CovMinusOp -> minusOp(element, holder)
+			is CovTimesOp -> timesOp(element, holder)
+			is CovDivOp -> divOp(element, holder)
 			is CovNamespaceDeclaration -> namespaceDeclaration(element, holder)
 			is CovFunctionDeclaration -> functionDeclaration(element, holder)
 			is CovVariableDeclaration -> variableDeclaration(element, holder)
@@ -102,20 +104,38 @@ class CovAnnotator : Annotator {
 		}
 	}
 
-	private fun minusOp(element: CovMinusOp, holder: AnnotationHolder) {
+	private fun timesOp(element: CovTimesOp, holder: AnnotationHolder) {
+		constantFolding(element, holder, BigDecimal::times)
+	}
+
+	private inline fun constantFolding(
+			element: CovExpr,
+			holder: AnnotationHolder,
+			op: (BigDecimal, BigDecimal) -> BigDecimal) {
 		val left = element.children.first { it is CovExpr } as CovExpr
 		val right = element.children.last { it is CovExpr } as CovExpr
-		val infoText = CovBundle.message("cov.lint.constant-folding")
 		when {
+			left is CovString || left is CovCharLit || right is CovString || right is CovCharLit ->
+				holder.createErrorAnnotation(element,
+						CovBundle.message("cov.lint.unsupported"))
 			left is CovNumber && right is CovNumber -> {
 				val leftDec = BigDecimal(left.text)
 				val rightDec = BigDecimal(right.text)
-				holder.createWeakWarningAnnotation(element, infoText)
+				holder.createWeakWarningAnnotation(element,
+						CovBundle.message("cov.lint.constant-folding"))
 						.registerFix(CovReplaceWithTextIntention(element,
-								(leftDec - rightDec).toPlainString(),
+								op(leftDec, rightDec).toPlainString(),
 								CovBundle.message("cov.lint.replace-with-calculated")))
 			}
 		}
+	}
+
+	private fun divOp(element: CovDivOp, holder: AnnotationHolder) {
+		constantFolding(element, holder, BigDecimal::divide)
+	}
+
+	private fun minusOp(element: CovMinusOp, holder: AnnotationHolder) {
+		constantFolding(element, holder, BigDecimal::minus)
 	}
 
 	private fun collapsedStatement(element: CovCollapsedStatement, holder: AnnotationHolder) {
