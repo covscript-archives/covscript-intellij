@@ -325,7 +325,7 @@ number ::= NUM { extends=expr }
 string ::= STR {
 	extends=expr
 	implements=['org.covscript.lang.psi.impl.ICovString']
-	mixin='org.covscript.lang.psi.impl.JuliaRegexMixin'
+	mixin='org.covscript.lang.psi.impl.CovStringMixin'
 }
 
 charLit ::= CHAR

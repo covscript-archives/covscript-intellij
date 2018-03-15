@@ -17,7 +17,7 @@ interface ICovString : PsiLanguageInjectionHost {
 }
 
 @Suppress("HasPlatformType")
-abstract class JuliaRegexMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovString {
+abstract class CovStringMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovString {
 	override fun isValidHost() = true
 	override fun createLiteralTextEscaper() = LiteralTextEscaper.createSimple(this)
 	override fun updateText(s: String) = ElementManipulators.handleContentChange(this, s)

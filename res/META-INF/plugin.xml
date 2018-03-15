@@ -20,6 +20,7 @@
 		<errorHandler implementation="de.halirutan.mathematica.errorreporting.cov.GitHubErrorReporter"/>
 		<consoleFilterProvider implementation="org.covscript.lang.execution.CovConsoleFilterProvider"/>
 		<iconProvider implementation="org.covscript.lang.editing.CovIconProvider"/>
+		<languageInjector implementation="org.covscript.lang.editing.CovLanguageInjector"/>
 		<lang.findUsagesProvider
 				language="CovScript"
 				implementationClass="org.covscript.lang.psi.CovFindUsageProvider"/>
