@@ -29,6 +29,8 @@ class CovAnnotator : Annotator {
 			is CovMinusOp -> minusOp(element, holder)
 			is CovTimesOp -> timesOp(element, holder)
 			is CovDivOp -> divOp(element, holder)
+			is CovMemberAccess -> {
+			}
 			is CovNamespaceDeclaration -> namespaceDeclaration(element, holder)
 			is CovFunctionDeclaration -> functionDeclaration(element, holder)
 			is CovVariableDeclaration -> variableDeclaration(element, holder)

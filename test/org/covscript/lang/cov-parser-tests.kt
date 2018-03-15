@@ -42,4 +42,10 @@ class CovParserTest : ParsingTestCase("", COV_EXTENSION, CovParserDefinition()) 
 		println(name)
 		doTest(true)
 	}
+
+	@Test
+	fun testInjection() {
+		println(name)
+		doTest(true)
+	}
 }

@@ -11,6 +11,18 @@ import org.covscript.lang.CovTokenType
 import org.covscript.lang.orFalse
 import org.covscript.lang.psi.*
 
+interface ICovString : PsiLanguageInjectionHost {
+	override fun createLiteralTextEscaper(): LiteralTextEscaper<out CovString>
+	override fun updateText(s: String): CovString
+}
+
+@Suppress("HasPlatformType")
+abstract class JuliaRegexMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovString {
+	override fun isValidHost() = true
+	override fun createLiteralTextEscaper() = LiteralTextEscaper.createSimple(this)
+	override fun updateText(s: String) = ElementManipulators.handleContentChange(this, s)
+}
+
 interface ICovImportDeclaration : PsiNameIdentifierOwner
 
 abstract class CovImportDeclarationMixin(node: ASTNode) : CovImportDeclaration, TrivialDeclaration(node) {

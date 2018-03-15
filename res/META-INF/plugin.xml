@@ -65,6 +65,9 @@
 		<projectService
 				serviceInterface="org.covscript.lang.module.CovProjectSettingsService"
 				serviceImplementation="org.covscript.lang.module.CovProjectSettingsServiceImpl"/>
+		<lang.elementManipulator
+				forClass="org.covscript.lang.psi.CovString"
+				implementationClass="org.covscript.lang.psi.CovStringManipulator"/>
 		<additionalTextAttributes scheme="Darcula" file="/colorSchemes/CovColors.xml"/>
 		<additionalTextAttributes scheme="Default" file="/colorSchemes/CovColors.xml"/>
 	</extensions>
