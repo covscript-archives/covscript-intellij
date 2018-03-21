@@ -11,7 +11,8 @@ class CovConsoleFilter(private val project: Project) : Filter {
 		private const val startOffset = "File \"".length
 	}
 
-	private fun default(startPoint: Int, entireLength: Int) = Filter.Result(startPoint, entireLength, null)
+	private fun default(startPoint: Int, entireLength: Int): Filter.Result? = null
+			// Filter.Result(startPoint, entireLength, null)
 	override fun applyFilter(line: String, entireLength: Int): Filter.Result? {
 		val startPoint = entireLength - line.length
 		val matcher = ERROR_FILE_LOCATION.matcher(line)
