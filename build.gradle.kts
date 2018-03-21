@@ -1,6 +1,7 @@
 import groovy.lang.Closure
 import org.gradle.api.internal.HasConvention
 import org.gradle.language.base.internal.plugins.CleanRule
+import org.jetbrains.grammarkit.GrammarKitPluginExtension
 import org.jetbrains.grammarkit.tasks.BaseTask
 import org.jetbrains.grammarkit.tasks.GenerateLexer
 import org.jetbrains.grammarkit.tasks.GenerateParser
@@ -167,6 +168,11 @@ task("isCI") {
 	doFirst {
 		println(if (isCI) "Yes, I'm on a CI." else "No, I'm not on CI.")
 	}
+}
+
+configure<GrammarKitPluginExtension> {
+	jflexRelease = "c779429" // 1.7.0
+	grammarKitRelease = "2017.1.2"
 }
 
 genTask<GenerateParser>("genParser") {
