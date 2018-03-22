@@ -11,8 +11,7 @@ class CovConsoleFilter(private val project: Project) : Filter {
 		private const val startOffset = "File \"".length
 	}
 
-	private fun default(startPoint: Int, entireLength: Int): Filter.Result? = null
-			// Filter.Result(startPoint, entireLength, null)
+	// Filter.Result(startPoint, entireLength, null)
 	override fun applyFilter(line: String, entireLength: Int): Filter.Result? {
 		val startPoint = entireLength - line.length
 		val matcher = ERROR_FILE_LOCATION.matcher(line)
@@ -21,15 +20,15 @@ class CovConsoleFilter(private val project: Project) : Filter {
 					.baseDir
 					.fileSystem
 					.findFileByPath(matcher.group().drop(startOffset).dropLast(2))
-					?: return default(startPoint, entireLength)
+					?: return null
 			val lineNumber = line.split(' ').lastOrNull()?.trim()?.toIntOrNull()
-					?: return default(startPoint, entireLength)
+					?: return null
 			return Filter.Result(
 					startPoint + matcher.start() + startOffset,
 					startPoint + matcher.end() - 2,
 					OpenFileHyperlinkInfo(project, resultFile, lineNumber.let { if (it > 0) it - 1 else it }))
 		}
-		return default(startPoint, entireLength)
+		return null
 	}
 }
 
