@@ -31,58 +31,49 @@ class CovAnnotator : Annotator {
 			is CovDivOp -> divOp(element, holder)
 			is CovMemberAccess -> {
 			}
-			is CovNamespaceDeclaration -> namespaceDeclaration(element, holder)
-			is CovFunctionDeclaration -> functionDeclaration(element, holder)
-			is CovVariableDeclaration -> variableDeclaration(element, holder)
-			is CovStructDeclaration -> structDeclaration(element, holder)
 			is CovCollapsedStatement -> collapsedStatement(element, holder)
 		}
 	}
 
 	private fun symbol(element: CovSymbol, holder: AnnotationHolder) {
+		val isDeclaration = when {
+			element.isNamespaceName or element.isUsingedName or element.isImportedName ->
+				holder.createInfoAnnotation(element, null)
+						.apply { textAttributes = CovSyntaxHighlighter.NAMESPACE_DEFINITION }
+			element.isConstVar ->
+				holder.createInfoAnnotation(element, null)
+						.apply { textAttributes = CovSyntaxHighlighter.CONST_DEFINITION }
+			element.isVar or element.isException or element.isLoopVar ->
+				holder.createInfoAnnotation(element, null)
+						.apply { textAttributes = CovSyntaxHighlighter.VARIABLE_DEFINITION }
+			element.isStructName ->
+				holder.createInfoAnnotation(element, null)
+						.apply { textAttributes = CovSyntaxHighlighter.STRUCT_DEFINITION }
+			element.isFunctionName ->
+				holder.createInfoAnnotation(element, null)
+						.apply { textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION }
+			else -> null
+		}
+		if (null != isDeclaration) return
 		val declaration = element.reference?.resolve() as? CovSymbol
-		if (declaration?.isException.orFalse()) {
-			val dad = element.parent
-			if (dad is CovApplyFunction) {
-				val callee = PsiTreeUtil.findChildOfType(dad, CovExpr::class.java)
-				val annotation = when (callee?.text) {
-					"to_string" -> holder.createErrorAnnotation(
-							dad, CovBundle.message("cov.lint.exception.convert.str"))
-					"to_integer" -> holder.createErrorAnnotation(
-							dad, CovBundle.message("cov.lint.exception.convert.int"))
-					else -> null
+		if (null != declaration) {
+			when {
+				declaration.isException -> {
+					val dad = element.parent
+					if (dad is CovApplyFunction) {
+						val callee = PsiTreeUtil.findChildOfType(dad, CovExpr::class.java)
+						val annotation = when (callee?.text) {
+							"to_string" -> holder.createErrorAnnotation(
+									dad, CovBundle.message("cov.lint.exception.convert.str"))
+							"to_integer" -> holder.createErrorAnnotation(
+									dad, CovBundle.message("cov.lint.exception.convert.int"))
+							else -> null
+						}
+						annotation?.registerFix(CovReplaceWithTextIntention(dad, "${element.text}.what()",
+								CovBundle.message("cov.lint.exception.to-str.replace", element.text)))
+					}
 				}
-				annotation?.registerFix(CovReplaceWithTextIntention(dad, "${element.text}.what()",
-						CovBundle.message("cov.lint.exception.to-str.replace", element.text)))
 			}
-		}
-	}
-
-	private fun namespaceDeclaration(element: CovNamespaceDeclaration, holder: AnnotationHolder) {
-		element.symbol?.let {
-			holder.createInfoAnnotation(it, null)
-					.textAttributes = CovSyntaxHighlighter.NAMESPACE_DEFINITION
-		}
-	}
-
-	private fun variableDeclaration(element: CovVariableDeclaration, holder: AnnotationHolder) {
-		element.nameIdentifier?.let {
-			holder.createInfoAnnotation(it, null)
-					.textAttributes = CovSyntaxHighlighter.VARIABLE_DEFINITION
-		}
-	}
-
-	private fun structDeclaration(element: CovStructDeclaration, holder: AnnotationHolder) {
-		element.nameIdentifier?.let {
-			holder.createInfoAnnotation(it, null)
-					.textAttributes = CovSyntaxHighlighter.STRUCT_DEFINITION
-		}
-	}
-
-	private fun functionDeclaration(element: CovFunctionDeclaration, holder: AnnotationHolder) {
-		element.nameIdentifier?.let {
-			holder.createInfoAnnotation(it, null)
-					.textAttributes = CovSyntaxHighlighter.FUNCTION_DEFINITION
 		}
 	}
 

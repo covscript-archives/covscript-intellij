@@ -181,18 +181,18 @@ interface ICovSymbol : PsiNameIdentifierOwner, CovExpr {
 
 abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, CovExprMixin(node) {
 	private var referenceImpl: CovSymbolRef? = null
-	final override val isException: Boolean by lazy { parent.let { it is CovTryCatchStatement && it.nameIdentifier === this } }
-	final override val isLoopVar: Boolean by lazy { parent.let { it is CovForStatement && it.nameIdentifier === this } }
-	final override val isVar: Boolean by lazy { parent.let { it is CovVariableDeclaration && it.nameIdentifier === this } }
-	final override val isConstVar: Boolean by lazy { isVar && prevSibling.prevSibling?.run { node.elementType == CovTypes.CONST_KEYWORD } == true }
-	final override val isParameter: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.nameIdentifier !== this } }
-	final override val isNamespaceName: Boolean by lazy { parent is CovNamespaceDeclaration }
-	final override val isStructName: Boolean by lazy { parent.let { it is CovStructDeclaration && it.nameIdentifier === this } }
-	final override val isFunctionName: Boolean by lazy { parent.let { it is CovFunctionDeclaration && it.nameIdentifier === this } }
-	final override val isImportedName: Boolean by lazy { parent.let { it is CovImportDeclaration && it.nameIdentifier === this } }
-	final override val isUsingedName: Boolean by lazy { parent.let { it is CovUsingDeclaration && it.nameIdentifier === this } }
-	final override val isDeclaration: Boolean by lazy {
-		isException or
+	final override val isException: Boolean get() = parent.let { it is CovTryCatchStatement && it.nameIdentifier === this }
+	final override val isLoopVar: Boolean get() = parent.let { it is CovForStatement && it.nameIdentifier === this }
+	final override val isVar: Boolean get() = parent.let { it is CovVariableDeclaration && it.nameIdentifier === this }
+	final override val isConstVar: Boolean get() = isVar && prevSibling.prevSibling?.run { node.elementType == CovTypes.CONST_KEYWORD } == true
+	final override val isParameter: Boolean get() = parent.let { it is CovFunctionDeclaration && it.nameIdentifier !== this }
+	final override val isNamespaceName: Boolean get() = parent is CovNamespaceDeclaration
+	final override val isStructName: Boolean get() = parent.let { it is CovStructDeclaration && it.nameIdentifier === this }
+	final override val isFunctionName: Boolean get() = parent.let { it is CovFunctionDeclaration && it.nameIdentifier === this }
+	final override val isImportedName: Boolean get() = parent.let { it is CovImportDeclaration && it.nameIdentifier === this }
+	final override val isUsingedName: Boolean get() = parent.let { it is CovUsingDeclaration && it.nameIdentifier === this }
+	final override val isDeclaration: Boolean
+		get() = isException or
 				isLoopVar or
 				isVar or
 				isConstVar or
@@ -202,7 +202,6 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, CovExprMixin(node) {
 				isFunctionName or
 				isStructName or
 				isParameter
-	}
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =

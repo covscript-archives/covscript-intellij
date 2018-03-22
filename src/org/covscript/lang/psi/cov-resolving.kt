@@ -119,4 +119,5 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 
 class CovRefactoringSupportProvider : RefactoringSupportProvider() {
 	override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?) = true
+	override fun isSafeDeleteAvailable(element: PsiElement) = true
 }

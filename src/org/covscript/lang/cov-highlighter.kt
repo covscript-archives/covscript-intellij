@@ -27,6 +27,12 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 		@JvmField val NAMESPACE_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_NAMESPACE_DEFINITION", DefaultLanguageHighlighterColors.CLASS_NAME)
 		@JvmField val VARIABLE_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_VARIABLE_DEFINITION", DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
 		@JvmField val STRUCT_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_STRUCT_DEFINITION", DefaultLanguageHighlighterColors.CLASS_NAME)
+		@JvmField val CONST_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_CONST_DEFINITION", DefaultLanguageHighlighterColors.CLASS_NAME)
+		@JvmField val FUNCTION_REFERENCE = TextAttributesKey.createTextAttributesKey("COV_FUNCTION_REFERENCE", DefaultLanguageHighlighterColors.FUNCTION_CALL)
+		@JvmField val NAMESPACE_REFERENCE = TextAttributesKey.createTextAttributesKey("COV_NAMESPACE_REFERENCE", DefaultLanguageHighlighterColors.CLASS_REFERENCE)
+		@JvmField val VARIABLE_REFERENCE = TextAttributesKey.createTextAttributesKey("COV_VARIABLE_REFERENCE", DefaultLanguageHighlighterColors.IDENTIFIER)
+		@JvmField val STRUCT_REFERENCE = TextAttributesKey.createTextAttributesKey("COV_STRUCT_REFERENCE", DefaultLanguageHighlighterColors.CLASS_REFERENCE)
+		@JvmField val CONST_REFERENCE = TextAttributesKey.createTextAttributesKey("COV_CONST_REFERENCE", DefaultLanguageHighlighterColors.CONSTANT)
 		private val KEYWORD_KEY = arrayOf(KEYWORD)
 		private val COMMENT_KEY = arrayOf(COMMENT)
 		private val NUMBER_KEY = arrayOf(NUMBER)
@@ -134,6 +140,12 @@ class CovColorSettingsPage : ColorSettingsPage {
 				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.namespace"), CovSyntaxHighlighter.NAMESPACE_DEFINITION),
 				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.variable"), CovSyntaxHighlighter.VARIABLE_DEFINITION),
 				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.struct"), CovSyntaxHighlighter.STRUCT_DEFINITION),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.const"), CovSyntaxHighlighter.CONST_DEFINITION),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.references.function"), CovSyntaxHighlighter.FUNCTION_REFERENCE),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.references.namespace"), CovSyntaxHighlighter.NAMESPACE_REFERENCE),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.references.variable"), CovSyntaxHighlighter.VARIABLE_REFERENCE),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.references.struct"), CovSyntaxHighlighter.STRUCT_REFERENCE),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.references.const"), CovSyntaxHighlighter.CONST_REFERENCE),
 				AttributesDescriptor(CovBundle.message("cov.settings.color.operators"), CovSyntaxHighlighter.OPERATOR)
 		)
 		private val KEYS = mapOf(
