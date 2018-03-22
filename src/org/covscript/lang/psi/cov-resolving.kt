@@ -100,8 +100,8 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 		val (type, icon) = when {
 			element.isParameter -> "Parameter" to CovIcons.VARIABLE_ICON
 			element.isException -> "Exception" to CovIcons.TRY_CATCH_ICON
-			element.isVar -> "Variable" to CovIcons.VARIABLE_ICON
 			element.isConstVar -> "Constant" to CovIcons.VARIABLE_ICON
+			element.isVar -> "Variable" to CovIcons.VARIABLE_ICON
 			element.isFunctionName -> "Function" to CovIcons.FUNCTION_ICON
 			element.isImportedName or
 					element.isUsingedName or

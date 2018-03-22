@@ -154,7 +154,13 @@ class CovColorSettingsPage : ColorSettingsPage {
 				"functionName" to CovSyntaxHighlighter.FUNCTION_DEFINITION,
 				"structName" to CovSyntaxHighlighter.STRUCT_DEFINITION,
 				"namespaceName" to CovSyntaxHighlighter.NAMESPACE_DEFINITION,
-				"variableName" to CovSyntaxHighlighter.VARIABLE_DEFINITION
+				"constantName" to CovSyntaxHighlighter.CONST_DEFINITION,
+				"variableName" to CovSyntaxHighlighter.VARIABLE_DEFINITION,
+				"variableRef" to CovSyntaxHighlighter.VARIABLE_REFERENCE,
+				"functionRef" to CovSyntaxHighlighter.FUNCTION_REFERENCE,
+				"namespaceRef" to CovSyntaxHighlighter.NAMESPACE_REFERENCE,
+				"constRef" to CovSyntaxHighlighter.VARIABLE_REFERENCE,
+				"structRef" to CovSyntaxHighlighter.STRUCT_REFERENCE
 		)
 	}
 
@@ -164,26 +170,26 @@ class CovColorSettingsPage : ColorSettingsPage {
 	override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
 	override fun getAdditionalHighlightingTagToDescriptorMap() = KEYS
 	override fun getAttributeDescriptors() = DESCRIPTORS
+
 	@Language("CovScript")
 	override fun getDemoText() = """# CovScript code example
 namespace <namespaceName>std</namespaceName>
   struct <structName>MyStruct</structName>
-    const var <variableName>thisIsAType</variableName> = typeid (233 * 666)
-    const var <variableName>i</variableName> = gcnew string
   end
-  <variableName>i</variableName> = new string
+  const var <constantName>ThisIsAType</constantName> = typeid <structRef>MyStruct</structRef>
+  var <variableName>someString</variableName> = gcnew string
+  <variableRef>someString</variableRef> = to_string(<constRef>ThisIsAType</constRef>)
 
   function <functionName>main</functionName>(args)
-    var <variableName>thisIsAnArray</variableName> = {a, b, c}
-    const var <variableName>str</variableName> = "boy next door<escapeCharacter>\n</escapeCharacter>" + to_string(y)
+    const var <variableName>str</variableName> = "boy next door<escapeCharacter>\n</escapeCharacter>" + to_string(<variableRef>y</variableRef>)
     # @begin and @end are not highlighted as well as their inside part
     # due to the limitation of IntelliJ's preview system
     @begin<beginEndBlock>
       system.out.println(str +
-      x.to_string())
+      "")
     </beginEndBlock>@end
   end
 end
-std.main({})
+<namespaceRef>std</namespaceRef>.<functionRef>main</functionRef>({233 * 666, 114514})
 """
 }

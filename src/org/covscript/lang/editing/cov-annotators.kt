@@ -58,6 +58,21 @@ class CovAnnotator : Annotator {
 		val declaration = element.reference?.resolve() as? CovSymbol
 		if (null != declaration) {
 			when {
+				declaration.isNamespaceName or declaration.isUsingedName or declaration.isImportedName ->
+					holder.createInfoAnnotation(element, null)
+							.apply { textAttributes = CovSyntaxHighlighter.NAMESPACE_REFERENCE }
+				declaration.isConstVar ->
+					holder.createInfoAnnotation(element, null)
+							.apply { textAttributes = CovSyntaxHighlighter.CONST_REFERENCE }
+				declaration.isVar or declaration.isLoopVar ->
+					holder.createInfoAnnotation(element, null)
+							.apply { textAttributes = CovSyntaxHighlighter.VARIABLE_REFERENCE }
+				declaration.isStructName ->
+					holder.createInfoAnnotation(element, null)
+							.apply { textAttributes = CovSyntaxHighlighter.STRUCT_REFERENCE }
+				declaration.isFunctionName ->
+					holder.createInfoAnnotation(element, null)
+							.apply { textAttributes = CovSyntaxHighlighter.FUNCTION_REFERENCE }
 				declaration.isException -> {
 					val dad = element.parent
 					if (dad is CovApplyFunction) {
@@ -67,7 +82,11 @@ class CovAnnotator : Annotator {
 									dad, CovBundle.message("cov.lint.exception.convert.str"))
 							"to_integer" -> holder.createErrorAnnotation(
 									dad, CovBundle.message("cov.lint.exception.convert.int"))
-							else -> null
+							else -> {
+								holder.createInfoAnnotation(element, null)
+										.apply { textAttributes = CovSyntaxHighlighter.VARIABLE_REFERENCE }
+								null
+							}
 						}
 						annotation?.registerFix(CovReplaceWithTextIntention(dad, "${element.text}.what()",
 								CovBundle.message("cov.lint.exception.to-str.replace", element.text)))
