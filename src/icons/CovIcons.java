@@ -14,7 +14,7 @@ public interface CovIcons {
 	@NotNull Icon COV_ICON = IconLoader.getIcon("/icons/csc.png");
 	@NotNull Icon COV_PKG_ICON = IconLoader.getIcon("/icons/csp.png");
 	@NotNull Icon COV_EXT_ICON = IconLoader.getIcon("/icons/cse.png");
-	@NotNull Icon COV_BIG_ICON = IconLoader.getIcon("/icons/icon.png");
+	@NotNull Icon COV_BIG_ICON = IconLoader.getIcon("/icons/cov_big.png");
 
 	@NotNull Icon FUNCTION_ICON = IconLoader.getIcon("/icons/function_cov.png");
 	@NotNull Icon NAMESPACE_ICON = IconLoader.getIcon("/icons/namespace_cov.png");
