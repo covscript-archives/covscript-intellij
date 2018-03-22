@@ -89,3 +89,5 @@ resources
 build
 .gradle/
 exportToHTML
+.piggy
+pinpoint_piggy
