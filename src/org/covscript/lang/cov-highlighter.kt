@@ -27,6 +27,12 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 		@JvmField val NAMESPACE_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_NAMESPACE_DEFINITION", DefaultLanguageHighlighterColors.CLASS_NAME)
 		@JvmField val VARIABLE_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_VARIABLE_DEFINITION", DefaultLanguageHighlighterColors.LOCAL_VARIABLE)
 		@JvmField val STRUCT_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_STRUCT_DEFINITION", DefaultLanguageHighlighterColors.CLASS_NAME)
+		@JvmField val CONST_DEFINITION = TextAttributesKey.createTextAttributesKey("COV_CONST_DEFINITION", DefaultLanguageHighlighterColors.CLASS_NAME)
+		@JvmField val FUNCTION_REFERENCE = TextAttributesKey.createTextAttributesKey("COV_FUNCTION_REFERENCE", DefaultLanguageHighlighterColors.FUNCTION_CALL)
+		@JvmField val NAMESPACE_REFERENCE = TextAttributesKey.createTextAttributesKey("COV_NAMESPACE_REFERENCE", DefaultLanguageHighlighterColors.CLASS_REFERENCE)
+		@JvmField val VARIABLE_REFERENCE = TextAttributesKey.createTextAttributesKey("COV_VARIABLE_REFERENCE", DefaultLanguageHighlighterColors.IDENTIFIER)
+		@JvmField val STRUCT_REFERENCE = TextAttributesKey.createTextAttributesKey("COV_STRUCT_REFERENCE", DefaultLanguageHighlighterColors.CLASS_REFERENCE)
+		@JvmField val CONST_REFERENCE = TextAttributesKey.createTextAttributesKey("COV_CONST_REFERENCE", DefaultLanguageHighlighterColors.CONSTANT)
 		private val KEYWORD_KEY = arrayOf(KEYWORD)
 		private val COMMENT_KEY = arrayOf(COMMENT)
 		private val NUMBER_KEY = arrayOf(NUMBER)
@@ -134,6 +140,12 @@ class CovColorSettingsPage : ColorSettingsPage {
 				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.namespace"), CovSyntaxHighlighter.NAMESPACE_DEFINITION),
 				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.variable"), CovSyntaxHighlighter.VARIABLE_DEFINITION),
 				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.struct"), CovSyntaxHighlighter.STRUCT_DEFINITION),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.declarations.const"), CovSyntaxHighlighter.CONST_DEFINITION),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.references.function"), CovSyntaxHighlighter.FUNCTION_REFERENCE),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.references.namespace"), CovSyntaxHighlighter.NAMESPACE_REFERENCE),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.references.variable"), CovSyntaxHighlighter.VARIABLE_REFERENCE),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.references.struct"), CovSyntaxHighlighter.STRUCT_REFERENCE),
+				AttributesDescriptor(CovBundle.message("cov.settings.color.references.const"), CovSyntaxHighlighter.CONST_REFERENCE),
 				AttributesDescriptor(CovBundle.message("cov.settings.color.operators"), CovSyntaxHighlighter.OPERATOR)
 		)
 		private val KEYS = mapOf(
@@ -142,7 +154,13 @@ class CovColorSettingsPage : ColorSettingsPage {
 				"functionName" to CovSyntaxHighlighter.FUNCTION_DEFINITION,
 				"structName" to CovSyntaxHighlighter.STRUCT_DEFINITION,
 				"namespaceName" to CovSyntaxHighlighter.NAMESPACE_DEFINITION,
-				"variableName" to CovSyntaxHighlighter.VARIABLE_DEFINITION
+				"constantName" to CovSyntaxHighlighter.CONST_DEFINITION,
+				"variableName" to CovSyntaxHighlighter.VARIABLE_DEFINITION,
+				"variableRef" to CovSyntaxHighlighter.VARIABLE_REFERENCE,
+				"functionRef" to CovSyntaxHighlighter.FUNCTION_REFERENCE,
+				"namespaceRef" to CovSyntaxHighlighter.NAMESPACE_REFERENCE,
+				"constRef" to CovSyntaxHighlighter.VARIABLE_REFERENCE,
+				"structRef" to CovSyntaxHighlighter.STRUCT_REFERENCE
 		)
 	}
 
@@ -152,26 +170,26 @@ class CovColorSettingsPage : ColorSettingsPage {
 	override fun getColorDescriptors(): Array<ColorDescriptor> = ColorDescriptor.EMPTY_ARRAY
 	override fun getAdditionalHighlightingTagToDescriptorMap() = KEYS
 	override fun getAttributeDescriptors() = DESCRIPTORS
+
 	@Language("CovScript")
 	override fun getDemoText() = """# CovScript code example
 namespace <namespaceName>std</namespaceName>
   struct <structName>MyStruct</structName>
-    const var <variableName>thisIsAType</variableName> = typeid (233 * 666)
-    const var <variableName>i</variableName> = gcnew string
   end
-  <variableName>i</variableName> = new string
+  const var <constantName>ThisIsAType</constantName> = typeid <structRef>MyStruct</structRef>
+  var <variableName>someString</variableName> = gcnew string
+  <variableRef>someString</variableRef> = to_string(<constRef>ThisIsAType</constRef>)
 
   function <functionName>main</functionName>(args)
-    var <variableName>thisIsAnArray</variableName> = {a, b, c}
-    const var <variableName>str</variableName> = "boy next door<escapeCharacter>\n</escapeCharacter>" + to_string(y)
+    const var <variableName>str</variableName> = "boy next door<escapeCharacter>\n</escapeCharacter>" + to_string(<variableRef>y</variableRef>)
     # @begin and @end are not highlighted as well as their inside part
     # due to the limitation of IntelliJ's preview system
     @begin<beginEndBlock>
       system.out.println(str +
-      x.to_string())
+      "")
     </beginEndBlock>@end
   end
 end
-std.main({})
+<namespaceRef>std</namespaceRef>.<functionRef>main</functionRef>({233 * 666, 114514})
 """
 }

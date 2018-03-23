@@ -1,7 +1,7 @@
 # covscript-intellij
 
-[![JetBrains plugins](https://img.shields.io/jetbrains/plugin/v/10326-covscript.svg)](https://plugins.jetbrains.com/plugin/10326-covscript)
-[![JetBrains plugins](https://img.shields.io/jetbrains/plugin/d/10326-covscript.svg)](https://plugins.jetbrains.com/plugin/10326-covscript)
+[![Version](https://img.shields.io/jetbrains/plugin/v/10326-covscript.svg)](https://plugins.jetbrains.com/plugin/10326-covscript)
+[![Download count](https://img.shields.io/jetbrains/plugin/d/10326-covscript.svg)](https://plugins.jetbrains.com/plugin/10326-covscript)
 
 CI|Status
 :---:|:---:
@@ -24,5 +24,6 @@ This repo is currently maintained by only one developer.
 <img src="https://plugins.jetbrains.com/files/10326/screenshot_17808.png">
 <img src="https://plugins.jetbrains.com/files/10326/screenshot_17904.png">
 <img src="https://plugins.jetbrains.com/files/10326/screenshot_17905.png">
+<img src="https://plugins.jetbrains.com/files/10326/screenshot_17938.png">
 
 The IntelliJ IDEA Plugin for CovScript

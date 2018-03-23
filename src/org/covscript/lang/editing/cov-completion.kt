@@ -20,6 +20,7 @@ class CovCompletionContributor : CompletionContributor() {
 			LookupElementBuilder.create(it)
 					.withIcon(CovIcons.COV_BIG_ICON)
 					.withTypeText(CovBundle.message("cov.completion.keyword"))
+					.bold()
 		}
 		private val builtinCompletion = listOf(
 				"to_string",
@@ -55,6 +56,7 @@ class CovCompletionContributor : CompletionContributor() {
 			LookupElementBuilder.create(it)
 					.withIcon(CovIcons.COV_BIG_ICON)
 					.withTypeText(CovBundle.message("cov.completion.keyword"))
+					.bold()
 		}
 		private val functionCompletion = listOf(
 				"return "
@@ -62,6 +64,7 @@ class CovCompletionContributor : CompletionContributor() {
 			LookupElementBuilder.create(it)
 					.withIcon(CovIcons.COV_BIG_ICON)
 					.withTypeText(CovBundle.message("cov.completion.keyword"))
+					.bold()
 		}
 		private val fileContentCompletion = listOf(
 				"if ",
@@ -83,6 +86,7 @@ class CovCompletionContributor : CompletionContributor() {
 					.withIcon(CovIcons.COV_BIG_ICON)
 					.withTypeText(CovBundle.message("cov.completion.keyword"))
 					.withPresentableText(if (' ' in it) it.substringBefore(' ') else it.trimEnd('\n'))
+					.bold()
 		}
 	}
 
