@@ -40,7 +40,7 @@ buildscript {
 	var kotlinVersion: String by extra
 	var grammarKitVersion: String by extra
 
-	grammarKitVersion = "2017.1.1"
+	grammarKitVersion = "2018.1.1"
 	kotlinVersion = "1.2.30"
 
 	repositories {
@@ -168,11 +168,6 @@ task("isCI") {
 	doFirst {
 		println(if (isCI) "Yes, I'm on a CI." else "No, I'm not on CI.")
 	}
-}
-
-configure<GrammarKitPluginExtension> {
-	jflexRelease = "c779429" // 1.7.0
-	grammarKitRelease = "2017.1.2"
 }
 
 genTask<GenerateParser>("genParser") {
