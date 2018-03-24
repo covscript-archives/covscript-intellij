@@ -21,7 +21,7 @@ public interface CovIcons {
 	@NotNull Icon CONTROL_FLOW_ICON = IconLoader.getIcon("/icons/control_flow.png");
 	@NotNull Icon JOJO_ICON = IconLoader.getIcon("/icons/jojo.png");
 
-	@NotNull Icon STRUCT_ICON = IconLoader.getIcon("/icons/static.png");
+	@NotNull Icon STRUCT_ICON = IconLoader.getIcon("/icons/struct_cov.png");
 	@NotNull Icon COLLAPSED_ICON = IconLoader.getIcon("/icons/collapsed_cov.png");
 	@NotNull Icon VARIABLE_ICON = IconLoader.getIcon("/icons/variable_cov.png");
 	@NotNull Icon TRY_CATCH_ICON = IconLoader.getIcon("/icons/exception_cov.png");
