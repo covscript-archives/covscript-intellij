@@ -30,17 +30,25 @@ import javax.swing.Icon
 
 class CovIconProvider : IconProvider() {
 	override fun getIcon(element: PsiElement, flags: Int): Icon? {
-		val file = element as? CovFile ?: return null
-		val statements = file.children.filterIsInstance<CovStatement>()
-		val validChildren = statements.mapNotNull { it.inside }
-		if (validChildren.size != 1) return CovIcons.COV_ICON
-		return when (validChildren.first()) {
+		val file = element as? PsiFile ?: return null
+		return when (file.virtualFile.fileType) {
+			CovPackageFileType -> icon(file) ?: CovIcons.COV_PKG_ICON
+			CovFileType -> icon(file) ?: CovIcons.COV_ICON
+			else -> null
+		}
+	}
+
+	private fun icon(file: PsiFile) =
+			icon(file.children.filterIsInstance<CovStatement>().mapNotNull { it.inside })
+
+	private fun icon(validChildren: List<PsiElement>) = if (validChildren.size == 1)
+		when (validChildren.first()) {
 			is CovNamespaceDeclaration -> CovIcons.NAMESPACE_ICON
 			is CovStructDeclaration -> CovIcons.STRUCT_ICON
 			is CovFunctionDeclaration -> CovIcons.FUNCTION_ICON
 			else -> null
 		}
-	}
+	else null
 }
 
 class CovBraceMatcher : PairedBraceMatcher {

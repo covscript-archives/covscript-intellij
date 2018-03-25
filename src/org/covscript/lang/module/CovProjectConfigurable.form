@@ -74,7 +74,7 @@
                 </constraints>
                 <properties>
                   <horizontalTextPosition value="11"/>
-                  <icon value="icons/icon.png"/>
+                  <icon value="icons/cov_big.png"/>
                   <iconTextGap value="4"/>
                   <text value="http://covscript.org" noi18n="true"/>
                   <toolTipText resource-bundle="org/covscript/lang/cov-bundle" key="cov.modules.sdk.website"/>

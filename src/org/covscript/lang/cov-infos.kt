@@ -23,8 +23,8 @@ object CovPackageFileType : LanguageFileType(CovLanguage.INSTANCE) {
 
 object CovFileType : LanguageFileType(CovLanguage.INSTANCE) {
 	override fun getDefaultExtension() = COV_EXTENSION
-	override fun getName() = CovBundle.message("cov.name")
 	override fun getIcon() = CovIcons.COV_ICON
+	override fun getName() = CovBundle.message("cov.name")
 	override fun getDescription() = CovBundle.message("cov.name.description")
 }
 
@@ -37,8 +37,8 @@ class CovFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, CovLan
 
 class CovFileTypeFactory : FileTypeFactory() {
 	override fun createFileTypes(consumer: FileTypeConsumer) {
-		consumer.consume(CovFileType, COV_EXTENSION)
 		consumer.consume(CovPackageFileType, COV_PKG_EXTENSION)
+		consumer.consume(CovFileType, COV_EXTENSION)
 		consumer.consume(CovExtensionFileType, COV_EXT_EXTENSION)
 	}
 }
