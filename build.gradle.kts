@@ -50,14 +50,14 @@ buildscript {
 
 	dependencies {
 		classpath(kotlin("gradle-plugin", kotlinVersion))
-		classpath("com.github.hurricup:gradle-grammar-kit-plugin:$grammarKitVersion")
+		classpath("com.github.JetBrains:gradle-grammar-kit-plugin:$grammarKitVersion")
 	}
 }
 
 plugins {
 	idea
 	java
-	id("org.jetbrains.intellij") version "0.2.18"
+	id("org.jetbrains.intellij") version "0.3.1"
 	kotlin("jvm") version "1.2.31"
 }
 
@@ -78,10 +78,10 @@ allprojects {
 		instrumentCode = true
 		when (System.getProperty("user.name")) {
 			"ice1000" -> {
-				localPath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/173.4548.28"
+				localPath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/181.4203.550"
 				alternativeIdePath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/PyCharm-C/ch-0/173.4674.37"
 			}
-			else -> version = "2017.3"
+			else -> version = "2018.1"
 		}
 	}
 }
