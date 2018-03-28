@@ -37,6 +37,7 @@ import com.intellij.openapi.diagnostic.*
 import com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus
 import com.intellij.openapi.progress.*
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.Consumer
 import com.intellij.util.SystemProperties
 import org.apache.commons.codec.binary.Base64
@@ -262,9 +263,8 @@ private fun getKeyValuePairs(
 			"CovScript Version" to (project?.run { covSettings.settings.version } ?: "Unknown"),
 			"Plugin Name" to error.pluginName,
 			"Plugin Version" to error.pluginVersion,
-			"OS Name" to SystemProperties.getOsName(),
-			"Java version" to SystemProperties.getJavaVersion(),
-			"Java vm vendor" to SystemProperties.getJavaVmVendor(),
+			"OS Name" to SystemInfo.OS_NAME,
+			"Java version" to SystemInfo.JAVA_VERSION,
 			"App Name" to namesInfo.productName,
 			"App Full Name" to namesInfo.fullProductName,
 			"App Version name" to appInfo.versionName,

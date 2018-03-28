@@ -28,9 +28,22 @@ jobs:
 
       - run: gradle displayCommitHash
 
-      - run: gradle buildPlugin
+      - run: gradle buildPlugin --info
 
       - store_artifacts:
           path: build/distributions
 
-      - run: gradle test
+      - run: gradle test --info
+
+      - run: gradle verifyPlugin --info
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/junit
+      - store_artifacts:
+          path: ~/junit

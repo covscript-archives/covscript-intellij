@@ -6,6 +6,7 @@ jdk:
 script:
 - ./gradlew displayCommitHash
 - ./gradlew isCI
-- ./gradlew buildPlugin
+- ./gradlew buildPlugin --info
+- ./gradlew verifyPlugin --info
 before_install:
 - chmod a+x gradlew

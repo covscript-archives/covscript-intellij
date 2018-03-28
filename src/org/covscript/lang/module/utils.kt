@@ -1,12 +1,12 @@
 package org.covscript.lang.module
 
-import com.google.common.util.concurrent.SimpleTimeLimiter
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil
 import com.intellij.openapi.util.SystemInfo
 import org.covscript.lang.*
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 const val GET_VERSION_TIME_PERIOD = 1500L
@@ -45,21 +45,23 @@ fun executeInRepl(
 	var processRef: Process? = null
 	var output: List<String> = emptyList()
 	var outputErr: List<String> = emptyList()
+	val path = replPathByExe(exePath)
+	val executor = Executors.newCachedThreadPool()
+	val future = executor.submit {
+		val process: Process = Runtime.getRuntime().exec("$path --silent")
+		processRef = process
+		process.outputStream.use {
+			it.write("$code\nsystem.exit(0)".toByteArray())
+			it.flush()
+		}
+		process.waitFor(timeLimit, TimeUnit.MILLISECONDS)
+		output = process.inputStream.use(::collectLines)
+		outputErr = process.errorStream.use(::collectLines)
+		process.destroy()
+	}
 	try {
-		val path = replPathByExe(exePath)
-		SimpleTimeLimiter().callWithTimeout({
-			val process: Process = Runtime.getRuntime().exec("$path --silent")
-			processRef = process
-			process.outputStream.use {
-				it.write("$code\nsystem.exit(0)".toByteArray())
-				it.flush()
-			}
-			process.waitFor(timeLimit, TimeUnit.MILLISECONDS)
-			output = process.inputStream.use(::collectLines)
-			outputErr = process.errorStream.use(::collectLines)
-			forceRun(process::destroy)
-		}, timeLimit + 100, TimeUnit.MILLISECONDS, true)
-	} catch (e: Throwable) {
+		future.get(timeLimit, TimeUnit.MILLISECONDS)
+	} finally {
 		processRef?.destroy()
 	}
 	return output to outputErr
