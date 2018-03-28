@@ -5,7 +5,8 @@ environment:
 build_script:
   - gradlew displayCommitHash
   - gradlew isCI
-  - gradlew buildPlugin
+  - gradlew buildPlugin --info
+  - gradlew verifyPlugin --info
 #
 
 artifacts:
