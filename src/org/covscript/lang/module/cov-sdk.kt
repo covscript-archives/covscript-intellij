@@ -13,7 +13,7 @@ import org.jdom.Element
 class CovSdkType : SdkType(CovBundle.message("cov.name")) {
 	override fun getPresentableName() = CovBundle.message("cov.modules.sdk.name")
 	override fun getIcon() = CovIcons.COV_BIG_ICON
-	override fun getIconForAddAction() = icon
+	override fun getIconForAddAction() = CovIcons.COV_ADD_SDK_ICON
 	override fun isValidSdkHome(s: String?) = validateCovExe(s.orEmpty())
 	override fun suggestSdkName(s: String?, p1: String?) = CovBundle.message("cov.modules.sdk.name")
 	override fun suggestHomePath() = defaultCovExe
