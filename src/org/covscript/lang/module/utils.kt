@@ -61,6 +61,8 @@ fun executeInRepl(
 	}
 	try {
 		future.get(timeLimit, TimeUnit.MILLISECONDS)
+	} catch (ignored: Throwable) {
+		// timeout? catch it and give up anyway
 	} finally {
 		processRef?.destroy()
 	}
