@@ -81,7 +81,7 @@ allprojects {
 				localPath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/181.4203.550"
 				alternativeIdePath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/PyCharm-C/ch-0/173.4674.37"
 			}
-			!System.getenv("TRAVIS").isNullOrBlank() -> version = "2016.1"
+			!System.getenv("TRAVIS").isNullOrBlank() -> version = "2017.1"
 			else -> version = "2018.1"
 		}
 	}
