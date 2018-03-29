@@ -14,6 +14,6 @@ public abstract class CovProjectConfigurable implements Configurable {
 	protected @NotNull JFormattedTextField textLimitField;
 	protected @NotNull TextFieldWithBrowseButton covExeField;
 	protected @NotNull JLabel version;
-	protected @NotNull LinkLabel covWebsite;
+	protected @NotNull LinkLabel<Object> covWebsite;
 	protected @NotNull RawCommandLineEditor importPathField;
 }

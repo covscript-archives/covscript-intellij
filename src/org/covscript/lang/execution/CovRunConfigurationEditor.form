@@ -51,9 +51,7 @@
       </component>
       <component id="81ded" class="javax.swing.JLabel">
         <constraints>
-          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-            <preferred-size width="266" height="20"/>
-          </grid>
+          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.compiler-args"/>
@@ -76,11 +74,9 @@
         </constraints>
         <properties/>
       </component>
-      <component id="2470f" class="javax.swing.JCheckBox" binding="compileOnly">
+      <component id="7481a" class="com.intellij.ui.components.JBCheckBox" binding="compileOnly">
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-            <preferred-size width="100" height="24"/>
-          </grid>
+          <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.compile-only"/>
@@ -92,31 +88,25 @@
         </constraints>
         <properties/>
       </component>
-      <component id="5b570" class="javax.swing.JCheckBox" binding="waitBeforeExit">
+      <component id="3fcfd" class="com.intellij.ui.components.JBCheckBox" binding="waitBeforeExit">
         <constraints>
-          <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-            <preferred-size width="100" height="24"/>
-          </grid>
+          <grid row="7" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.wait-b4-exit"/>
         </properties>
       </component>
-      <component id="5d152" class="javax.swing.JCheckBox" binding="logPath">
+      <component id="3d9fc" class="com.intellij.ui.components.JBCheckBox" binding="logPath">
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-            <preferred-size width="100" height="24"/>
-          </grid>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text resource-bundle="org/covscript/lang/cov-bundle" key="cov.run.config.log-path"/>
         </properties>
       </component>
-      <component id="bf4df" class="javax.swing.JCheckBox" binding="importPath">
+      <component id="15163" class="com.intellij.ui.components.JBCheckBox" binding="importPath">
         <constraints>
-          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-            <preferred-size width="100" height="24"/>
-          </grid>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <selected value="false"/>
