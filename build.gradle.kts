@@ -78,8 +78,9 @@ allprojects {
 		instrumentCode = true
 		when {
 			System.getProperty("user.name") == "ice1000" -> {
-				localPath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/181.4203.550"
-				alternativeIdePath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/PyCharm-C/ch-0/173.4674.37"
+				val root = "/home/ice1000/.local/share/JetBrains/Toolbox/apps"
+				localPath = "$root/IDEA-U/ch-0/181.4203.550"
+				alternativeIdePath = "$root/PyCharm-C/ch-0/173.4674.37"
 			}
 			!System.getenv("TRAVIS").isNullOrBlank() -> version = "2017.1"
 			else -> version = "2018.1"
@@ -123,7 +124,7 @@ val SourceSet.kotlin
 java.sourceSets {
 	"main" {
 		java.srcDirs("src", "gen")
-		kotlin.srcDirs("src", "gen")
+		kotlin.srcDirs("src")
 		resources.srcDirs("res")
 	}
 
