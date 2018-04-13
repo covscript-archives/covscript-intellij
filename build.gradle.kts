@@ -93,20 +93,6 @@ java {
 	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-tasks.withType<KotlinCompile> {
-	dependsOn("genParser")
-	dependsOn("genLexer")
-	kotlinOptions {
-		jvmTarget = "1.8"
-		languageVersion = "1.2"
-		apiVersion = "1.2"
-	}
-}
-
-tasks.withType<Delete> {
-	dependsOn("cleanGenerated")
-}
-
 tasks.withType<PatchPluginXmlTask> {
 	changeNotes(file("res/META-INF/change-notes.html").readText())
 	pluginDescription(file("res/META-INF/description.html").readText())
@@ -115,30 +101,23 @@ tasks.withType<PatchPluginXmlTask> {
 	println(pluginId)
 }
 
-val SourceSet.kotlin
-	get() = (this as HasConvention)
-			.convention
-			.getPlugin(KotlinSourceSet::class.java)
-			.kotlin
-
 java.sourceSets {
 	"main" {
 		java.srcDirs("src", "gen")
-		kotlin.srcDirs("src")
+		withConvention(KotlinSourceSet::class) {
+			kotlin.srcDirs("src")
+		}
 		resources.srcDirs("res")
 	}
 
 	"test" {
 		java.srcDirs("test")
-		kotlin.srcDirs("test")
+		withConvention(KotlinSourceSet::class) {
+			kotlin.srcDirs("test")
+		}
 		resources.srcDirs("testData")
 	}
 }
-
-// TODO workaround for KT-23077
-inline fun <reified TheTask : BaseTask>
-		Project.genTask(name: String, noinline configuration: TheTask.() -> Unit) =
-		task(name, TheTask::class, configuration)
 
 repositories {
 	mavenCentral()
@@ -172,7 +151,7 @@ task("isCI") {
 	}
 }
 
-genTask<GenerateParser>("genParser") {
+val genParser = task<GenerateParser>("genParser") {
 	group = "build setup"
 	description = "Generate the Parser and PsiElement classes"
 	source = "grammar/cov-grammar.bnf"
@@ -182,7 +161,7 @@ genTask<GenerateParser>("genParser") {
 	purgeOldFiles = true
 }
 
-genTask<GenerateLexer>("genLexer") {
+val genLexer = task<GenerateLexer>("genLexer") {
 	group = "build setup"
 	description = "Generate the Lexer"
 	source = "grammar/cov-lexer.flex"
@@ -191,10 +170,24 @@ genTask<GenerateLexer>("genLexer") {
 	purgeOldFiles = true
 }
 
-task("cleanGenerated") {
-	group = "build"
+val cleanGenerated = task("cleanGenerated") {
+	group = tasks["clean"].group
 	description = "Remove all generated codes"
 	doFirst {
 		delete("gen")
 	}
+}
+
+tasks.withType<KotlinCompile> {
+	dependsOn(genParser)
+	dependsOn(genLexer)
+	kotlinOptions {
+		jvmTarget = "1.8"
+		languageVersion = "1.2"
+		apiVersion = "1.2"
+	}
+}
+
+tasks.withType<Delete> {
+	dependsOn(cleanGenerated)
 }
