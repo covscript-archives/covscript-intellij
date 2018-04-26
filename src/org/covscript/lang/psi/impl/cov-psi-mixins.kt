@@ -3,7 +3,6 @@ package org.covscript.lang.psi.impl
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.*
-import com.intellij.psi.impl.source.tree.injected.StringLiteralEscaper
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
@@ -101,13 +100,6 @@ abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclarati
 		nameCache = null
 		super.subtreeChanged()
 	}
-}
-
-abstract class CovCommentMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovComment {
-	override fun getTokenType() = node.elementType
-	override fun isValidHost() = true
-	override fun updateText(string: String): CovComment = replace(CovTokenType.fromText(string, project)) as CovComment
-	override fun createLiteralTextEscaper() = StringLiteralEscaper.createSimple(this)
 }
 
 interface ICovStatement : PsiElement {

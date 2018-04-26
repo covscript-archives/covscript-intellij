@@ -112,7 +112,7 @@ class CovSyntaxHighlighter : SyntaxHighlighter {
 
 	override fun getHighlightingLexer() = CovLexerAdapter()
 	override fun getTokenHighlights(type: IElementType?): Array<TextAttributesKey> = when (type) {
-		CovTypes.LINE_COMMENT -> COMMENT_KEY
+		CovTokenType.LINE_COMMENT -> COMMENT_KEY
 		CovTypes.NUM -> NUMBER_KEY
 		CovTypes.STR, CovTypes.CHAR -> STRING_KEY
 		CovTypes.COLLAPSER_BEGIN, CovTypes.COLLAPSER_END -> BEGIN_END_THEMSELVES_KEY

@@ -21,16 +21,11 @@ fileHeader ::=
    usingDeclaration
  | importDeclaration
  | packageDeclaration
- | comment
  | endOfLine
 
 private endOfLine ::= EOL+
 break ::= BREAK_KEYWORD
 continue ::= CONTINUE_KEYWORD
-comment ::= LINE_COMMENT {
-	mixin='org.covscript.lang.psi.impl.CovCommentMixin'
-	implements=['com.intellij.psi.PsiLanguageInjectionHost' 'com.intellij.psi.PsiComment']
-}
 
 importDeclaration ::= IMPORT_KEYWORD symbol {
 	pin=1
@@ -167,7 +162,6 @@ private primaryStatement ::=
  | forStatement
  | loopUntilStatement
  | tryCatchStatement
- | comment
  | namespaceDeclaration
  | break
  | continue

@@ -129,7 +129,7 @@ override { return CovTypes.OVERRIDE_KEYWORD; }
 \} { return CovTypes.RIGHT_B_BRACKET; }
 \[ { return CovTypes.LEFT_S_BRACKET; }
 \] { return CovTypes.RIGHT_S_BRACKET; }
-{COMMENT} { return CovTypes.LINE_COMMENT; }
+{COMMENT} { return CovTokenType.LINE_COMMENT; }
 {EOL} { return CovTypes.EOL; }
 
 {STRING_LITERAL} { return CovTypes.STR; }
