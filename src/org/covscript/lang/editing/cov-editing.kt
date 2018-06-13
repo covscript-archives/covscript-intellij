@@ -2,9 +2,11 @@ package org.covscript.lang.editing
 
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter
-import com.intellij.codeInsight.editorActions.smartEnter.SmartEnterProcessor
 import com.intellij.ide.IconProvider
-import com.intellij.ide.structureView.*
+import com.intellij.ide.structureView.StructureViewModel
+import com.intellij.ide.structureView.StructureViewModelBase
+import com.intellij.ide.structureView.StructureViewTreeElement
+import com.intellij.ide.structureView.TreeBasedStructureViewBuilder
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
 import com.intellij.ide.util.treeView.smartTree.SortableTreeElement
 import com.intellij.lang.*
@@ -18,7 +20,9 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.InputValidatorEx
-import com.intellij.patterns.*
+import com.intellij.patterns.ElementPattern
+import com.intellij.patterns.PatternCondition
+import com.intellij.patterns.PlatformPatterns
 import com.intellij.pom.PomTargetPsiElement
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -37,7 +41,7 @@ import javax.swing.Icon
 class CovIconProvider : IconProvider() {
 	override fun getIcon(element: PsiElement, flags: Int): Icon? {
 		val file = element as? PsiFile ?: return null
-		return when (file.virtualFile.fileType) {
+		return when (file.virtualFile?.fileType) {
 			CovPackageFileType -> icon(file) ?: CovIcons.COV_PKG_ICON
 			CovFileType -> icon(file) ?: CovIcons.COV_ICON
 			else -> null
