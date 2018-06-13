@@ -1,5 +1,6 @@
 package org.covscript.lang.editing
 
+import com.intellij.codeInsight.editorActions.smartEnter.SmartEnterProcessor
 import com.intellij.ide.IconProvider
 import com.intellij.ide.structureView.*
 import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
@@ -18,6 +19,7 @@ import com.intellij.patterns.*
 import com.intellij.pom.PomTargetPsiElement
 import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.RenameInputValidator
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
 import com.intellij.spellchecker.tokenizer.Tokenizer
@@ -53,7 +55,8 @@ class CovIconProvider : IconProvider() {
 
 class CovBraceMatcher : PairedBraceMatcher {
 	companion object {
-		private val PAIRS = arrayOf(
+		@JvmField
+		val PAIRS = arrayOf(
 				BracePair(CovTypes.LEFT_BRACKET, CovTypes.RIGHT_BRACKET, false),
 				BracePair(CovTypes.LEFT_B_BRACKET, CovTypes.RIGHT_B_BRACKET, false),
 				BracePair(CovTypes.LEFT_S_BRACKET, CovTypes.RIGHT_S_BRACKET, false),
@@ -83,6 +86,27 @@ class CovCommenter : Commenter {
 	override fun getBlockCommentPrefix(): String? = null
 	override fun getBlockCommentSuffix(): String? = null
 	override fun getLineCommentPrefix() = "# "
+}
+
+class CovStupidEnterProcessor : SmartEnterProcessor() {
+	override fun process(project: Project, editor: Editor, psiFile: PsiFile): Boolean {
+		val caretModel = editor.caretModel
+		val offset = caretModel.offset
+		val element = psiFile.findElementAt(offset) ?: return false
+		if (element.node.elementType != CovTypes.EOL) return false
+		val prevLeaf = PsiTreeUtil.prevLeaf(element, true)?.node ?: return false
+		return CovBraceMatcher.PAIRS.firstOrNull { it.leftBraceType == prevLeaf.elementType }?.also {
+			editor.document.insertString(offset, when (it.rightBraceType) {
+				CovTypes.END_KEYWORD -> "\n\t\nend\n"
+				CovTypes.COLLAPSER_END -> "\n\t\n@end\n"
+				CovTypes.RIGHT_BRACKET -> "\n\t\n)\n"
+				CovTypes.RIGHT_B_BRACKET -> "\n\t\n}\n"
+				CovTypes.RIGHT_S_BRACKET -> "\n\t\n]\n"
+				else -> return false
+			})
+			caretModel.moveToOffset(offset + 2)
+		} != null
+	}
 }
 
 class CovSpellCheckingStrategy : SpellcheckingStrategy() {

@@ -4,7 +4,6 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import org.covscript.lang.CovTokenType
 import org.covscript.lang.orFalse
@@ -63,15 +62,6 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 	}
 
 	override fun getName() = nameIdentifier?.text
-	open val startPoint: PsiElement
-		get() = PsiTreeUtil.getParentOfType(this, CovStatement::class.java, true)?.parent ?: parent
-
-	override fun getReferences() = refCache
-			?: nameIdentifier
-					?.let { collectFrom(startPoint, it.text, it) }
-					?.also { refCache = it }
-			?: emptyArray()
-
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
 			nameIdentifier?.processDeclarations(processor, substitutor, lastParent, place).orFalse() and
