@@ -7,18 +7,12 @@ import org.jetbrains.intellij.tasks.PatchPluginXmlTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.*
-import java.nio.file.*
-import java.util.stream.Collectors
 
 val commitHash by lazy {
 	val output: String
 	val process: Process = Runtime.getRuntime().exec("git rev-parse --short HEAD")
 	process.waitFor()
-	output = process.inputStream.use {
-		it.bufferedReader().use {
-			it.readText()
-		}
-	}
+	output = process.inputStream.use { it.bufferedReader().use { it.readText() } }
 	process.destroy()
 	output.trim()
 }
@@ -28,34 +22,22 @@ val isCI = !System.getenv("CI").isNullOrBlank()
 val pluginComingVersion = "1.9.0"
 val pluginVersion = if (isCI) "$pluginComingVersion-$commitHash" else pluginComingVersion
 val packageName = "org.covscript"
-val kotlinVersion: String by extra
+val kotlinVersion = "1.2.41"
 
 group = packageName
 version = pluginVersion
 
 buildscript {
-	var kotlinVersion: String by extra
-	var grammarKitVersion: String by extra
-
-	grammarKitVersion = "2018.1.1"
-	kotlinVersion = "1.2.40"
-
-	repositories {
-		mavenCentral()
-		maven("https://jitpack.io")
-	}
-
-	dependencies {
-		classpath(kotlin("gradle-plugin", kotlinVersion))
-		classpath("com.github.JetBrains:gradle-grammar-kit-plugin:$grammarKitVersion")
-	}
+	val grammarKitVersion = "2018.1.2"
+	repositories { maven("https://jitpack.io") }
+	dependencies { classpath("com.github.JetBrains:gradle-grammar-kit-plugin:$grammarKitVersion") }
 }
 
 plugins {
 	idea
 	java
 	id("org.jetbrains.intellij") version "0.3.1"
-	kotlin("jvm") version "1.2.40"
+	kotlin("jvm") version "1.2.41"
 }
 
 idea {
@@ -76,8 +58,8 @@ allprojects {
 		when {
 			System.getProperty("user.name") == "ice1000" -> {
 				val root = "/home/ice1000/.local/share/JetBrains/Toolbox/apps"
-				localPath = "$root/IDEA-U/ch-0/181.4668.68"
-				alternativeIdePath = "$root/PyCharm-C/ch-0/181.4668.75"
+				localPath = "$root/IDEA-U/ch-0/181.5087.20"
+				alternativeIdePath = "$root/PyCharm-C/ch-0/181.4892.64"
 			}
 			!System.getenv("TRAVIS").isNullOrBlank() -> version = "2017.1"
 			else -> version = "2018.1"
@@ -116,9 +98,7 @@ java.sourceSets {
 	}
 }
 
-repositories {
-	mavenCentral()
-}
+repositories { jcenter() }
 
 dependencies {
 	compileOnly(kotlin("stdlib-jdk8", kotlinVersion))
@@ -127,7 +107,7 @@ dependencies {
 		exclude(module = "kotlin-reflect")
 		exclude(module = "kotlin-stdlib")
 	}
-	compile(files(Paths.get("lib", "org.eclipse.egit.github.core-2.1.5.jar")))
+	compile(files("lib/org.eclipse.egit.github.core-2.1.5.jar"))
 	testCompile(kotlin("test-junit", kotlinVersion))
 	testCompile("junit", "junit", "4.12")
 }
@@ -135,17 +115,13 @@ dependencies {
 task("displayCommitHash") {
 	group = "help"
 	description = "Display the newest commit hash"
-	doFirst {
-		println("Commit hash: $commitHash")
-	}
+	doFirst { println("Commit hash: $commitHash") }
 }
 
 task("isCI") {
 	group = "help"
 	description = "Check if it's running in a continuous-integration"
-	doFirst {
-		println(if (isCI) "Yes, I'm on a CI." else "No, I'm not on CI.")
-	}
+	doFirst { println(if (isCI) "Yes, I'm on a CI." else "No, I'm not on CI.") }
 }
 
 val genParser = task<GenerateParser>("genParser") {
@@ -170,9 +146,7 @@ val genLexer = task<GenerateLexer>("genLexer") {
 val cleanGenerated = task("cleanGenerated") {
 	group = tasks["clean"].group
 	description = "Remove all generated codes"
-	doFirst {
-		delete("gen")
-	}
+	doFirst { delete("gen") }
 }
 
 tasks.withType<KotlinCompile> {
@@ -185,6 +159,4 @@ tasks.withType<KotlinCompile> {
 	}
 }
 
-tasks.withType<Delete> {
-	dependsOn(cleanGenerated)
-}
+tasks.withType<Delete> { dependsOn(cleanGenerated) }
