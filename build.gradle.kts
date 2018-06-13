@@ -40,6 +40,12 @@ plugins {
 	kotlin("jvm") version "1.2.41"
 }
 
+apply { plugin("org.jetbrains.grammarkit") }
+
+configure<GrammarKitPluginExtension> {
+	grammarKitRelease = "2017.1.4"
+}
+
 idea {
 	module {
 		// https://github.com/gradle/kotlin-dsl/issues/537/
@@ -47,24 +53,14 @@ idea {
 	}
 }
 
-allprojects {
-	apply {
-		plugin("org.jetbrains.grammarkit")
-	}
-
-	intellij {
-		updateSinceUntilBuild = false
-		instrumentCode = true
-		when {
-			System.getProperty("user.name") == "ice1000" -> {
-				val root = "/home/ice1000/.local/share/JetBrains/Toolbox/apps"
-				localPath = "$root/IDEA-U/ch-0/181.5087.20"
-				alternativeIdePath = "$root/PyCharm-C/ch-0/181.4892.64"
-			}
-			!System.getenv("TRAVIS").isNullOrBlank() -> version = "2017.1"
-			else -> version = "2018.1"
-		}
-	}
+intellij {
+	updateSinceUntilBuild = false
+	instrumentCode = true
+	if (System.getProperty("user.name") == "ice1000") {
+		val root = "/home/ice1000/.local/share/JetBrains/Toolbox/apps"
+		localPath = "$root/IDEA-U/ch-0/181.5087.20"
+		alternativeIdePath = "$root/PyCharm-C/ch-0/181.5087.37"
+	} else version = "2018.1"
 }
 
 java {
@@ -77,7 +73,6 @@ tasks.withType<PatchPluginXmlTask> {
 	pluginDescription(file("res/META-INF/description.html").readText())
 	version(pluginVersion)
 	pluginId(packageName)
-	println(pluginId)
 }
 
 java.sourceSets {

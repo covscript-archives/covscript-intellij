@@ -108,19 +108,7 @@ interface ICovStatement : PsiElement {
 
 abstract class CovStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovStatement {
 	override val inside: PsiElement?
-		get() = children.firstOrNull()?.takeIf {
-			it is CovFunctionDeclaration ||
-					it is CovNamespaceDeclaration ||
-					it is CovVariableDeclaration ||
-					it is CovForStatement ||
-					it is CovStructDeclaration ||
-					it is CovLoopUntilStatement ||
-					it is CovIfStatement ||
-					it is CovWhileStatement ||
-					it is CovSwitchStatement ||
-					it is CovBlockStatement ||
-					it is CovTryCatchStatement
-		}
+		get() = children.firstOrNull()?.takeUnless { it is CovExpr }
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
@@ -184,15 +172,15 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, CovExprMixin(node) {
 	final override val isImportedName: Boolean get() = parent.let { it is CovImportDeclaration && it.nameIdentifier === this }
 	final override val isUsingedName: Boolean get() = parent.let { it is CovUsingDeclaration && it.nameIdentifier === this }
 	final override val isDeclaration: Boolean
-		get() = isException or
-				isLoopVar or
-				isVar or
-				isConstVar or
-				isNamespaceName or
-				isUsingedName or
-				isImportedName or
-				isFunctionName or
-				isStructName or
+		get() = isException ||
+				isLoopVar ||
+				isVar ||
+				isConstVar ||
+				isNamespaceName ||
+				isUsingedName ||
+				isImportedName ||
+				isFunctionName ||
+				isStructName ||
 				isParameter
 
 	override fun processDeclarations(
