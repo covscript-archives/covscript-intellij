@@ -19,7 +19,7 @@ val commitHash by lazy {
 
 val isCI = !System.getenv("CI").isNullOrBlank()
 
-val pluginComingVersion = "1.9.0"
+val pluginComingVersion = "1.9.1"
 val pluginVersion = if (isCI) "$pluginComingVersion-$commitHash" else pluginComingVersion
 val packageName = "org.covscript"
 val kotlinVersion = "1.2.41"
