@@ -21,9 +21,7 @@
 		<consoleFilterProvider implementation="org.covscript.lang.execution.CovConsoleFilterProvider"/>
 		<iconProvider implementation="org.covscript.lang.editing.CovIconProvider"/>
 		<languageInjector implementation="org.covscript.lang.editing.CovLanguageInjector"/>
-		<lang.smartEnterProcessor
-				language="CovScript"
-				implementationClass="org.covscript.lang.editing.CovStupidEnterProcessor"/>
+		<enterHandlerDelegate implementation="org.covscript.lang.editing.CovEnterHandlerDelegate"/>
 		<lang.findUsagesProvider
 				language="CovScript"
 				implementationClass="org.covscript.lang.psi.CovFindUsageProvider"/>

@@ -1,5 +1,7 @@
 package org.covscript.lang.editing
 
+import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate
+import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter
 import com.intellij.codeInsight.editorActions.smartEnter.SmartEnterProcessor
 import com.intellij.ide.IconProvider
 import com.intellij.ide.structureView.*
@@ -11,6 +13,7 @@ import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.lang.parser.GeneratedParserUtilBase
 import com.intellij.lang.refactoring.NamesValidator
 import com.intellij.navigation.LocationPresentation
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -18,6 +21,7 @@ import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.patterns.*
 import com.intellij.pom.PomTargetPsiElement
 import com.intellij.psi.*
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.RenameInputValidator
@@ -88,24 +92,26 @@ class CovCommenter : Commenter {
 	override fun getLineCommentPrefix() = "# "
 }
 
-class CovStupidEnterProcessor : SmartEnterProcessor() {
-	override fun process(project: Project, editor: Editor, psiFile: PsiFile): Boolean {
+class CovEnterHandlerDelegate : EnterHandlerDelegateAdapter() {
+	override fun postProcessEnter(file: PsiFile, editor: Editor, dataContext: DataContext): EnterHandlerDelegate.Result {
+		if (file.language != CovLanguage.INSTANCE) return EnterHandlerDelegate.Result.Continue
 		val caretModel = editor.caretModel
 		val offset = caretModel.offset
-		val element = psiFile.findElementAt(offset) ?: return false
-		if (element.node.elementType != CovTypes.EOL) return false
-		val prevLeaf = PsiTreeUtil.prevLeaf(element, true)?.node ?: return false
+		val element = file.findElementAt(offset) ?: return EnterHandlerDelegate.Result.Continue
+		if (element.node.elementType != CovTypes.EOL) return EnterHandlerDelegate.Result.Continue
+		var prevLeaf = PsiTreeUtil.getPrevSiblingOfType(element, LeafPsiElement::class.java)
+				?: return EnterHandlerDelegate.Result.Continue
+		while (prevLeaf.node.elementType.let { it == CovTypes.EOL || it == CovTypes.SYM || it == TokenType.WHITE_SPACE })
+			prevLeaf = PsiTreeUtil.getPrevSiblingOfType(prevLeaf, LeafPsiElement::class.java)
+					?: return EnterHandlerDelegate.Result.Continue
 		return CovBraceMatcher.PAIRS.firstOrNull { it.leftBraceType == prevLeaf.elementType }?.also {
 			editor.document.insertString(offset, when (it.rightBraceType) {
-				CovTypes.END_KEYWORD -> "\n\t\nend\n"
-				CovTypes.COLLAPSER_END -> "\n\t\n@end\n"
-				CovTypes.RIGHT_BRACKET -> "\n\t\n)\n"
-				CovTypes.RIGHT_B_BRACKET -> "\n\t\n}\n"
-				CovTypes.RIGHT_S_BRACKET -> "\n\t\n]\n"
-				else -> return false
+				CovTypes.END_KEYWORD -> "\t\nend\n"
+				CovTypes.COLLAPSER_END -> "\t\n@end\n"
+				else -> return EnterHandlerDelegate.Result.Continue
 			})
-			caretModel.moveToOffset(offset + 2)
-		} != null
+			caretModel.moveToOffset(offset + 1)
+		}?.let { EnterHandlerDelegate.Result.Stop } ?: EnterHandlerDelegate.Result.Continue
 	}
 }
 
