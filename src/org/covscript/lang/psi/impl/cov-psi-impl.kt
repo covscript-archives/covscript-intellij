@@ -13,9 +13,9 @@ fun PsiElement.processDeclTrivial(
 		substitutor: ResolveState,
 		lastParent: PsiElement?,
 		place: PsiElement): Boolean {
-	var run: PsiElement? = lastParent?.prevSibling ?: lastChild
+	var run: PsiElement? = place.prevSibling ?: lastChild
 	while (run != null) {
-		if (!run.processDeclarations(processor, substitutor, null, place)) return false
+		if (!run.processDeclarations(processor, substitutor, lastParent, place)) return false
 		run = run.prevSibling
 	}
 	return true

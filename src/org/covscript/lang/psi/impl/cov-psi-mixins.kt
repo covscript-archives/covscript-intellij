@@ -84,7 +84,7 @@ abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclarati
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
 			symbolList.asReversed().all {
 				it.processDeclarations(processor, substitutor, lastParent, place)
-			} and processDeclTrivial(processor, substitutor, lastParent, place)
+			} && processDeclTrivial(processor, substitutor, lastParent, place)
 
 	override fun subtreeChanged() {
 		nameCache = null

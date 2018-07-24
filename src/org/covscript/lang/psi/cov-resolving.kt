@@ -63,8 +63,9 @@ abstract class ResolveProcessor<ResolveResult>(private val place: PsiElement) : 
 	protected val PsiElement.hasNoError get() = (this as? StubBasedPsiElement<*>)?.stub != null || !PsiTreeUtil.hasErrorElements(this)
 
 	protected fun isInScope(element: PsiElement) = if (element is CovSymbol) when {
-		element.isParameter or
-				element.isException or
+		element.isUsingedName || element.isImportedName -> true
+		element.isParameter ||
+				element.isException ||
 				element.isLoopVar -> PsiTreeUtil.isAncestor(element.parent, place, true)
 		element.isDeclaration -> PsiTreeUtil.isAncestor(
 				PsiTreeUtil.getParentOfType(element, CovStatement::class.java)?.parent, place, false)
@@ -81,7 +82,7 @@ class SymbolResolveProcessor(private val name: String, place: PsiElement, val in
 	override fun execute(element: PsiElement, resolveState: ResolveState) = when {
 		candidateSet.isNotEmpty() -> false
 		element is CovSymbol -> {
-			val accessible = accessible(element) and element.isDeclaration
+			val accessible = accessible(element) && element.isDeclaration
 			if (accessible) candidateSet += PsiElementResolveResult(element, element.hasNoError)
 			!accessible
 		}
@@ -95,7 +96,7 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 
 	override val candidateSet = ArrayList<LookupElementBuilder>(30)
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
-		if (!(element.hasNoError and isInScope(element))) return true
+		if (!element.hasNoError || !isInScope(element)) return true
 		if (element !is CovSymbol || !element.isDeclaration) return true
 		val (type, icon) = when {
 			element.isParameter -> "Parameter" to CovIcons.VARIABLE_ICON
@@ -103,8 +104,8 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 			element.isConstVar -> "Constant" to CovIcons.VARIABLE_ICON
 			element.isVar -> "Variable" to CovIcons.VARIABLE_ICON
 			element.isFunctionName -> "Function" to CovIcons.FUNCTION_ICON
-			element.isImportedName or
-					element.isUsingedName or
+			element.isImportedName ||
+					element.isUsingedName ||
 					element.isNamespaceName -> "Namespace" to CovIcons.NAMESPACE_ICON
 			element.isLoopVar -> "Loop var" to CovIcons.VARIABLE_ICON
 			element.isStructName -> "Struct" to CovIcons.STRUCT_ICON

@@ -6,9 +6,10 @@ import com.intellij.codeInsight.template.impl.DefaultLiveTemplatesProvider
 import com.intellij.extapi.psi.PsiFileBase
 import com.intellij.openapi.fileTypes.*
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.FileViewProvider
-import com.intellij.psi.PsiFile
+import com.intellij.psi.*
+import com.intellij.psi.scope.PsiScopeProcessor
 import icons.CovIcons
+import org.covscript.lang.psi.impl.processDeclTrivial
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.PropertyKey
 import java.util.*
@@ -29,6 +30,8 @@ object CovFileType : LanguageFileType(CovLanguage.INSTANCE) {
 
 class CovFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, CovLanguage.INSTANCE) {
 	override fun getFileType() = CovFileType
+	override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			processDeclTrivial(processor, state, lastParent, place)
 }
 
 class CovFileTypeFactory : FileTypeFactory() {

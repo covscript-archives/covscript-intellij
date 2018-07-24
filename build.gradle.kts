@@ -19,7 +19,7 @@ val commitHash by lazy {
 
 val isCI = !System.getenv("CI").isNullOrBlank()
 
-val pluginComingVersion = "1.9.1"
+val pluginComingVersion = "1.9.2"
 val pluginVersion = if (isCI) "$pluginComingVersion-$commitHash" else pluginComingVersion
 val packageName = "org.covscript"
 val kotlinVersion = "1.2.41"
@@ -27,23 +27,17 @@ val kotlinVersion = "1.2.41"
 group = packageName
 version = pluginVersion
 
-buildscript {
-	val grammarKitVersion = "2018.1.2"
-	repositories { maven("https://jitpack.io") }
-	dependencies { classpath("com.github.JetBrains:gradle-grammar-kit-plugin:$grammarKitVersion") }
-}
-
 plugins {
 	idea
 	java
 	id("org.jetbrains.intellij") version "0.3.1"
+	id("org.jetbrains.grammarkit") version "2018.1.7"
 	kotlin("jvm") version "1.2.41"
 }
 
 apply { plugin("org.jetbrains.grammarkit") }
-
 configure<GrammarKitPluginExtension> {
-	grammarKitRelease = "2017.1.4"
+	grammarKitRelease = "2017.1.5"
 }
 
 idea {
@@ -56,11 +50,14 @@ idea {
 intellij {
 	updateSinceUntilBuild = false
 	instrumentCode = true
-	if (System.getProperty("user.name") == "ice1000") {
-		val root = "/home/ice1000/.local/share/JetBrains/Toolbox/apps"
-		localPath = "$root/IDEA-U/ch-0/181.5087.20"
-		alternativeIdePath = "$root/PyCharm-C/ch-0/181.5087.37"
-	} else version = "2018.1"
+	when {
+		System.getProperty("user.name") == "ice1000" -> {
+			val root = "/home/ice1000/.local/share/JetBrains/Toolbox/apps"
+			localPath = "$root/IDEA-U/ch-0/181.5540.7"
+			alternativeIdePath = "$root/PyCharm-C/ch-0/181.5087.37"
+		}
+		else -> version = "2018.1"
+	}
 }
 
 java {
