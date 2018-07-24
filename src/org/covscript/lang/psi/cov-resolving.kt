@@ -1,7 +1,12 @@
 package org.covscript.lang.psi
 
+import com.intellij.codeInsight.completion.InsertHandler
+import com.intellij.codeInsight.editorActions.TypedHandler
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.lang.refactoring.RefactoringSupportProvider
+import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
@@ -35,8 +40,8 @@ class CovSymbolRef constructor(private val symbol: CovSymbol) : PsiPolyVariantRe
 
 	override fun isReferenceTo(o: PsiElement?) = o === refTo || o === resolve()
 	override fun resolve() = refTo
-			?: multiResolve(false)
-					.firstOrNull()?.element.also { refTo = it as? PsiNameIdentifierOwner }
+		?: multiResolve(false)
+				.firstOrNull()?.element.also { refTo = it as? PsiNameIdentifierOwner }
 
 	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
 		if (element.isDeclaration or !element.isValid or element.project.isDisposed) return emptyArray()
@@ -98,22 +103,27 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
 		if (!element.hasNoError || !isInScope(element)) return true
 		if (element !is CovSymbol || !element.isDeclaration) return true
-		val (type, icon) = when {
-			element.isParameter -> "Parameter" to CovIcons.VARIABLE_ICON
-			element.isException -> "Exception" to CovIcons.TRY_CATCH_ICON
-			element.isConstVar -> "Constant" to CovIcons.VARIABLE_ICON
-			element.isVar -> "Variable" to CovIcons.VARIABLE_ICON
-			element.isFunctionName -> "Function" to CovIcons.FUNCTION_ICON
+		val (type, icon, insertHandler) = when {
+			element.isParameter -> Triple("Parameter", CovIcons.VARIABLE_ICON, null)
+			element.isException -> Triple("Exception", CovIcons.TRY_CATCH_ICON, null)
+			element.isConstVar -> Triple("Constant", CovIcons.VARIABLE_ICON, null)
+			element.isVar -> Triple("Variable", CovIcons.VARIABLE_ICON, null)
+			element.isFunctionName -> Triple("Function", CovIcons.FUNCTION_ICON, InsertHandler { context, _: LookupElement ->
+				val editor = context.editor
+				editor.document.insertString(editor.caretModel.offset, "()")
+				editor.caretModel.moveCaretRelatively(1, 0, false, false, true)
+			})
 			element.isImportedName ||
 					element.isUsingedName ||
-					element.isNamespaceName -> "Namespace" to CovIcons.NAMESPACE_ICON
-			element.isLoopVar -> "Loop var" to CovIcons.VARIABLE_ICON
-			element.isStructName -> "Struct" to CovIcons.STRUCT_ICON
-			else -> "<Unknown>" to CovIcons.COV_BIG_ICON
+					element.isNamespaceName -> Triple("Namespace", CovIcons.NAMESPACE_ICON, null)
+			element.isLoopVar -> Triple("Loop var", CovIcons.VARIABLE_ICON, null)
+			element.isStructName -> Triple("Struct", CovIcons.STRUCT_ICON, null)
+			else -> Triple("<Unknown>", CovIcons.COV_BIG_ICON, null)
 		}
 		candidateSet += LookupElementBuilder.create(element.text)
 				.withIcon(icon)
 				.withTypeText(type)
+				.withInsertHandler(insertHandler)
 		return true
 	}
 }
