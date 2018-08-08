@@ -36,9 +36,6 @@ plugins {
 }
 
 apply { plugin("org.jetbrains.grammarkit") }
-configure<GrammarKitPluginExtension> {
-	grammarKitRelease = "2017.1.5"
-}
 
 idea {
 	module {
@@ -53,8 +50,8 @@ intellij {
 	when {
 		System.getProperty("user.name") == "ice1000" -> {
 			val root = "/home/ice1000/.local/share/JetBrains/Toolbox/apps"
-			localPath = "$root/IDEA-U/ch-0/181.5540.7"
-			alternativeIdePath = "$root/PyCharm-C/ch-0/181.5087.37"
+			localPath = "$root/IDEA-U/ch-0/182.3911.36"
+			alternativeIdePath = "$root/PyCharm-C/ch-0/182.3911.33"
 		}
 		else -> version = "2018.1"
 	}
