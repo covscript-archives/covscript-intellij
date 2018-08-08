@@ -88,6 +88,7 @@ class CovCompletionContributor : CompletionContributor() {
 				"@begin\n",
 				"switch ",
 				"var ",
+				"const var ",
 				"throw runtime.exception",
 				"try\n",
 				"end"
