@@ -50,6 +50,15 @@ class CovCompletionContributor : CompletionContributor() {
 					.withIcon(CovIcons.COV_BIG_ICON)
 					.withTypeText(CovBundle.message("cov.completion.builtin"))
 		}
+		private val keywordExprCompletion = listOf(
+				"null",
+				"true",
+				"false"
+		).map {
+			LookupElementBuilder.create(it)
+					.withIcon(CovIcons.COV_BIG_ICON)
+					.withTypeText(CovBundle.message("cov.completion.keyword"))
+		}
 		private val loopCompletion = listOf(
 				"break",
 				"continue"
@@ -122,7 +131,7 @@ class CovCompletionContributor : CompletionContributor() {
 				CovProvider(functionCompletion))
 		extend(CompletionType.BASIC,
 				psiElement(CovTypes.SYM),
-				CovProvider(builtinCompletion))
+				CovProvider(builtinCompletion + keywordExprCompletion))
 		extend(CompletionType.BASIC,
 				psiElement(CovTypes.SYM).afterLeaf("\n"),
 				CovProvider(fileContentCompletion))
