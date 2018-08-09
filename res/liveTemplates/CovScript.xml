@@ -89,5 +89,15 @@
 			<option name="COVSCRIPT_STATEMENT" value="true"/>
 			<option name="OTHER" value="false"/>
 		</context>
-	</template></templateSet>
+	</template>
+	<template
+			name="const" value="const var $END$ = $INITIAL_VALUE$" description="Define a const var"
+			toReformat="true" toShortenFQNames="true">
+		<variable name="INITIAL_VALUE" expression="" defaultValue="null" alwaysStopAt="true"/>
+		<context>
+			<option name="COVSCRIPT_STATEMENT" value="true"/>
+			<option name="OTHER" value="false"/>
+		</context>
+	</template>
+</templateSet>
 

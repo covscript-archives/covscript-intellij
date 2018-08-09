@@ -19,7 +19,7 @@ val commitHash by lazy {
 
 val isCI = !System.getenv("CI").isNullOrBlank()
 
-val pluginComingVersion = "1.9.2"
+val pluginComingVersion = "1.9.3"
 val pluginVersion = if (isCI) "$pluginComingVersion-$commitHash" else pluginComingVersion
 val packageName = "org.covscript"
 val kotlinVersion = "1.2.41"
@@ -28,7 +28,6 @@ group = packageName
 version = pluginVersion
 
 plugins {
-	idea
 	java
 	id("org.jetbrains.intellij") version "0.3.1"
 	id("org.jetbrains.grammarkit") version "2018.1.7"
@@ -36,13 +35,6 @@ plugins {
 }
 
 apply { plugin("org.jetbrains.grammarkit") }
-
-idea {
-	module {
-		// https://github.com/gradle/kotlin-dsl/issues/537/
-		excludeDirs = excludeDirs + file("pinpoint_piggy")
-	}
-}
 
 intellij {
 	updateSinceUntilBuild = false
@@ -53,7 +45,7 @@ intellij {
 			localPath = "$root/IDEA-U/ch-0/182.3911.36"
 			alternativeIdePath = "$root/PyCharm-C/ch-0/182.3911.33"
 		}
-		else -> version = "2018.1"
+		else -> version = "2018.2"
 	}
 }
 
