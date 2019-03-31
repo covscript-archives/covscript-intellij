@@ -9,12 +9,13 @@ interface CovProjectSettingsService {
 	val settings: CovSettings
 }
 
-val Project.covSettings: CovProjectSettingsService
+val Project.covSettings: CovProjectSettingsService get() = covSettingsNullable!!
+val Project.covSettingsNullable: CovProjectSettingsService?
 	get() = getService(this, CovProjectSettingsService::class.java)
 
 @State(
 		name = "CovProjectSettings",
-		storages = [Storage(file = "covscriptConfig.xml", scheme = StorageScheme.DIRECTORY_BASED)])
+		storages = [Storage(file = "covscriptConfig.xml")])
 class CovProjectSettingsServiceImpl :
 		CovProjectSettingsService, PersistentStateComponent<CovSettings> {
 	override val settings = CovSettings()

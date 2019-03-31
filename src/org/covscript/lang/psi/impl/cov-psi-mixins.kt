@@ -6,7 +6,7 @@ import com.intellij.psi.*
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.util.IncorrectOperationException
 import org.covscript.lang.CovTokenType
-import org.covscript.lang.orFalse
+import org.covscript.lang.orTrue
 import org.covscript.lang.psi.*
 
 interface ICovString : PsiLanguageInjectionHost {
@@ -55,22 +55,14 @@ abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclarati
 }
 
 abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), PsiNameIdentifierOwner {
-	private var refCache: Array<PsiReference>? = null
 	override fun setName(newName: String) = also {
 		nameIdentifier.run { CovTokenType.fromText(newName, project).let(::replace) }
-		references.forEach { it.handleElementRename(newName) }
 	}
 
 	override fun getName() = nameIdentifier?.text
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			nameIdentifier?.processDeclarations(processor, substitutor, lastParent, place).orFalse() and
-					processDeclTrivial(processor, substitutor, lastParent, place)
-
-	override fun subtreeChanged() {
-		refCache = null
-		super.subtreeChanged()
-	}
+			nameIdentifier?.processDeclarations(processor, substitutor, lastParent, place).orTrue()
 }
 
 interface ICovFunctionDeclaration : PsiNameIdentifierOwner
@@ -84,7 +76,7 @@ abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclarati
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
 			symbolList.asReversed().all {
 				it.processDeclarations(processor, substitutor, lastParent, place)
-			} && processDeclTrivial(processor, substitutor, lastParent, place)
+			}
 
 	override fun subtreeChanged() {
 		nameCache = null

@@ -17,7 +17,7 @@ import org.jdom.Element
 
 class CovRunConfiguration(
 		project: Project, factory: CovRunConfigurationFactory) :
-		LocatableConfigurationBase(project, factory, CovBundle.message("cov.name")) {
+		LocatableConfigurationBase<CovCommandLineState>(project, factory, CovBundle.message("cov.name")) {
 	var logPath = ""
 	var importPaths = project.covSettings.settings.importPaths
 	var logPathOption = false

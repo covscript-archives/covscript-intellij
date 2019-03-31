@@ -38,7 +38,7 @@ class CovSymbolRef constructor(private val symbol: CovSymbol) : PsiPolyVariantRe
 		return variantsProcessor.candidateSet.toTypedArray()
 	}
 
-	override fun isReferenceTo(o: PsiElement?) = o === refTo || o === resolve()
+	override fun isReferenceTo(o: PsiElement) = o === refTo || o === resolve()
 	override fun resolve() = refTo
 		?: multiResolve(false)
 				.firstOrNull()?.element.also { refTo = it as? PsiNameIdentifierOwner }

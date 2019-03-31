@@ -8,4 +8,5 @@ internal inline fun forceRun(lambda: () -> Any) {
 }
 
 fun Boolean?.orFalse() = true == this
+fun Boolean?.orTrue() = false != this
 

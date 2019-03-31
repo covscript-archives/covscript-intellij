@@ -73,7 +73,7 @@ class CovProjectGeneratorPeerImpl(private val settings: CovSettings) : CovProjec
 }
 
 class CovProjectConfigurableImpl(project: Project) : CovProjectConfigurable() {
-	private var settings = project.covSettings.settings
+	private var settings = project.covSettingsNullable?.settings ?: CovSettings()
 	override fun createComponent() = mainPanel
 	override fun getDisplayName() = CovBundle.message("cov.name")
 	override fun isModified() = settings.exePath != covExeField.text ||

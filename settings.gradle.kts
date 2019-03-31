@@ -1,2 +1,2 @@
-rootProject.name = "covscript-intellij"
+rootProject.name = "intellij-covscript"
 

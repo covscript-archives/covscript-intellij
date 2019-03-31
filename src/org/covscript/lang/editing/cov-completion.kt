@@ -104,7 +104,7 @@ class CovCompletionContributor : CompletionContributor() {
 	private class CovProvider(private val list: List<LookupElement>) :
 			CompletionProvider<CompletionParameters>() {
 		override fun addCompletions(
-				parameters: CompletionParameters, context: ProcessingContext?, result: CompletionResultSet) =
+				parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) =
 				list.forEach(result::addElement)
 	}
 

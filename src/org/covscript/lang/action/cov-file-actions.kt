@@ -30,7 +30,7 @@ class NewCovFile : CreateFileFromTemplateAction(
 		}
 	}
 
-	override fun getActionName(directory: PsiDirectory?, s: String?, s2: String?) =
+	override fun getActionName(directory: PsiDirectory, s: String, s2: String) =
 			CovBundle.message("cov.actions.new-file.title")
 
 	override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
