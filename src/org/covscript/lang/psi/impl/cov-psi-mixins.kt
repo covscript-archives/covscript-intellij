@@ -99,10 +99,7 @@ abstract class CovStatementMixin(node: ASTNode) : ASTWrapperPsiElement(node), Co
 
 interface ICovExpr : PsiElement
 
-abstract class CovExprMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovExpr {
-	override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			processDeclTrivial(processor, state, lastParent, place)
-}
+abstract class CovExprMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovExpr
 
 abstract class CovBodyOfSomethingMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovBodyOfSomething {
 	override fun processDeclarations(
