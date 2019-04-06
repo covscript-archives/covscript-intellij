@@ -37,7 +37,7 @@ class CovAnnotator : Annotator {
 
 	private fun symbol(element: CovSymbol, holder: AnnotationHolder) {
 		val isDeclaration = when {
-			element.isNamespaceName or element.isUsingedName or element.isImportedName ->
+			element.isNamespaceName || element.isUsingedName || element.isImportedName ->
 				holder.createInfoAnnotation(element, null)
 						.apply { textAttributes = CovSyntaxHighlighter.NAMESPACE_DEFINITION }
 			element.isConstVar ->

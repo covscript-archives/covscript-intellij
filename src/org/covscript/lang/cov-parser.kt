@@ -32,6 +32,8 @@ class CovTokenType(debugName: String) : IElementType(debugName, CovLanguage.INST
 		@JvmField val STRINGS = TokenSet.create(CovTypes.STR, CovTypes.CHAR, CovTypes.STRING, CovTypes.CHAR_LIT)
 		@JvmField val SYMBOLS = TokenSet.create(CovTypes.SYM, CovTypes.SYMBOL)
 		@JvmField val CONCATENATABLE_TOKENS = TokenSet.orSet(COMMENTS, STRINGS)
+		@JvmField val CONST_DECLARER: List<IElementType> = listOf(CovTypes.CONST_KEYWORD, CovTypes.CONSTANT_KEYWORD)
+
 		fun fromText(name: String, project: Project): PsiElement = PsiFileFactory
 				.getInstance(project)
 				.createFileFromText(CovLanguage.INSTANCE, name)

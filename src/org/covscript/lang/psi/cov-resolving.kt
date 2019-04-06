@@ -44,7 +44,7 @@ class CovSymbolRef constructor(private val symbol: CovSymbol) : PsiPolyVariantRe
 				.firstOrNull()?.element.also { refTo = it as? PsiNameIdentifierOwner }
 
 	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
-		if (element.isDeclaration or !element.isValid or element.project.isDisposed) return emptyArray()
+		if (element.isDeclaration || !element.isValid || element.project.isDisposed) return emptyArray()
 		val file = element.containingFile ?: return emptyArray()
 		return ResolveCache
 				.getInstance(element.project)

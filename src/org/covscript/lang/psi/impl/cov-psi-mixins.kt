@@ -145,7 +145,7 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, CovExprMixin(node) {
 	final override val isException: Boolean get() = parent.let { it is CovTryCatchStatement && it.nameIdentifier === this }
 	final override val isLoopVar: Boolean get() = parent.let { it is CovForStatement && it.nameIdentifier === this }
 	final override val isVar: Boolean get() = parent.let { it is CovVariableInitialization && it.nameIdentifier === this }
-	final override val isConstVar: Boolean get() = isVar && parent.firstChild.node.elementType == CovTypes.CONST_KEYWORD
+	final override val isConstVar: Boolean get() = isVar && parent?.parent?.firstChild?.firstChild?.node?.elementType in CovTokenType.CONST_DECLARER
 	final override val isParameter: Boolean get() = parent.let { it is CovFunctionDeclaration && it.nameIdentifier !== this }
 	final override val isNamespaceName: Boolean get() = parent is CovNamespaceDeclaration
 	final override val isStructName: Boolean get() = parent.let { it is CovStructDeclaration && it.nameIdentifier === this }
