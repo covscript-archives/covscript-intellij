@@ -30,7 +30,7 @@ plugins {
     java
     id("org.jetbrains.intellij") version "0.4.6"
     id("org.jetbrains.grammarkit") version "2018.3.1"
-    kotlin("jvm") version "1.2.40"
+    kotlin("jvm") version "1.3.20"
 }
 
 fun fromToolbox(path: String) = file(path).listFiles().orEmpty().filter { it.isDirectory }.maxBy {
@@ -89,33 +89,26 @@ tasks.withType<PatchPluginXmlTask> {
 	pluginId(packageName)
 }
 
-java.sourceSets {
-	"main" {
-		java.srcDirs("src", "gen")
+sourceSets {
+	main {
 		withConvention(KotlinSourceSet::class) {
-			kotlin.srcDirs("src")
+			listOf(java, kotlin).forEach { it.srcDirs("src", "gen") }
 		}
-		resources.srcDirs("res")
+		resources.srcDir("res")
 	}
 
-	"test" {
-		java.srcDirs("test")
+	test {
 		withConvention(KotlinSourceSet::class) {
-			kotlin.srcDirs("test")
+			listOf(java, kotlin).forEach { it.srcDirs("test") }
 		}
-		resources.srcDirs("testData")
+		resources.srcDir("testData")
 	}
 }
 
 repositories { jcenter() }
 
 dependencies {
-	compileOnly(kotlin("stdlib-jdk8"))
-	compile(kotlin("stdlib-jdk8").toString()) {
-		exclude(module = "kotlin-runtime")
-		exclude(module = "kotlin-reflect")
-		exclude(module = "kotlin-stdlib")
-	}
+	compile(kotlin("stdlib-jdk8"))
 	compile(files("lib/org.eclipse.egit.github.core-2.1.5.jar"))
 	testCompile(kotlin("test-junit"))
 	testCompile("junit", "junit", "4.12")
@@ -163,8 +156,8 @@ tasks.withType<KotlinCompile> {
 	dependsOn(genLexer)
 	kotlinOptions {
 		jvmTarget = "1.8"
-		languageVersion = "1.2"
-		apiVersion = "1.2"
+		languageVersion = "1.3"
+		apiVersion = "1.3"
 	}
 }
 
