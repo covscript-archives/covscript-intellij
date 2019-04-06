@@ -41,17 +41,8 @@ abstract class CovUsingDeclarationMixin(node: ASTNode) : CovUsingDeclaration, Tr
 			throw IncorrectOperationException("Cannot rename import statement")
 }
 
-interface ICovVariableDeclaration : PsiNameIdentifierOwner
-
 abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, TrivialDeclaration(node) {
-	private var idCache: PsiElement? = null
-	override fun getNameIdentifier() = idCache
-			?: children.firstOrNull { it is CovSymbol }.also { idCache = it }
-
-	override fun subtreeChanged() {
-		idCache = null
-		super.subtreeChanged()
-	}
+	override fun getNameIdentifier() = children.firstOrNull { it is CovSymbol }
 }
 
 abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), PsiNameIdentifierOwner {
@@ -114,6 +105,10 @@ abstract class CovGeneralBodyMixin(node: ASTNode) : ASTWrapperPsiElement(node), 
 
 abstract class CovForStatementMixin(node: ASTNode) : TrivialDeclaration(node), CovForStatement {
 	override fun getNameIdentifier() = symbol
+}
+
+abstract class CovForEachStatementMixin(node: ASTNode) : TrivialDeclaration(node), CovForEachStatement {
+	override fun getNameIdentifier() = children.firstOrNull { it is CovSymbol }
 }
 
 abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclaration, TrivialDeclaration(node) {

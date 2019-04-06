@@ -51,7 +51,7 @@ variableDeclaration ::=
  variableInitialization (COMMA variableInitialization)* {
 	pin=1
 	mixin='org.covscript.lang.psi.impl.CovVariableDeclarationMixin'
-	implements=['org.covscript.lang.psi.impl.ICovVariableDeclaration']
+	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 }
 
 variableInitialization ::= symbol EQ expr
@@ -132,8 +132,7 @@ loopUntilStatement ::=
  END_KEYWORD { pin=1 }
 
 forStatement ::=
- FOR_KEYWORD symbol (forTo | forIterate) generalBody
- END_KEYWORD {
+ FOR_KEYWORD symbol (forTo | forIterate) generalBody {
 	pin=1
 	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 	mixin='org.covscript.lang.psi.impl.CovForStatementMixin'
@@ -141,12 +140,17 @@ forStatement ::=
 
 generalBody ::=
  DO_KEYWORD expr | endOfLine
-  bodyOfSomething {
+  bodyOfSomething
+  END_KEYWORD {
 	mixin='org.covscript.lang.psi.impl.CovGeneralBodyMixin'
 }
 
 forEachStatement ::=
- FOREACH_KEYWORD symbol COLON_SYM expr generalBody { pin=1 }
+ FOREACH_KEYWORD symbol COLON_SYM expr generalBody {
+	pin=1
+	implements=['com.intellij.psi.PsiNameIdentifierOwner']
+	mixin='org.covscript.lang.psi.impl.CovForEachStatementMixin'
+}
 
 forTo ::= EQ expr TO_KEYWORD expr (STEP_KEYWORD expr)?
 forIterate ::= ITERATE_KEYWORD expr
