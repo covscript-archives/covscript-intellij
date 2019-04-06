@@ -19,7 +19,7 @@
  * THE SOFTWARE.
  */
 
-package de.halirutan.mathematica.errorreporting.cov
+package org.covscript.lang.error
 
 import com.intellij.CommonBundle
 import com.intellij.diagnostic.AbstractMessage
@@ -67,7 +67,7 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 private object AnonymousFeedback {
-	private const val tokenFile = "de/halirutan/mathematica/errorreporting-cov/token.bin"
+	private const val tokenFile = "org/covscript/lang/error/token.bin"
 	private const val gitRepoUser = "covscript"
 	private const val gitRepo = "covscript-intellij"
 	private const val issueLabel = "pending"
@@ -114,7 +114,7 @@ private object AnonymousFeedback {
 	private fun findFirstDuplicate(uniqueTitle: String, service: IssueService, repo: RepositoryId): Issue? {
 		val searchParameters = HashMap<String, String>(2)
 		searchParameters[IssueService.FILTER_STATE] = IssueService.STATE_OPEN
-		return service.pageIssues(repo, searchParameters).flatMap { it }.firstOrNull { it.title == uniqueTitle }
+		return service.pageIssues(repo, searchParameters).flatten().firstOrNull { it.title == uniqueTitle }
 	}
 
 	private fun createNewGibHubIssue(details: MutableMap<String, String>) = Issue().apply {
@@ -249,7 +249,7 @@ class GitHubErrorBean(
  * Messages and strings used by the error reporter
  */
 private object ErrorReportBundle {
-	@NonNls private const val BUNDLE = "de.halirutan.mathematica.errorreporting-cov.report-bundle"
+	@NonNls private const val BUNDLE = "org.covscript.lang.error.report-bundle"
 	private val bundle: ResourceBundle by lazy { ResourceBundle.getBundle(BUNDLE) }
 
 	@JvmStatic

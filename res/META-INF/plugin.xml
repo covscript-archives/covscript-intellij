@@ -17,7 +17,7 @@
 		<sdkType implementation="org.covscript.lang.module.CovSdkType"/>
 		<breadcrumbsInfoProvider implementation="org.covscript.lang.editing.CovBreadCrumbProvider"/>
 		<directoryProjectGenerator implementation="org.covscript.lang.module.CovProjectGenerator"/>
-		<errorHandler implementation="de.halirutan.mathematica.errorreporting.cov.GitHubErrorReporter"/>
+		<errorHandler implementation="org.covscript.lang.error.GitHubErrorReporter"/>
 		<consoleFilterProvider implementation="org.covscript.lang.execution.CovConsoleFilterProvider"/>
 		<iconProvider implementation="org.covscript.lang.editing.CovIconProvider"/>
 		<languageInjector implementation="org.covscript.lang.editing.CovLanguageInjector"/>

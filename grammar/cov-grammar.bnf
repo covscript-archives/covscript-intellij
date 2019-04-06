@@ -29,13 +29,13 @@ continue ::= CONTINUE_KEYWORD
 
 importDeclaration ::= IMPORT_KEYWORD symbol (COMMA symbol)* {
 	pin=1
-	implements=['org.covscript.lang.psi.impl.ICovImportDeclaration']
+	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 	mixin='org.covscript.lang.psi.impl.CovImportDeclarationMixin'
 }
 
 usingDeclaration ::= USING_KEYWORD symbol (DOT symbol)* {
 	pin=1
-	implements=['org.covscript.lang.psi.impl.ICovUsingDeclaration']
+	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 	mixin='org.covscript.lang.psi.impl.CovUsingDeclarationMixin'
 }
 
@@ -51,10 +51,13 @@ variableDeclaration ::=
  variableInitialization (COMMA variableInitialization)* {
 	pin=1
 	mixin='org.covscript.lang.psi.impl.CovVariableDeclarationMixin'
-	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 }
 
-variableInitialization ::= symbol EQ expr
+variableInitialization ::= symbol EQ expr {
+	pin=1
+	implements=['com.intellij.psi.PsiNameIdentifierOwner']
+	mixin='org.covscript.lang.psi.impl.CovVariableInitializationMixin'
+}
 
 functionDeclaration ::=
  FUNCTION_KEYWORD symbol LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET
@@ -62,8 +65,8 @@ functionDeclaration ::=
   bodyOfSomething
  END_KEYWORD {
 	pin=1
+	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 	mixin='org.covscript.lang.psi.impl.CovFunctionDeclarationMixin'
-	implements=['org.covscript.lang.psi.impl.ICovFunctionDeclaration']
 }
 
 namespaceDeclaration ::=
@@ -80,7 +83,7 @@ structDeclaration ::=
   ((variableDeclaration | functionDeclaration) endOfLine)*
  END_KEYWORD {
 	pin=1
-	implements=['org.covscript.lang.psi.impl.ICovStructDeclaration']
+	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 	mixin='org.covscript.lang.psi.impl.CovStructDeclarationMixin'
 }
 

@@ -21,8 +21,6 @@ abstract class CovStringMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovSt
 	override fun updateText(s: String) = ElementManipulators.handleContentChange(this, s)
 }
 
-interface ICovImportDeclaration : PsiNameIdentifierOwner
-
 abstract class CovImportDeclarationMixin(node: ASTNode) : CovImportDeclaration, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = symbolList.first()
 	// workaround for KT-23219
@@ -30,8 +28,6 @@ abstract class CovImportDeclarationMixin(node: ASTNode) : CovImportDeclaration, 
 	override fun setName(newName: String): TrivialDeclaration =
 			throw IncorrectOperationException("Cannot rename import statement")
 }
-
-interface ICovUsingDeclaration : PsiNameIdentifierOwner
 
 abstract class CovUsingDeclarationMixin(node: ASTNode) : CovUsingDeclaration, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = symbolList.lastOrNull()
@@ -41,8 +37,13 @@ abstract class CovUsingDeclarationMixin(node: ASTNode) : CovUsingDeclaration, Tr
 			throw IncorrectOperationException("Cannot rename import statement")
 }
 
-abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, TrivialDeclaration(node) {
-	override fun getNameIdentifier() = children.firstOrNull { it is CovSymbol }
+abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclaration, ASTWrapperPsiElement(node) {
+	override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			variableInitializationList.all { it.processDeclarations(processor, state, lastParent, place) }
+}
+
+abstract class CovVariableInitializationMixin(node: ASTNode) : CovVariableInitialization, TrivialDeclaration(node) {
+	override fun getNameIdentifier() = firstChild
 }
 
 abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), PsiNameIdentifierOwner {
@@ -55,8 +56,6 @@ abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), P
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
 			nameIdentifier?.processDeclarations(processor, substitutor, lastParent, place).orTrue()
 }
-
-interface ICovFunctionDeclaration : PsiNameIdentifierOwner
 
 abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclaration, TrivialDeclaration(node) {
 	private var nameCache: PsiElement? = null
@@ -145,7 +144,7 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, CovExprMixin(node) {
 	private var referenceImpl: CovSymbolRef? = null
 	final override val isException: Boolean get() = parent.let { it is CovTryCatchStatement && it.nameIdentifier === this }
 	final override val isLoopVar: Boolean get() = parent.let { it is CovForStatement && it.nameIdentifier === this }
-	final override val isVar: Boolean get() = parent.let { it is CovVariableDeclaration && it.nameIdentifier === this }
+	final override val isVar: Boolean get() = parent.let { it is CovVariableInitialization && it.nameIdentifier === this }
 	final override val isConstVar: Boolean get() = isVar && parent.firstChild.node.elementType == CovTypes.CONST_KEYWORD
 	final override val isParameter: Boolean get() = parent.let { it is CovFunctionDeclaration && it.nameIdentifier !== this }
 	final override val isNamespaceName: Boolean get() = parent is CovNamespaceDeclaration
