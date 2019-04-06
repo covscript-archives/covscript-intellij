@@ -309,7 +309,7 @@ class CovStructureViewFactory : PsiStructureViewFactory {
 				is CovFunctionDeclaration -> o.bodyOfSomething?.statementList.orEmpty().mapNotNull { it.inside }
 				is CovStructDeclaration -> o.children.filter { it is CovFunctionDeclaration || it is CovVariableDeclaration }
 				is CovNamespaceDeclaration -> o.bodyOfSomething?.statementList.orEmpty().mapNotNull { it.inside }
-				is CovForStatement -> o.bodyOfSomething?.statementList.orEmpty().mapNotNull { it.inside }
+				is CovForStatement -> o.generalBody?.bodyOfSomething?.statementList.orEmpty().mapNotNull { it.inside }
 				is CovLoopUntilStatement -> o.bodyOfSomething?.statementList.orEmpty().mapNotNull { it.inside }
 				is CovWhileStatement -> o.bodyOfSomething?.statementList.orEmpty().mapNotNull { it.inside }
 				is CovTryCatchStatement -> o.bodyOfSomethingList.flatMap { it.statementList.mapNotNull { it.inside } }

@@ -24,7 +24,7 @@ abstract class CovStringMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovSt
 interface ICovImportDeclaration : PsiNameIdentifierOwner
 
 abstract class CovImportDeclarationMixin(node: ASTNode) : CovImportDeclaration, TrivialDeclaration(node) {
-	override fun getNameIdentifier() = symbol
+	override fun getNameIdentifier() = symbolList.first()
 	// workaround for KT-23219
 	@Throws(IncorrectOperationException::class)
 	override fun setName(newName: String): TrivialDeclaration =
@@ -105,6 +105,11 @@ abstract class CovBodyOfSomethingMixin(node: ASTNode) : ASTWrapperPsiElement(nod
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
 			processDeclTrivial(processor, substitutor, lastParent, place)
+}
+
+abstract class CovGeneralBodyMixin(node: ASTNode) : ASTWrapperPsiElement(node), CovGeneralBody {
+	override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			bodyOfSomething?.processDeclarations(processor, state, lastParent, place).orTrue()
 }
 
 abstract class CovForStatementMixin(node: ASTNode) : TrivialDeclaration(node), CovForStatement {

@@ -60,6 +60,8 @@ new { return CovTypes.NEW_KEYWORD; }
 gcnew { return CovTypes.GCNEW_KEYWORD; }
 typeid { return CovTypes.TYPEID_KEYWORD; }
 while { return CovTypes.WHILE_KEYWORD; }
+foreach { return CovTypes.FOREACH_KEYWORD; }
+class { return CovTypes.CLASS_KEYWORD; }
 for { return CovTypes.FOR_KEYWORD; }
 package { return CovTypes.PACKAGE_KEYWORD; }
 using { return CovTypes.USING_KEYWORD; }
@@ -69,6 +71,8 @@ null { return CovTypes.NULL_KEYWORD; }
 import { return CovTypes.IMPORT_KEYWORD; }
 var { return CovTypes.VAR_KEYWORD; }
 const { return CovTypes.CONST_KEYWORD; }
+constant { return CovTypes.CONSTANT_KEYWORD; }
+do { return CovTypes.DO_KEYWORD; }
 namespace { return CovTypes.NAMESPACE_KEYWORD; }
 function { return CovTypes.FUNCTION_KEYWORD; }
 break { return CovTypes.BREAK_KEYWORD; }

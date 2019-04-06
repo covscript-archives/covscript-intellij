@@ -27,7 +27,7 @@ private endOfLine ::= EOL+
 break ::= BREAK_KEYWORD
 continue ::= CONTINUE_KEYWORD
 
-importDeclaration ::= IMPORT_KEYWORD symbol {
+importDeclaration ::= IMPORT_KEYWORD symbol (COMMA symbol)* {
 	pin=1
 	implements=['org.covscript.lang.psi.impl.ICovImportDeclaration']
 	mixin='org.covscript.lang.psi.impl.CovImportDeclarationMixin'
@@ -41,11 +41,20 @@ usingDeclaration ::= USING_KEYWORD symbol (DOT symbol)* {
 
 packageDeclaration ::= PACKAGE_KEYWORD symbol { pin=1 }
 
-variableDeclaration ::= (CONST_KEYWORD)? VAR_KEYWORD symbol EQ expr {
-	pin=2
+variableDeclarer ::=
+   VAR_KEYWORD
+ | CONST_KEYWORD VAR_KEYWORD
+ | CONSTANT_KEYWORD { pin=1 }
+
+variableDeclaration ::=
+ variableDeclarer
+ variableInitialization (COMMA variableInitialization)* {
+	pin=1
 	mixin='org.covscript.lang.psi.impl.CovVariableDeclarationMixin'
 	implements=['org.covscript.lang.psi.impl.ICovVariableDeclaration']
 }
+
+variableInitialization ::= symbol EQ expr
 
 functionDeclaration ::=
  FUNCTION_KEYWORD symbol LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET
@@ -65,8 +74,9 @@ namespaceDeclaration ::=
 	mixin='org.covscript.lang.psi.impl.CovNamespaceDeclarationMixin'
 }
 
+structDeclarer ::= STRUCT_KEYWORD | CLASS_KEYWORD
 structDeclaration ::=
- STRUCT_KEYWORD symbol (EXTENDS_KEYWORD expr)? endOfLine
+ structDeclarer symbol (EXTENDS_KEYWORD expr)? endOfLine
   ((variableDeclaration | functionDeclaration) endOfLine)*
  END_KEYWORD {
 	pin=1
@@ -122,13 +132,21 @@ loopUntilStatement ::=
  END_KEYWORD { pin=1 }
 
 forStatement ::=
- FOR_KEYWORD symbol (forTo | forIterate) endOfLine
-  bodyOfSomething
+ FOR_KEYWORD symbol (forTo | forIterate) generalBody
  END_KEYWORD {
 	pin=1
 	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 	mixin='org.covscript.lang.psi.impl.CovForStatementMixin'
 }
+
+generalBody ::=
+ DO_KEYWORD expr | endOfLine
+  bodyOfSomething {
+	mixin='org.covscript.lang.psi.impl.CovGeneralBodyMixin'
+}
+
+forEachStatement ::=
+ FOREACH_KEYWORD symbol COLON_SYM expr generalBody { pin=1 }
 
 forTo ::= EQ expr TO_KEYWORD expr (STEP_KEYWORD expr)?
 forIterate ::= ITERATE_KEYWORD expr
@@ -160,6 +178,7 @@ private primaryStatement ::=
  | switchStatement
  | blockStatement
  | forStatement
+ | forEachStatement
  | loopUntilStatement
  | tryCatchStatement
  | namespaceDeclaration
