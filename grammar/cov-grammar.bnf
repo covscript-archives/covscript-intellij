@@ -1,3 +1,4 @@
+//noinspection BnfResolveForFile
 {
   parserClass='org.covscript.lang.CovParser'
   extends='com.intellij.extapi.psi.ASTWrapperPsiElement'

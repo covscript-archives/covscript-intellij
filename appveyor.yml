@@ -3,10 +3,8 @@ environment:
 #
 
 build_script:
-  - gradlew displayCommitHash
-  - gradlew isCI
+  - gradlew displayCommitHash isCI
   - gradlew buildPlugin --info
-  - gradlew verifyPlugin --info
 #
 
 cache:
@@ -15,5 +13,5 @@ cache:
 
 artifacts:
   - path: 'build\distributions\*.zip'
-    name: covscript-intellij
+    name: intellij-covscript
 #
