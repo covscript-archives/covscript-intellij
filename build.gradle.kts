@@ -28,8 +28,8 @@ version = pluginVersion
 
 plugins {
     java
-    id("org.jetbrains.intellij") version "0.4.7"
-    id("org.jetbrains.grammarkit") version "2018.3.1"
+    id("org.jetbrains.intellij") version "0.4.8"
+    id("org.jetbrains.grammarkit") version "2019.1"
     kotlin("jvm") version "1.3.30"
 }
 

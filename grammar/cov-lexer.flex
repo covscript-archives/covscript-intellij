@@ -126,6 +126,7 @@ override { return CovTypes.OVERRIDE_KEYWORD; }
 \! { return CovTypes.NOT_SYM; }
 
 , { return CovTypes.COMMA; }
+"..." { return CovTypes.TRIPLE_DOT; }
 \. { return CovTypes.DOT; }
 \( { return CovTypes.LEFT_BRACKET; }
 \) { return CovTypes.RIGHT_BRACKET; }

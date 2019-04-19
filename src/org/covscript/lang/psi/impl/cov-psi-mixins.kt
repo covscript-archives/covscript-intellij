@@ -42,7 +42,16 @@ abstract class CovVariableDeclarationMixin(node: ASTNode) : CovVariableDeclarati
 			variableInitializationList.all { it.processDeclarations(processor, state, lastParent, place) }
 }
 
+abstract class CovParametersMixin(node: ASTNode) : CovParameters, ASTWrapperPsiElement(node) {
+	override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			parameterList.all { it.processDeclarations(processor, state, lastParent, place) }
+}
+
 abstract class CovVariableInitializationMixin(node: ASTNode) : CovVariableInitialization, TrivialDeclaration(node) {
+	override fun getNameIdentifier() = firstChild
+}
+
+abstract class CovParameterMixin(node: ASTNode) : CovParameter, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = firstChild
 }
 
@@ -64,9 +73,8 @@ abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclarati
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
-			symbolList.asReversed().all {
-				it.processDeclarations(processor, substitutor, lastParent, place)
-			}
+			parameters?.processDeclarations(processor, substitutor, lastParent, place).orTrue() &&
+					symbol?.processDeclarations(processor, substitutor, lastParent, place).orTrue()
 
 	override fun subtreeChanged() {
 		nameCache = null

@@ -61,13 +61,27 @@ variableInitialization ::= symbol EQ expr {
 }
 
 functionDeclaration ::=
- FUNCTION_KEYWORD symbol LEFT_BRACKET (symbol (COMMA symbol)*)? RIGHT_BRACKET
+ FUNCTION_KEYWORD symbol parameters
    OVERRIDE_KEYWORD? endOfLine
   bodyOfSomething
  END_KEYWORD {
 	pin=1
 	implements=['com.intellij.psi.PsiNameIdentifierOwner']
 	mixin='org.covscript.lang.psi.impl.CovFunctionDeclarationMixin'
+}
+
+parameters ::=
+ LEFT_BRACKET
+  (parameter (COMMA parameter)*)?
+  (COMMA TRIPLE_DOT parameter)?
+ RIGHT_BRACKET {
+	pin=1
+	mixin='org.covscript.lang.psi.impl.CovParametersMixin'
+}
+
+parameter ::= SYM {
+	implements=['com.intellij.psi.PsiNameIdentifierOwner']
+	mixin='org.covscript.lang.psi.impl.CovParameterMixin'
 }
 
 namespaceDeclaration ::=
@@ -320,12 +334,7 @@ memberAccess ::= expr DOT expr {
 
 functionLit ::=
  LEFT_S_BRACKET RIGHT_S_BRACKET
- LEFT_BRACKET
- (
-  symbol
-  (COMMA symbol)*
- )?
- RIGHT_BRACKET ARROW
+ parameters ARROW
   expr
 
 private primaryExpr ::=
