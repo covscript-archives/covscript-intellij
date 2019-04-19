@@ -303,7 +303,7 @@ private level13 ::=
  | suffixedExpr
 
 unaryExpr ::= (INC_SYM | DEC_SYM) expr
-suffixedExpr ::= expr (INC_SYM | DEC_SYM)
+suffixedExpr ::= expr (INC_SYM | DEC_SYM | TRIPLE_DOT)
 
 private level14 ::=
    newExpr
