@@ -40,8 +40,8 @@ class CovSymbolRef constructor(private val symbol: CovSymbol) : PsiPolyVariantRe
 
 	override fun isReferenceTo(o: PsiElement) = o === refTo || o === resolve()
 	override fun resolve() = refTo
-		?: multiResolve(false)
-				.firstOrNull()?.element.also { refTo = it as? PsiNameIdentifierOwner }
+			?: multiResolve(false)
+					.firstOrNull()?.element.also { refTo = it as? PsiNameIdentifierOwner }
 
 	override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
 		if (element.isDeclaration || !element.isValid || element.project.isDisposed) return emptyArray()
@@ -69,9 +69,7 @@ abstract class ResolveProcessor<ResolveResult>(private val place: PsiElement) : 
 
 	protected fun isInScope(element: PsiElement) = if (element is CovSymbol) when {
 		element.isUsingedName || element.isImportedName -> true
-		element.isParameter ||
-				element.isException ||
-				element.isLoopVar -> PsiTreeUtil.isAncestor(element.parent, place, true)
+		element.isException || element.isLoopVar -> PsiTreeUtil.isAncestor(element.parent, place, true)
 		element.isDeclaration -> PsiTreeUtil.isAncestor(
 				PsiTreeUtil.getParentOfType(element, CovStatement::class.java)?.parent, place, false)
 		else -> false
@@ -91,6 +89,11 @@ class SymbolResolveProcessor(private val name: String, place: PsiElement, val in
 			if (accessible) candidateSet += PsiElementResolveResult(element, element.hasNoError)
 			!accessible
 		}
+		element is CovParameter -> {
+			val accessible = accessible(element)
+			if (accessible) candidateSet += PsiElementResolveResult(element, element.hasNoError)
+			!accessible
+		}
 		else -> true
 	}
 }
@@ -102,9 +105,14 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 	override val candidateSet = ArrayList<LookupElementBuilder>(30)
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
 		if (!element.hasNoError || !isInScope(element)) return true
+		if (element is CovParameter) {
+			candidateSet += LookupElementBuilder.create(element.text)
+					.withIcon(CovIcons.VARIABLE_ICON)
+					.withTypeText("Parameter")
+			return true
+		}
 		if (element !is CovSymbol || !element.isDeclaration) return true
 		val (type, icon, insertHandler) = when {
-			element.isParameter -> Triple("Parameter", CovIcons.VARIABLE_ICON, null)
 			element.isException -> Triple("Exception", CovIcons.TRY_CATCH_ICON, null)
 			element.isConstVar -> Triple("Constant", CovIcons.VARIABLE_ICON, null)
 			element.isVar -> Triple("Variable", CovIcons.VARIABLE_ICON, null)

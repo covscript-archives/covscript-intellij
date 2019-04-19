@@ -15,15 +15,16 @@ class CovFindUsageProvider : FindUsagesProvider {
 	override fun getWordsScanner() = Scanner
 	override fun getHelpId(psiElement: PsiElement): String? = null
 	override fun getDescriptiveName(element: PsiElement) = (element as? CovSymbol)?.text.orEmpty()
-	override fun getType(element: PsiElement) = (element as? CovSymbol)?.let {
-		when {
-			it.isParameter -> "Parameter"
-			it.isFunctionName -> "Function"
-			it.isConstVar -> "Const var"
-			it.isException -> "Exception"
+	override fun getType(element: PsiElement) = when (element) {
+		is CovSymbol -> when {
+			element.isFunctionName -> "Function"
+			element.isConstVar -> "Const var"
+			element.isException -> "Exception"
 			else -> ""
 		}
-	} ?: ""
+		is CovParameter -> "Parameter"
+		else -> ""
+	}
 
 	override fun getNodeText(element: PsiElement, useFullName: Boolean) = buildString {
 		append(getType(element))

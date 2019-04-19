@@ -137,7 +137,6 @@ abstract class CovTryCatchDeclarationMixin(node: ASTNode) : CovTryCatchStatement
 interface ICovSymbol : PsiNameIdentifierOwner, CovExpr {
 	val isException: Boolean
 	val isLoopVar: Boolean
-	val isParameter: Boolean
 	val isVar: Boolean
 	val isConstVar: Boolean
 	val isFunctionName: Boolean
@@ -154,7 +153,6 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, CovExprMixin(node) {
 	final override val isLoopVar: Boolean get() = parent.let { it is CovForStatement && it.nameIdentifier === this }
 	final override val isVar: Boolean get() = parent.let { it is CovVariableInitialization && it.nameIdentifier === this }
 	final override val isConstVar: Boolean get() = isVar && parent?.parent?.firstChild?.firstChild?.node?.elementType in CovTokenType.CONST_DECLARER
-	final override val isParameter: Boolean get() = parent.let { it is CovFunctionDeclaration && it.nameIdentifier !== this }
 	final override val isNamespaceName: Boolean get() = parent is CovNamespaceDeclaration
 	final override val isStructName: Boolean get() = parent.let { it is CovStructDeclaration && it.nameIdentifier === this }
 	final override val isFunctionName: Boolean get() = parent.let { it is CovFunctionDeclaration && it.nameIdentifier === this }
@@ -169,8 +167,7 @@ abstract class CovSymbolMixin(node: ASTNode) : CovSymbol, CovExprMixin(node) {
 				isUsingedName ||
 				isImportedName ||
 				isFunctionName ||
-				isStructName ||
-				isParameter
+				isStructName
 
 	override fun processDeclarations(
 			processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement) =
