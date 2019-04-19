@@ -53,6 +53,8 @@ abstract class CovVariableInitializationMixin(node: ASTNode) : CovVariableInitia
 
 abstract class CovParameterMixin(node: ASTNode) : CovParameter, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = firstChild
+	override fun processDeclarations(processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+			processor.execute(this, substitutor)
 }
 
 abstract class TrivialDeclaration(node: ASTNode) : ASTWrapperPsiElement(node), PsiNameIdentifierOwner {
@@ -71,8 +73,7 @@ abstract class CovFunctionDeclarationMixin(node: ASTNode) : CovFunctionDeclarati
 	override fun getNameIdentifier() = nameCache
 			?: children.firstOrNull { it is CovSymbol }.also { nameCache = it }
 
-	override fun processDeclarations(
-			processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
+	override fun processDeclarations(processor: PsiScopeProcessor, substitutor: ResolveState, lastParent: PsiElement?, place: PsiElement) =
 			parameters?.processDeclarations(processor, substitutor, lastParent, place).orTrue() &&
 					symbol?.processDeclarations(processor, substitutor, lastParent, place).orTrue()
 
@@ -120,10 +121,6 @@ abstract class CovForEachStatementMixin(node: ASTNode) : TrivialDeclaration(node
 
 abstract class CovNamespaceDeclarationMixin(node: ASTNode) : CovNamespaceDeclaration, TrivialDeclaration(node) {
 	override fun getNameIdentifier() = symbol
-}
-
-interface ICovStructDeclaration : PsiNameIdentifierOwner {
-	override fun getNameIdentifier(): CovExpr?
 }
 
 abstract class CovStructDeclarationMixin(node: ASTNode) : CovStructDeclaration, TrivialDeclaration(node) {

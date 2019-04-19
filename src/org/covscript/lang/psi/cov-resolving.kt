@@ -66,14 +66,6 @@ abstract class ResolveProcessor<ResolveResult>(private val place: PsiElement) : 
 	override fun handleEvent(event: PsiScopeProcessor.Event, o: Any?) = Unit
 	override fun <AnyNullable> getHint(hintKey: Key<AnyNullable>): AnyNullable? where AnyNullable : Any? = null
 	protected val PsiElement.hasNoError get() = (this as? StubBasedPsiElement<*>)?.stub != null || !PsiTreeUtil.hasErrorElements(this)
-
-	protected fun isInScope(element: PsiElement) = if (element is CovSymbol) when {
-		element.isUsingedName || element.isImportedName -> true
-		element.isException || element.isLoopVar -> PsiTreeUtil.isAncestor(element.parent, place, true)
-		element.isDeclaration -> PsiTreeUtil.isAncestor(
-				PsiTreeUtil.getParentOfType(element, CovStatement::class.java)?.parent, place, false)
-		else -> false
-	} else false
 }
 
 class SymbolResolveProcessor(private val name: String, place: PsiElement, val incompleteCode: Boolean) :
@@ -81,7 +73,7 @@ class SymbolResolveProcessor(private val name: String, place: PsiElement, val in
 	constructor(ref: CovSymbolRef, incompleteCode: Boolean) : this(ref.canonicalText, ref.element, incompleteCode)
 
 	override val candidateSet = ArrayList<PsiElementResolveResult>(3)
-	fun accessible(element: PsiElement) = element.hasNoError && name == element.text && isInScope(element)
+	fun accessible(element: PsiElement) = element.hasNoError && name == element.text
 	override fun execute(element: PsiElement, resolveState: ResolveState) = when {
 		candidateSet.isNotEmpty() -> false
 		element is CovSymbol -> {
@@ -104,7 +96,7 @@ class CompletionProcessor(place: PsiElement, val incompleteCode: Boolean) :
 
 	override val candidateSet = ArrayList<LookupElementBuilder>(30)
 	override fun execute(element: PsiElement, resolveState: ResolveState): Boolean {
-		if (!element.hasNoError || !isInScope(element)) return true
+		if (!element.hasNoError) return true
 		if (element is CovParameter) {
 			candidateSet += LookupElementBuilder.create(element.text)
 					.withIcon(CovIcons.VARIABLE_ICON)
